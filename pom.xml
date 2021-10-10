@@ -124,6 +124,7 @@
             </path>
           </annotationProcessorPaths>
           <compilerArgs>
+            <arg>-Xlint:all</arg>
             <arg>-Amicronaut.processing.group=com.notkamui</arg>
             <arg>-Amicronaut.processing.module=friday</arg>
           </compilerArgs>
