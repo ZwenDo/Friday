@@ -124,7 +124,7 @@
             </path>
           </annotationProcessorPaths>
           <compilerArgs>
-            <arg>-Amicronaut.processing.group=test.java.notkamui</arg>
+            <arg>-Amicronaut.processing.group=com.notkamui</arg>
             <arg>-Amicronaut.processing.module=friday</arg>
           </compilerArgs>
         </configuration>
