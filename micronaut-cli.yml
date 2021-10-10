@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: test.java.notkamui
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [annotation-api, app-name, h2, hibernate-jpa, http-client, java, java-application, jdbc-hikari, junit, logback, maven, netty-server, readme, shade, yaml]
