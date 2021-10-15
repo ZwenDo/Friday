@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "build": "^0.1.4",
-    "sirv-cli": "^1.0.0"
+    "sirv-cli": "^1.0.0",
+    "tailwindcss": "^2.2.17"
   }
 }
