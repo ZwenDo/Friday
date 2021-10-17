@@ -11,6 +11,7 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 @ExecuteOn(value = TaskExecutors.IO)
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @Post
-    public HttpResponse<UserDTO> save(@Body @Valid UserSaveDTO userDTO) {
+    public HttpResponse<UserDTO> save(@Body @Valid UserSaveDTO userDTO) throws NoSuchAlgorithmException {
         Objects.requireNonNull(userDTO);
         var user = repository.save(userDTO.username(), userDTO.password());
         return HttpResponse.created(new UserDTO(user.id(), user.username(), user.password()))
