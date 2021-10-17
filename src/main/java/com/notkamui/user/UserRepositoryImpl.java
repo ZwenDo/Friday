@@ -13,18 +13,19 @@ import java.util.Objects;
 public class UserRepositoryImpl implements UserRepository {
 
     private final EntityManager manager;
+    private final SHA512Hasher hasher = new SHA512Hasher();
 
-    public UserRepositoryImpl(@NotNull EntityManager manager) {
+    public UserRepositoryImpl(@NotNull EntityManager manager) throws NoSuchAlgorithmException {
         Objects.requireNonNull(manager);
         this.manager = manager;
     }
 
     @Override
     @Transactional
-    public User save(String username, String password) throws NoSuchAlgorithmException {
+    public User save(String username, String password) {
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
-        var hashedPwd = new SHA512Hasher().hash(password);
+        var hashedPwd = hasher.hash(password);
         var user = new User(username, hashedPwd);
         manager.persist(user);
         return user;
