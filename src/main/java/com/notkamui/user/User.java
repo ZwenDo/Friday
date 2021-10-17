@@ -1,6 +1,7 @@
-package com.notkamui.domain;
+package com.notkamui.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.notkamui.event.Event;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -11,7 +12,13 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 public class User {
+
     public User() {}
+
+    public User(@NotNull @NotBlank String username, @NotNull @NotBlank String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,5 +36,17 @@ public class User {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private Set<Event> events = new HashSet<>();
+    private final Set<Event> events = new HashSet<>();
+
+    public Long id() {
+        return id;
+    }
+
+    public String username() {
+        return username;
+    }
+
+    public String password() {
+        return password;
+    }
 }

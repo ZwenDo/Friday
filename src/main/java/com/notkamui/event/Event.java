@@ -1,4 +1,6 @@
-package com.notkamui.domain;
+package com.notkamui.event;
+
+import com.notkamui.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
