@@ -49,7 +49,11 @@ public class UserRepositoryImpl implements UserRepository {
         var hashedPwd = hasher.hash(password);
         var user = findById(id);
         if (user.isEmpty()) return false;
+        System.out.println("found user");
+        System.out.println(hashedPwd);
+        System.out.println(user.get().password());
         if (!user.get().password().equals(hashedPwd)) return false;
+        System.out.println("valid pwd");
         manager.remove(user.get());
         return true;
     }

@@ -14,10 +14,13 @@ import static java.util.Objects.requireNonNull;
 
 public final class SHA512Hasher {
     private final MessageDigest md;
+    private final byte[] salt;
 
-    private SHA512Hasher(MessageDigest md) {
+    private SHA512Hasher(MessageDigest md, byte[] salt) {
         requireNonNull(md);
+        requireNonNull(salt);
         this.md = md;
+        this.salt = salt;
     }
 
     public static SHA512Hasher getHasher() throws NoSuchAlgorithmException {
@@ -30,12 +33,12 @@ public final class SHA512Hasher {
             logger.warn("No salt found ; no salt will be added");
         }
         var md = MessageDigest.getInstance("SHA-512");
-        md.update(salt);
-        return new SHA512Hasher(md);
+        return new SHA512Hasher(md, salt);
     }
 
     public String hash(String word) {
         requireNonNull(word);
+        md.update(salt);
         var hashed = md.digest(word.getBytes(StandardCharsets.UTF_8));
         return new String(hashed);
     }
