@@ -1,6 +1,6 @@
 package com.notkamui.user;
 
-import com.notkamui.dto.UserDTO;
+import com.notkamui.dto.UserResponseDTO;
 import com.notkamui.dto.UserSaveDTO;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
@@ -26,10 +26,10 @@ public class UserController {
     }
 
     @Post
-    public HttpResponse<UserDTO> save(@Body @Valid UserSaveDTO userDTO) throws NoSuchAlgorithmException {
+    public HttpResponse<UserResponseDTO> save(@Body @Valid UserSaveDTO userDTO) throws NoSuchAlgorithmException {
         Objects.requireNonNull(userDTO);
         var user = repository.save(userDTO.username(), userDTO.password());
-        return HttpResponse.created(new UserDTO(user.id(), user.username(), user.password()))
+        return HttpResponse.created(new UserResponseDTO(user.id(), user.username()))
                 .headers(h -> h.location(URI.create("/user/" + user.id())));
     }
 }
