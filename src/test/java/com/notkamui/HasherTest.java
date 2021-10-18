@@ -9,7 +9,19 @@ import java.security.NoSuchAlgorithmException;
 public class HasherTest {
 
     @Test
-    public void testHasherTwice() throws NoSuchAlgorithmException {
+    public void testHasherTwiceWithOneInstance() throws NoSuchAlgorithmException {
+        var toHash = "APZOEI102938";
+
+        var hasher = SHA512Hasher.getHasher();
+
+        var hashed1 = hasher.hash(toHash);
+        var hashed2 = hasher.hash(toHash);
+
+        Assertions.assertEquals(hashed1, hashed2);
+    }
+
+    @Test
+    public void testHasherTwiceWithTwoInstances() throws NoSuchAlgorithmException {
         var toHash = "APZOEI102938";
 
         var hasher1 = SHA512Hasher.getHasher();
