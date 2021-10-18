@@ -13,7 +13,7 @@ import java.util.Objects;
 public class UserRepositoryImpl implements UserRepository {
 
     private final EntityManager manager;
-    private final SHA512Hasher hasher = new SHA512Hasher();
+    private final SHA512Hasher hasher = SHA512Hasher.getHasher();
 
     public UserRepositoryImpl(@NotNull EntityManager manager) throws NoSuchAlgorithmException {
         Objects.requireNonNull(manager);
