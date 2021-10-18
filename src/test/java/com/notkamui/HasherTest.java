@@ -12,8 +12,8 @@ public class HasherTest {
     public void testHasherTwice() throws NoSuchAlgorithmException {
         var toHash = "APZOEI102938";
 
-        var hasher1 = new SHA512Hasher();
-        var hasher2 = new SHA512Hasher();
+        var hasher1 = SHA512Hasher.getHasher();
+        var hasher2 = SHA512Hasher.getHasher();
 
         var hashed1 = hasher1.hash(toHash);
         var hashed2 = hasher2.hash(toHash);
