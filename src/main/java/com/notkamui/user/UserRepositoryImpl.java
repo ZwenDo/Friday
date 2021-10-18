@@ -50,7 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
         var user = findById(id);
         if (user.isEmpty()) return false;
         if (!user.get().password().equals(hashedPwd)) return false;
-        manager.remove(user);
+        manager.remove(user.get());
         return true;
     }
 }
