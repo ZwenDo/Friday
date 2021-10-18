@@ -27,6 +27,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     @ReadOnly
     public Optional<User> findById(UUID id) {
+        requireNonNull(id);
         return Optional.ofNullable(manager.find(User.class, id));
     }
 

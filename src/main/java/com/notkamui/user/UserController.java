@@ -13,7 +13,6 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -30,7 +29,7 @@ public class UserController {
     }
 
     @Post
-    public HttpResponse<UserResponseDTO> save(@Body @Valid UserSaveDTO userSaveDTO) throws NoSuchAlgorithmException {
+    public HttpResponse<UserResponseDTO> save(@Body @Valid UserSaveDTO userSaveDTO) {
         requireNonNull(userSaveDTO);
         var user = repository.save(userSaveDTO.username(), userSaveDTO.password());
         return HttpResponse
@@ -39,11 +38,11 @@ public class UserController {
     }
 
     @Delete("/{id}")
-    public HttpResponse<Boolean> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
+    public HttpResponse<Object> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         requireNonNull(id);
         requireNonNull(userDeleteDTO);
         return repository.deleteById(id, userDeleteDTO.password())
-            ? HttpResponse.ok(true)
-            : HttpResponse.badRequest(false);
+            ? HttpResponse.noContent().headers(h -> h.location(URI.create("/user/" + id)))
+            : HttpResponse.badRequest();
     }
 }

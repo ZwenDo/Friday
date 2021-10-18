@@ -1,7 +1,6 @@
 package com.notkamui.user;
 
 import javax.validation.constraints.NotNull;
-import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,9 +26,8 @@ public interface UserRepository {
      * @param username the unique username of the user
      * @param password the password of the user (will be hashed SHA-512)
      * @return the created user
-     * @throws NoSuchAlgorithmException (should never happen unless SHA-512 doesn't exist anymore)
      */
-    User save(@NotNull String username, @NotNull String password) throws NoSuchAlgorithmException;
+    User save(@NotNull String username, @NotNull String password);
 
     /**
      * Deletes a user by its id, provided the given password is the correct one.
