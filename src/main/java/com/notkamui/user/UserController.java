@@ -1,6 +1,7 @@
 package com.notkamui.user;
 
 import com.notkamui.dto.UserDeleteDTO;
+import com.notkamui.dto.UserPasswordUpdateDTO;
 import com.notkamui.dto.UserResponseDTO;
 import com.notkamui.dto.UserSaveDTO;
 import io.micronaut.http.HttpResponse;
@@ -8,6 +9,7 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 
@@ -37,12 +39,21 @@ public class UserController {
             .headers(h -> h.location(URI.create("/user/" + user.id())));
     }
 
-    @Delete("/{id}")
+    @Delete("/delete/{id}")
     public HttpResponse<Object> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         requireNonNull(id);
         requireNonNull(userDeleteDTO);
         return repository.deleteById(id, userDeleteDTO.password())
-            ? HttpResponse.noContent().headers(h -> h.location(URI.create("/user/" + id)))
+            ? HttpResponse.noContent().headers(h -> h.location(URI.create("/user/delete/" + id)))
+            : HttpResponse.badRequest();
+    }
+
+    @Put("/update/{id}")
+    public HttpResponse<Object> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
+        requireNonNull(id);
+        requireNonNull(upuDTO);
+        return repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword())
+            ? HttpResponse.noContent().headers(h -> h.location(URI.create("/user/update/" + id)))
             : HttpResponse.badRequest();
     }
 }
