@@ -66,7 +66,7 @@ public class UserRepositoryImpl implements UserRepository {
         var user = checkIdentity(id, oldPassword);
         if (user.isEmpty()) return false;
         var hashedNewPwd = hasher.hash(newPassword);
-        manager.createQuery("UPDATE user SET password = :password WHERE id = :id")
+        manager.createQuery("UPDATE User u SET password = :password WHERE id = :id")
             .setParameter("id", id)
             .setParameter("password", hashedNewPwd)
             .executeUpdate();
