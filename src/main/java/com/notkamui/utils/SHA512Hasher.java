@@ -13,6 +13,10 @@ import java.security.NoSuchAlgorithmException;
 import static java.util.Objects.requireNonNull;
 
 public final class SHA512Hasher {
+
+    private static final Path saltPath = Path.of("resources", "salt.txt");
+    private static final Logger logger = LoggerFactory.getLogger(SHA512Hasher.class);
+
     private final MessageDigest md;
     private final byte[] salt;
 
@@ -24,13 +28,11 @@ public final class SHA512Hasher {
     }
 
     public static SHA512Hasher getHasher() throws NoSuchAlgorithmException {
-        Logger logger = LoggerFactory.getLogger(SHA512Hasher.class);
         byte[] salt = new byte[16];
-        var path = Path.of("resources", "salt.txt");
         try {
-            salt = Files.readString(path).substring(0, 16).getBytes(StandardCharsets.UTF_8);
+            salt = Files.readString(saltPath).substring(0, 16).getBytes(StandardCharsets.UTF_8);
         } catch (IOException e) {
-            logger.warn("No salt found ; no salt will be added");
+            logger.warn("No salt found ; an empty salt will be added");
         }
         var md = MessageDigest.getInstance("SHA-512");
         return new SHA512Hasher(md, salt);
