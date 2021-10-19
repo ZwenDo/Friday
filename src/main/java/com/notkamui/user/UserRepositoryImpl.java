@@ -13,6 +13,10 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Implementation of {@code UserRepository} used by Micronaut for dependency injection.
+ * (is actually used)
+ */
 @Singleton
 public class UserRepositoryImpl implements UserRepository {
 
@@ -47,15 +51,34 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean deleteById(UUID id, String password) {
         requireNonNull(id);
         requireNonNull(password);
-        var hashedPwd = hasher.hash(password);
-        var user = findById(id);
+        var user = checkIdentity(id, password);
         if (user.isEmpty()) return false;
-        System.out.println("found user");
-        System.out.println(hashedPwd);
-        System.out.println(user.get().password());
-        if (!user.get().password().equals(hashedPwd)) return false;
-        System.out.println("valid pwd");
         manager.remove(user.get());
         return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updatePassword(UUID id, String oldPassword, String newPassword) {
+        requireNonNull(id);
+        requireNonNull(oldPassword);
+        requireNonNull(newPassword);
+        var user = checkIdentity(id, oldPassword);
+        if (user.isEmpty()) return false;
+        var hashedNewPwd = hasher.hash(newPassword);
+        manager.createQuery("UPDATE user SET password = :password WHERE id = :id")
+            .setParameter("id", id)
+            .setParameter("password", hashedNewPwd)
+            .executeUpdate();
+        return true;
+    }
+
+    private Optional<User> checkIdentity(UUID id, String password) {
+        requireNonNull(id);
+        requireNonNull(password);
+        var user = findById(id);
+        if (user.isEmpty()) return Optional.empty();
+        var hashedPwd = hasher.hash(password);
+        return user.get().password().equals(hashedPwd) ? user : Optional.empty();
     }
 }
