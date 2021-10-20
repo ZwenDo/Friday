@@ -113,7 +113,7 @@ public class UserControllerTest {
             ))
         );
         assertNotNull(thrownUpdateUnknown.getResponse());
-        assertEquals(HttpStatus.BAD_REQUEST, thrownUpdateUnknown.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, thrownUpdateUnknown.getStatus());
     }
 
     @Test
@@ -127,6 +127,6 @@ public class UserControllerTest {
             ))
         );
         assertNotNull(thrownDeleteUnknown.getResponse());
-        assertEquals(HttpStatus.BAD_REQUEST, thrownDeleteUnknown.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND, thrownDeleteUnknown.getStatus());
     }
 }
