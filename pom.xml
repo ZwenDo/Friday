@@ -138,10 +138,12 @@
             </path>
           </annotationProcessorPaths>
           <compilerArgs>
-            <arg>-Xlint:all</arg>
+            <arg>--enable-preview</arg>
             <arg>-Amicronaut.processing.group=com.notkamui</arg>
             <arg>-Amicronaut.processing.module=friday</arg>
           </compilerArgs>
+          <source>17</source>
+          <target>17</target>
         </configuration>
       </plugin>
 
