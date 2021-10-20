@@ -40,7 +40,7 @@ public interface UserRepository {
      *
      * @param id       the id of the user to delete
      * @param password the password of the user to delete
-     * @return true if the user has been deleted successfully (known id + valid password), false otherwise
+     * @return Ok if deleted | NotFound if the id is unknown | Unauthorized if the password is incorrect
      */
     @Transactional
     RepositoryResponseStatus deleteById(@NotNull UUID id, @NotNull String password);
@@ -51,7 +51,7 @@ public interface UserRepository {
      * @param id          the id of the user of whom to update the password
      * @param oldPassword the old password of the user
      * @param newPassword the new password to replace the old one with
-     * @return true if the password has been successfully updated (known id + valid old password), false otherwise
+     * @return Ok if updated | NotFound if the id is unknown | Unauthorized if the old password is incorrect
      */
     @Transactional
     RepositoryResponseStatus updatePassword(@NotNull UUID id, @NotNull String oldPassword, @NotNull String newPassword);

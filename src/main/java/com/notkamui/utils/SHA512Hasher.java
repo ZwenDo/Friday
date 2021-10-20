@@ -12,6 +12,9 @@ import java.security.NoSuchAlgorithmException;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Utility class to obtain a hasher to hash character strings with SHA-512
+ */
 public final class SHA512Hasher {
 
     private static final Path SALT_PATH = Path.of("resources", "salt.txt");
@@ -27,6 +30,15 @@ public final class SHA512Hasher {
         this.salt = salt;
     }
 
+    /**
+     * Obtains a SHA-512 hasher.
+     * If a file `resources/salt.txt` exists, it will take the first 16 bytes
+     * of said file to create a salt for the hasher.
+     * <p><b>Warning</b> : if the salt is lost... all your passwords will be unrecoverable.</p>
+     *
+     * @return a salted SHA-512 hasher
+     * @throws NoSuchAlgorithmException (should never happen, unless SHA-512 doesn't exist anymore)
+     */
     public static SHA512Hasher getHasher() throws NoSuchAlgorithmException {
         byte[] salt = new byte[16];
         try {
@@ -38,6 +50,12 @@ public final class SHA512Hasher {
         return new SHA512Hasher(md, salt);
     }
 
+    /**
+     * Hashes a character string.
+     *
+     * @param word the character string to hash
+     * @return the hashed character string
+     */
     public String hash(String word) {
         requireNonNull(word);
         md.update(salt);

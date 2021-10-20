@@ -20,17 +20,37 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * API endpoint for communicating with the user side of the database.
+ */
 @ExecuteOn(value = TaskExecutors.IO)
 @Controller("/user")
 public class UserController {
 
     private final UserRepository repository;
 
+    /**
+     * Creates a controller by injection with Micronaut.
+     *
+     * @param repository the user repository which serves to manipulate the database
+     */
     public UserController(UserRepository repository) {
         requireNonNull(repository);
         this.repository = repository;
     }
 
+    /**
+     * Creates and saves a user, provided a correct body.
+     *
+     * @param userSaveDTO {
+     *                    "username": "",
+     *                    "password": ""
+     *                    }
+     * @return {
+     * "id": "",
+     * "username": ""
+     * }
+     */
     @Post
     public HttpResponse<UserResponseDTO> save(@Body @Valid UserSaveDTO userSaveDTO) {
         requireNonNull(userSaveDTO);
@@ -40,6 +60,16 @@ public class UserController {
             .headers(h -> h.location(URI.create("/user/" + user.id())));
     }
 
+    /**
+     * Deletes a user by its id, provided a correct body
+     * which holds the valid password of the user.
+     *
+     * @param id            the id of the user to delete
+     * @param userDeleteDTO {
+     *                      "password": ""
+     *                      }
+     * @return OK if deleted | NOT_FOUND if the id is unknown | BAD_REQUEST if the password is incorrect
+     */
     @Delete("/delete/{id}")
     public HttpResponse<Object> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         requireNonNull(id);
@@ -55,6 +85,17 @@ public class UserController {
         return response.headers(h -> h.location(URI.create("/user/delete/" + id)));
     }
 
+    /**
+     * Updates a user's password by its id, provided a correct body
+     * which holds the valid old password of the user.
+     *
+     * @param id     the id of the user to update
+     * @param upuDTO {
+     *               "oldPassword": "",
+     *               "newPassword": ""
+     *               }
+     * @return OK if updated | NOT_FOUND if the id is unknown | BAD_REQUEST if the old password is incorrect
+     */
     @Put("/update/{id}")
     public HttpResponse<Object> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
         requireNonNull(id);
