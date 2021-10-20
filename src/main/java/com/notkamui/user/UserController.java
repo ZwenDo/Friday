@@ -4,6 +4,7 @@ import com.notkamui.dto.UserDeleteDTO;
 import com.notkamui.dto.UserPasswordUpdateDTO;
 import com.notkamui.dto.UserResponseDTO;
 import com.notkamui.dto.UserSaveDTO;
+import com.notkamui.utils.RepositoryResponseStatus;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -43,17 +44,29 @@ public class UserController {
     public HttpResponse<Object> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         requireNonNull(id);
         requireNonNull(userDeleteDTO);
-        return repository.deleteById(id, userDeleteDTO.password())
-            ? HttpResponse.noContent().headers(h -> h.location(URI.create("/user/delete/" + id)))
-            : HttpResponse.badRequest();
+        var response = switch (repository.deleteById(id, userDeleteDTO.password())) {
+            case RepositoryResponseStatus.Ok ignored -> HttpResponse
+                .noContent();
+            case RepositoryResponseStatus.NotFound ignored -> HttpResponse
+                .notFound();
+            case RepositoryResponseStatus.Unauthorized ignored -> HttpResponse
+                .badRequest();
+        };
+        return response.headers(h -> h.location(URI.create("/user/delete/" + id)));
     }
 
     @Put("/update/{id}")
     public HttpResponse<Object> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
         requireNonNull(id);
         requireNonNull(upuDTO);
-        return repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword())
-            ? HttpResponse.noContent().headers(h -> h.location(URI.create("/user/update/" + id)))
-            : HttpResponse.badRequest();
+        var response = switch (repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword())) {
+            case RepositoryResponseStatus.Ok ignored -> HttpResponse
+                .noContent();
+            case RepositoryResponseStatus.NotFound ignored -> HttpResponse
+                .notFound();
+            case RepositoryResponseStatus.Unauthorized ignored -> HttpResponse
+                .badRequest();
+        };
+        return response.headers(h -> h.location(URI.create("/user/update/" + id)));
     }
 }

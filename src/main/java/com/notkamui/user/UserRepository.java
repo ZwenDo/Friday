@@ -1,5 +1,6 @@
 package com.notkamui.user;
 
+import com.notkamui.utils.RepositoryResponseStatus;
 import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;
@@ -37,21 +38,21 @@ public interface UserRepository {
     /**
      * Deletes a user by its id, provided the given password is the correct one.
      *
-     * @param id the id of the user to delete
+     * @param id       the id of the user to delete
      * @param password the password of the user to delete
      * @return true if the user has been deleted successfully (known id + valid password), false otherwise
      */
     @Transactional
-    boolean deleteById(@NotNull UUID id, @NotNull String password);
+    RepositoryResponseStatus deleteById(@NotNull UUID id, @NotNull String password);
 
     /**
      * Updates a user's password (by id), provided the old password is the correct one.
      *
-     * @param id the id of the user of whom to update the password
+     * @param id          the id of the user of whom to update the password
      * @param oldPassword the old password of the user
      * @param newPassword the new password to replace the old one with
      * @return true if the password has been successfully updated (known id + valid old password), false otherwise
      */
     @Transactional
-    boolean updatePassword(@NotNull UUID id, @NotNull String oldPassword, @NotNull String newPassword);
+    RepositoryResponseStatus updatePassword(@NotNull UUID id, @NotNull String oldPassword, @NotNull String newPassword);
 }
