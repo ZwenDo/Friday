@@ -99,7 +99,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private void updatePasswordQuery(UUID id, String newPassword) {
         var hashedNewPwd = hasher.hash(newPassword);
-        manager.createQuery("UPDATE User u SET password = :password WHERE id = :id")
+        manager.createQuery("UPDATE User SET password = :password WHERE id = :id")
             .setParameter("id", id)
             .setParameter("password", hashedNewPwd)
             .executeUpdate();

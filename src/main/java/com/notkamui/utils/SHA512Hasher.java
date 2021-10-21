@@ -24,10 +24,8 @@ public final class SHA512Hasher {
     private final byte[] salt;
 
     private SHA512Hasher(MessageDigest md, byte[] salt) {
-        requireNonNull(md);
-        requireNonNull(salt);
-        this.md = md;
-        this.salt = salt;
+        this.md = requireNonNull(md);
+        this.salt = requireNonNull(salt);
     }
 
     /**
