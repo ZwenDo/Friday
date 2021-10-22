@@ -18,6 +18,7 @@
     <jdk.version>17</jdk.version>
     <release.version>17</release.version>
     <micronaut.version>3.0.2</micronaut.version>
+    <micronaut.data.version>3.0.1</micronaut.data.version> <!-- 3.0.2 doesn't exist -->
     <exec.mainClass>com.notkamui.Application</exec.mainClass>
     <micronaut.runtime>netty</micronaut.runtime>
   </properties>
@@ -25,88 +26,82 @@
   <repositories>
     <repository>
       <id>central</id>
-      <url>https://repo1.maven.org/maven2/</url>
+      <url>https://repo.maven.apache.org/maven2</url>
     </repository>
   </repositories>
 
   <dependencies>
     <dependency>
-      <groupId>io.micronaut</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>io.micronaut</groupId>
       <artifactId>micronaut-inject</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.micronaut</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>io.micronaut</groupId>
       <artifactId>micronaut-validation</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.junit.jupiter</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.junit.jupiter</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.micronaut.test</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>io.micronaut.test</groupId>
       <artifactId>micronaut-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.micronaut</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-client</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.micronaut</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-server-netty</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.micronaut</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>io.micronaut</groupId>
       <artifactId>micronaut-runtime</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.micronaut.sql</groupId> <!-- Micronaut dependency ; included at initialization -->
-      <artifactId>micronaut-hibernate-jpa</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut.data</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>io.micronaut.data</groupId>
       <artifactId>micronaut-data-hibernate-jpa</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.micronaut.sql</groupId> <!-- Micronaut dependency ; included at initialization -->
+      <groupId>io.micronaut.sql</groupId>
+      <artifactId>micronaut-hibernate-jpa</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.sql</groupId>
       <artifactId>micronaut-jdbc-hikari</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.annotation</groupId> <!-- Micronaut dependency ; JPA annotations, included at initialization -->
+      <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>ch.qos.logback</groupId> <!-- Micronaut dependency ; default logger, included at initialization -->
+      <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.6</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>com.h2database</groupId> <!-- In memory embedded database -->
+      <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.4.200</version>
       <scope>runtime</scope>
     </dependency>
 
-    <!-- OTHER DEPENDENCIES -->
     <dependency>
       <groupId>net.sf.biweekly</groupId> <!-- iCalendar utilities -->
       <artifactId>biweekly</artifactId>
@@ -122,12 +117,14 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>io.micronaut.build</groupId>
+        <artifactId>micronaut-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
         <configuration>
-          <useIncrementalCompilation>true</useIncrementalCompilation>
-
           <annotationProcessorPaths combine.children="append">
             <path>
               <groupId>io.micronaut</groupId>
@@ -137,14 +134,25 @@
             <path>
               <groupId>io.micronaut.data</groupId>
               <artifactId>micronaut-data-processor</artifactId>
-              <version>3.0.1</version>
+              <version>${micronaut.data.version}</version>
             </path>
           </annotationProcessorPaths>
+          <release>17</release>
           <compilerArgs>
-            <arg>-Xlint:all</arg>
+            <arg>--enable-preview</arg>
             <arg>-Amicronaut.processing.group=com.notkamui</arg>
             <arg>-Amicronaut.processing.module=friday</arg>
           </compilerArgs>
+          <source>17</source>
+          <target>17</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>--enable-preview</argLine>
         </configuration>
       </plugin>
 
@@ -178,13 +186,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <groupId>io.micronaut.build</groupId>
-        <artifactId>micronaut-maven-plugin</artifactId>
-        <version>${micronaut.version}</version>
-      </plugin>
     </plugins>
   </build>
-
 </project>
