@@ -31,6 +31,7 @@
   </repositories>
 
   <dependencies>
+    <!-- BEGIN Micronaut dependencies -->
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-inject</artifactId>
@@ -101,6 +102,7 @@
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <!-- END Micronaut dependencies -->
 
     <dependency>
       <groupId>net.sf.biweekly</groupId> <!-- iCalendar utilities -->
@@ -108,7 +110,7 @@
       <version>0.6.6</version>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId> <!-- iCalendar utilities -->
+      <groupId>com.fasterxml.jackson.core</groupId> <!-- POJO/JSON utilities -->
       <artifactId>jackson-databind</artifactId>
       <version>2.11.4</version>
     </dependency>
