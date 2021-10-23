@@ -1,6 +1,6 @@
-package com.notkamui;
+package com.kalia.friday;
 
-import com.notkamui.utils.SHA512Hasher;
+import com.kalia.friday.util.SHA512Hasher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

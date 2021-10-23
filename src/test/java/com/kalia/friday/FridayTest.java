@@ -1,4 +1,4 @@
-package com.notkamui;
+package com.kalia.friday;
 
 import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;

@@ -1,4 +1,4 @@
-package com.notkamui.utils;
+package com.kalia.friday.util;
 
 import static java.util.Objects.requireNonNull;
 

@@ -19,7 +19,7 @@
     <release.version>17</release.version>
     <micronaut.version>3.0.2</micronaut.version>
     <micronaut.data.version>3.0.1</micronaut.data.version> <!-- 3.0.2 doesn't exist -->
-    <exec.mainClass>com.notkamui.Application</exec.mainClass>
+    <exec.mainClass>com.kalia.friday.Application</exec.mainClass>
     <micronaut.runtime>netty</micronaut.runtime>
   </properties>
 

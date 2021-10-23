@@ -1,6 +1,6 @@
-package com.notkamui.event;
+package com.kalia.friday.event;
 
-import com.notkamui.user.User;
+import com.kalia.friday.user.User;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

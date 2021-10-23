@@ -1,6 +1,6 @@
-package com.notkamui.user;
+package com.kalia.friday.user;
 
-import com.notkamui.utils.RepositoryResponseStatus;
+import com.kalia.friday.util.RepositoryResponseStatus;
 import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;

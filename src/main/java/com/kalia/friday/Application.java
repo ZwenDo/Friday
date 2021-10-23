@@ -1,4 +1,4 @@
-package com.notkamui;
+package com.kalia.friday;
 
 import io.micronaut.runtime.Micronaut;
 

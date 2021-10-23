@@ -1,4 +1,4 @@
-package com.notkamui.utils;
+package com.kalia.friday.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

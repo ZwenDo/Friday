@@ -1,4 +1,4 @@
-package com.notkamui.dto;
+package com.kalia.friday.dto;
 
 import io.micronaut.core.annotation.Introspected;
 

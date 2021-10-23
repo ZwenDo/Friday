@@ -1,7 +1,7 @@
-package com.notkamui.user;
+package com.kalia.friday.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.notkamui.event.Event;
+import com.kalia.friday.event.Event;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

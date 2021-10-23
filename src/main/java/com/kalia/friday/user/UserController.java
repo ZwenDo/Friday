@@ -1,10 +1,10 @@
-package com.notkamui.user;
+package com.kalia.friday.user;
 
-import com.notkamui.dto.UserDeleteDTO;
-import com.notkamui.dto.UserPasswordUpdateDTO;
-import com.notkamui.dto.UserResponseDTO;
-import com.notkamui.dto.UserSaveDTO;
-import com.notkamui.utils.RepositoryResponseStatus;
+import com.kalia.friday.dto.UserDeleteDTO;
+import com.kalia.friday.dto.UserPasswordUpdateDTO;
+import com.kalia.friday.dto.UserResponseDTO;
+import com.kalia.friday.dto.UserSaveDTO;
+import com.kalia.friday.util.RepositoryResponseStatus;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
