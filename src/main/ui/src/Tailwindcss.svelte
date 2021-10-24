@@ -1,5 +1,8 @@
 <style global>
+    /* noinspection CssInvalidAtRule */
     @tailwind base;
+    /* noinspection CssInvalidAtRule */
     @tailwind components;
+    /* noinspection CssInvalidAtRule */
     @tailwind utilities;
 </style>
