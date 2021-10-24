@@ -1,9 +1,12 @@
 <script>
     import Tailwindcss from './Tailwindcss.svelte';
+    import Background from './components/Background.svelte';
+
     export let name;
 </script>
 
 <Tailwindcss />
+<Background />
 <main>
     <h1>Hello {name}!</h1>
     <p>
