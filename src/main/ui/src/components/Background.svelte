@@ -2,7 +2,7 @@
 
 <style>
     .background-body {
-        background-color: rgb(240, 240, 240, 1);
+        background-color: #f0f0f0;
         width: 100vw;
         height: 100vh;
         position: absolute;
