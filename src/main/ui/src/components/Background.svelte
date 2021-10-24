@@ -14,9 +14,11 @@
 
     .background-inner {
         transform: rotate(-12deg) scale(1.5) translateY(-45%);
+        -moz-transform: rotate(-12deg) scale(1.5) translateY(-45%);
+        -webkit-transform: rotate(-12deg) scale(1.5) translateY(-45%);
         background: linear-gradient(90deg, #5a1e8f, #6411a9, #f369ad);
         background-size: 300% 300%;
-        animation: gradient 11s alternate infinite;
+        animation: gradient 5s alternate infinite;
         position: absolute;
         top: 0;
         left: 0;
