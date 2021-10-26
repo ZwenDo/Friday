@@ -1,5 +1,4 @@
-<footer
-    class="
+<footer class="
     flex-initial
     mt-2 w-full
     flex justify-center"

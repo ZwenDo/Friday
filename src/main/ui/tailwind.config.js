@@ -8,7 +8,7 @@ module.exports = {
         },
         extend: {
             backgroundSize: {
-              '300': '300%'
+                '300': '300%'
             },
             zIndex: {
                 '-20': '-20',
@@ -19,8 +19,8 @@ module.exports = {
             },
             keyframes: {
                 fader: {
-                    '0%': { 'background-position': 0 },
-                    '100%': { 'background-position': '100%' }
+                    '0%': {'background-position': 0},
+                    '100%': {'background-position': '100%'}
                 }
             }
         },

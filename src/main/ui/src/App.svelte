@@ -6,8 +6,8 @@
     import Footer from './components/Footer.svelte';
 </script>
 
-<Tailwindcss />
-<Background />
-<Navbar />
-<Main />
-<Footer />
+<Tailwindcss/>
+<Background/>
+<Navbar/>
+<Main/>
+<Footer/>
