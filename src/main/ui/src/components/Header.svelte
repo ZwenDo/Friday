@@ -3,7 +3,8 @@
 </script>
 
 <header class="w-full flex-initial flex justify-between">
-    <h1 class="
+    <h1
+        class="
         flex-initial
         font-cursive text-white text-7xl
         inline m-5 p-0
@@ -12,5 +13,5 @@
     >
         <a href="/">Friday</a>
     </h1>
-    <Navbar menuChoices={['Overview', 'Today', 'This month']}/>
+    <Navbar menuChoices="{['Overview', 'Today', 'This month']}" />
 </header>

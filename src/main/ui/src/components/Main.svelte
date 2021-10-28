@@ -1,4 +1,5 @@
-<main class="
+<main
+    class="
     flex-auto
     bg-white
     z-0
