@@ -1,17 +1,26 @@
 <script>
-    export let link;
+    //export let link;
     export let name;
     export let selected = false;
 </script>
 
 <button 
     class="
-    {selected ? "bg-white relative transform -translate-y-2" : "bg-gray-200 font-extralight"} 
-    duration-200 ease-in-out
+    duration-200 ease-in-out bg-gray-300
     px-3 pt-2 pb-4 rounded-t-xl shadow-2xl
-    font-serif  text-black text-2xl"
-    href="{link}"
-    on:click={() => {selected = !selected}}
->
+    font-serif text-gray-500 text-4xl font-extralight"
+
+    class:selected={selected}
+
+    on:click={() => {selected = !selected}}>
     {name}
 </button>
+
+<style>
+    .selected {
+        @apply bg-white;
+        @apply relative;
+        @apply transform;
+        @apply -translate-y-2;
+    }
+</style>

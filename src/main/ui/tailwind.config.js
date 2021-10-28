@@ -22,6 +22,9 @@ module.exports = {
                     '0%': {'background-position': 0},
                     '100%': {'background-position': '100%'}
                 }
+            },
+            spacing: {
+                '100': '33rem'
             }
         },
     },
