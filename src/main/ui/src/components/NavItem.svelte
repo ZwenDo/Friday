@@ -11,7 +11,7 @@
     px-3 pt-2 pb-4 rounded-t-xl shadow-2xl
     font-serif  text-black text-2xl"
     href="{link}"
-    on:click
+    on:click={() => {selected = !selected}}
 >
     {name}
 </button>
