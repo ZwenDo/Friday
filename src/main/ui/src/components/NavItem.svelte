@@ -1,9 +1,17 @@
 <script>
     export let link;
     export let name;
+    export let selected = false;
 </script>
 
-<a 
-    class="font-serif font-extralight text-white text-4xl"
+<button 
+    class="
+    {selected ? "bg-white relative transform -translate-y-2" : "bg-gray-200 font-extralight"} 
+    duration-200 ease-in-out
+    px-3 pt-2 pb-4 rounded-t-xl shadow-2xl
+    font-serif  text-black text-2xl"
     href="{link}"
->{name}</a>
+    on:click
+>
+    {name}
+</button>

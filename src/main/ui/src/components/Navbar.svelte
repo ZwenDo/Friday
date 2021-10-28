@@ -1,14 +1,6 @@
-<script>
-import NavItem from "./NavItem.svelte";
-
-</script>
-
 <nav class="
-    flex-auto
-    inline-block mr-8
+    inline-block right-20 relative top-10 w-96
     flex flex-row items-center justify-around"
 >
-    <NavItem link="/overview" name="Overview"/>
-    <NavItem link="/today" name="Today"/>
-    <NavItem link="/month" name="This month"/>
+    <slot></slot>
 </nav>
