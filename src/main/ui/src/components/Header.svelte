@@ -1,6 +1,5 @@
 <script>
-    import Navbar from "./Navbar.svelte";
-    import NavItem from "./NavItem.svelte";
+    import Navbar from './Navbar.svelte';
 </script>
 
 <header class="w-full flex-initial flex justify-between">
@@ -13,9 +12,5 @@
     >
         <a href="/">Friday</a>
     </h1>
-    <Navbar>
-        <NavItem link="/overview" name="Overview"/>
-        <NavItem link="/today" name="Today"/>
-        <NavItem link="/month" name="This month"/>
-    </Navbar>
+    <Navbar menuChoices={['Overview', 'Today', 'This month']}/>
 </header>
