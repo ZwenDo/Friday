@@ -12,12 +12,14 @@ import java.util.UUID;
  * Interface used by Micronaut to inject a UserRepository when requested.
  *
  * Serves to manage the {@code user} table.
+ *
+ * @see User
  */
 public interface UserRepository {
     /**
      * Finds a user by its id.
      *
-     * SELECT * USER WHERE ID = {id} LIMIT 1;
+     * SELECT * FROM User WHERE ID = {id} LIMIT 1;
      *
      * @param id the id of the user
      * @return an optional of {@code User} (empty if not found)

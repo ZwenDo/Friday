@@ -25,14 +25,13 @@ public class UserRepositoryImpl implements UserRepository {
     private final SHA512Hasher hasher = SHA512Hasher.getHasher();
 
     /**
-     * Used by Micronaut to create a singleton repository by injection
+     * Used by Micronaut to create a singleton repository by injection.
      *
      * @param manager the injected {@code EntityManager}
      * @throws NoSuchAlgorithmException (should never happen unless SHA-512 doesn't exist anymore)
      */
     public UserRepositoryImpl(@NotNull EntityManager manager) throws NoSuchAlgorithmException {
-        requireNonNull(manager);
-        this.manager = manager;
+        this.manager = requireNonNull(manager);
     }
 
     @Override

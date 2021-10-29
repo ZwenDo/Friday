@@ -35,8 +35,7 @@ public class UserController {
      * @param repository the user repository which serves to manipulate the database
      */
     public UserController(UserRepository repository) {
-        requireNonNull(repository);
-        this.repository = repository;
+        this.repository = requireNonNull(repository);
     }
 
     /**
