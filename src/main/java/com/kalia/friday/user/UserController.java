@@ -4,8 +4,9 @@ import com.kalia.friday.dto.UserDeleteDTO;
 import com.kalia.friday.dto.UserPasswordUpdateDTO;
 import com.kalia.friday.dto.UserResponseDTO;
 import com.kalia.friday.dto.UserSaveDTO;
-import com.kalia.friday.util.RepositoryResponseStatus;
+import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -35,8 +36,7 @@ public class UserController {
      * @param repository the user repository which serves to manipulate the database
      */
     public UserController(UserRepository repository) {
-        requireNonNull(repository);
-        this.repository = repository;
+        this.repository = requireNonNull(repository);
     }
 
     /**
@@ -74,15 +74,9 @@ public class UserController {
     public HttpResponse<Object> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         requireNonNull(id);
         requireNonNull(userDeleteDTO);
-        var response = switch (repository.deleteById(id, userDeleteDTO.password())) {
-            case RepositoryResponseStatus.Ok ignored -> HttpResponse
-                .noContent();
-            case RepositoryResponseStatus.NotFound ignored -> HttpResponse
-                .notFound();
-            case RepositoryResponseStatus.Unauthorized ignored -> HttpResponse
-                .badRequest();
-        };
-        return response.headers(h -> h.location(URI.create("/user/delete/" + id)));
+        var deleteUserResponse = repository.deleteById(id, userDeleteDTO.password());
+        var httpResponse = toEmptyHttpResponse(deleteUserResponse.status());
+        return httpResponse.headers(h -> h.location(URI.create("/user/delete/" + id)));
     }
 
     /**
@@ -100,14 +94,16 @@ public class UserController {
     public HttpResponse<Object> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
         requireNonNull(id);
         requireNonNull(upuDTO);
-        var response = switch (repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword())) {
-            case RepositoryResponseStatus.Ok ignored -> HttpResponse
-                .noContent();
-            case RepositoryResponseStatus.NotFound ignored -> HttpResponse
-                .notFound();
-            case RepositoryResponseStatus.Unauthorized ignored -> HttpResponse
-                .badRequest();
+        var updatePwdResponse = repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword());
+        var httpResponse = toEmptyHttpResponse(updatePwdResponse.status());
+        return httpResponse.headers(h -> h.location(URI.create("/user/update/" + id)));
+    }
+
+    private static MutableHttpResponse<Object> toEmptyHttpResponse(RepositoryResponse.Status repositoryResponseStatus) {
+        return switch (repositoryResponseStatus) {
+            case OK -> HttpResponse.noContent();
+            case NOT_FOUND -> HttpResponse.notFound();
+            case UNAUTHORIZED -> HttpResponse.badRequest();
         };
-        return response.headers(h -> h.location(URI.create("/user/update/" + id)));
     }
 }
