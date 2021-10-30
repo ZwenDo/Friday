@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -28,7 +27,7 @@ public interface EventRepository {
      * @return an optional of {@code Event} (empty if not found)
      */
     @ReadOnly
-    Optional<Event> findById(@NotNull UUID id);
+    RepositoryResponse<Event> findById(@NotNull UUID id);
 
     /**
      * Finds all events of a user by its user id.

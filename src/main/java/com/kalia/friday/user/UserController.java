@@ -54,7 +54,8 @@ public class UserController {
     @Post
     public HttpResponse<UserResponseDTO> save(@Body @Valid UserSaveDTO userSaveDTO) {
         requireNonNull(userSaveDTO);
-        var user = repository.save(userSaveDTO.username(), userSaveDTO.password());
+        var saveResponse = repository.save(userSaveDTO.username(), userSaveDTO.password());
+        var user = saveResponse.get();
         return HttpResponse
             .created(new UserResponseDTO(user.id(), user.username()))
             .headers(h -> h.location(URI.create("/user/" + user.id())));

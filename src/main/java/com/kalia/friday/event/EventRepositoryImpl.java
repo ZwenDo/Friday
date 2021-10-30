@@ -8,7 +8,6 @@ import jakarta.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -36,9 +35,10 @@ public class EventRepositoryImpl implements EventRepository {
 
     @Override
     @ReadOnly
-    public Optional<Event> findById(UUID id) {
+    public RepositoryResponse<Event> findById(UUID id) {
         requireNonNull(id);
-        return Optional.ofNullable(manager.find(Event.class, id));
+        var event = manager.find(Event.class, id);
+        return event == null ? RepositoryResponse.notFound() : RepositoryResponse.ok(event);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class EventRepositoryImpl implements EventRepository {
     public RepositoryResponse<List<Event>> findByUserId(UUID userId) {
         requireNonNull(userId);
         var user = userRepository.findById(userId);
-        if (user.isEmpty()) {
+        if (user.status() == RepositoryResponse.Status.NOT_FOUND) {
             return RepositoryResponse.notFound();
         }
         var result = manager.createQuery("SELECT e FROM Event e WHERE e.id = :userId", Event.class)
@@ -62,7 +62,7 @@ public class EventRepositoryImpl implements EventRepository {
         requireNonNull(title);
         requireNonNull(recurRuleParts);
         var user = userRepository.findById(userId);
-        if (user.isEmpty()) {
+        if (user.status() == RepositoryResponse.Status.NOT_FOUND) {
             return RepositoryResponse.notFound();
         }
         var event = new Event(user.get(), title, description, place, recurRuleParts);
@@ -75,8 +75,8 @@ public class EventRepositoryImpl implements EventRepository {
     public RepositoryResponse<Event> deleteById(UUID id) {
         requireNonNull(id);
         var event = findById(id);
-        if (event.isEmpty()) {
-            return RepositoryResponse.notFound();
+        if (event.status() == RepositoryResponse.Status.NOT_FOUND) {
+            return event;
         }
         manager.remove(event.get());
         return RepositoryResponse.ok(event.get());
@@ -88,8 +88,8 @@ public class EventRepositoryImpl implements EventRepository {
         requireNonNull(id);
         requireNonNull(title);
         var event = findById(id);
-        if (event.isEmpty()) {
-            return RepositoryResponse.notFound();
+        if (event.status() == RepositoryResponse.Status.NOT_FOUND) {
+            return event;
         }
         manager.createQuery("UPDATE Event SET title = :title," +
                         "description = :description," +

@@ -5,7 +5,6 @@ import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -25,17 +24,17 @@ public interface UserRepository {
      * @return an optional of {@code User} (empty if not found)
      */
     @ReadOnly
-    Optional<User> findById(@NotNull UUID id);
+    RepositoryResponse<User> findById(@NotNull UUID id);
 
     /**
      * Saves a new user.
      *
      * @param username the unique username of the user
      * @param password the password of the user (will be hashed SHA-512)
-     * @return the created user
+     * @return Ok if created
      */
     @Transactional
-    User save(@NotNull String username, @NotNull String password);
+    RepositoryResponse<User> save(@NotNull String username, @NotNull String password);
 
     /**
      * Deletes a user by its id, provided the given password is the correct one.

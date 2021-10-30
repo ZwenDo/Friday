@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -36,20 +35,21 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     @ReadOnly
-    public Optional<User> findById(UUID id) {
+    public RepositoryResponse<User> findById(UUID id) {
         requireNonNull(id);
-        return Optional.ofNullable(manager.find(User.class, id));
+        var user = manager.find(User.class, id);
+        return user == null ? RepositoryResponse.notFound() : RepositoryResponse.ok(user);
     }
 
     @Override
     @Transactional
-    public User save(String username, String password) {
+    public RepositoryResponse<User> save(String username, String password) {
         requireNonNull(username);
         requireNonNull(password);
         var hashedPwd = hasher.hash(password);
         var user = new User(username, hashedPwd);
         manager.persist(user);
-        return user;
+        return RepositoryResponse.ok(user);
     }
 
     @Override
@@ -81,7 +81,9 @@ public class UserRepositoryImpl implements UserRepository {
         requireNonNull(id);
         requireNonNull(password);
         var user = findById(id);
-        if (user.isEmpty()) return RepositoryResponse.notFound();
+        if (user.status() == RepositoryResponse.Status.NOT_FOUND) {
+            return user;
+        }
         var hashedPwd = hasher.hash(password);
         return user.get().password().equals(hashedPwd)
                 ? RepositoryResponse.ok(user.get())
