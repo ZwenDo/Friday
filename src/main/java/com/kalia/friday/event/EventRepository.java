@@ -1,11 +1,12 @@
 package com.kalia.friday.event;
 
-import com.kalia.friday.util.RepositoryResponseStatus;
+import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public interface EventRepository {
      * @return Ok if found | NotFound if the id is unknown
      */
     @ReadOnly
-    RepositoryResponseStatus findByUserId(@NotNull UUID userId);
+    RepositoryResponse<List<Event>> findByUserId(@NotNull UUID userId);
 
     /**
      * Saves a new event.
@@ -49,7 +50,7 @@ public interface EventRepository {
      * @return Ok if saved | No
      */
     @Transactional
-    RepositoryResponseStatus save(
+    RepositoryResponse<Event> save(
             @NotNull UUID userId,
             @NotNull @NotBlank String title,
             @NotBlank String description,
@@ -58,10 +59,10 @@ public interface EventRepository {
     );
 
     @Transactional
-    RepositoryResponseStatus deleteById(@NotNull UUID id);
+    RepositoryResponse<Event> deleteById(@NotNull UUID id);
 
     @Transactional
-    RepositoryResponseStatus edit(
+    RepositoryResponse<Event> edit(
             @NotNull UUID id,
             @NotNull @NotBlank String title,
             @NotBlank String description,
