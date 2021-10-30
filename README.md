@@ -2,6 +2,9 @@
 
 ## CREANTOR-TEILLARD
 
+- Download the dependencies beforehand : `./mvnw clean install -U`
+  - Don't let IntelliJ do that for you because it will give you false flags
+    due to Java 17.
 - Running backend : `./mvnw mn:run`
 - Launching backend tests : `./mvnw test`
   - **Notice** : It is recommended to run `export JDBC_URL=jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`
