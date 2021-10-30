@@ -1,5 +1,5 @@
 applicationType: default
-defaultPackage: test.java.notkamui
+defaultPackage: com.kalia.friday
 testFramework: junit
 sourceLanguage: java
 buildTool: maven
