@@ -20,12 +20,25 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Represents the {@code Login} table in the database.
+ */
 @Entity
 @Table(name = "login")
 @IdClass(LoginId.class)
 public class Login {
+
+    /**
+     * Necessary empty constructor for Micronaut and JPA.
+     */
     public Login() {}
 
+    /**
+     * Creates a {@code login} row.
+     *
+     * @param user the user (id) to create a token for
+     * @param lastRefresh the timestamp of the last token refresh
+     */
     public Login(@NotNull User user, @NotNull Date lastRefresh) {
         this.user = requireNonNull(user);
         this.lastRefresh = requireNonNull(lastRefresh);
@@ -44,18 +57,38 @@ public class Login {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastRefresh;
 
+    /**
+     * Gets the token of the user session.
+     *
+     * @return the token of the user session
+     */
     public UUID token() {
         return token;
     }
 
+    /**
+     * Gets the user (id) of the session.
+     *
+     * @return the user (id) of the session
+     */
     public User user() {
         return user;
     }
 
+    /**
+     * Gets the timestamp of the last token refresh.
+     *
+     * @return the timestamp of the last token refresh
+     */
     public Date lastRefresh() {
         return lastRefresh;
     }
 
+    /**
+     * Sets the timestamp of the last token refresh.
+     *
+     * @param lastRefresh the timestamp of the last token refresh
+     */
     public void setLastRefresh(Date lastRefresh) {
         this.lastRefresh = requireNonNull(lastRefresh);
     }

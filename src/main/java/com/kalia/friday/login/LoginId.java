@@ -2,6 +2,7 @@ package com.kalia.friday.login;
 
 import com.kalia.friday.user.User;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -9,6 +10,9 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 
 public class LoginId implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private UUID token;
     private User user;
 

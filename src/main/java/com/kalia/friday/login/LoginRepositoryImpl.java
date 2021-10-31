@@ -82,8 +82,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         return RepositoryResponse.ok(logins.get());
     }
 
-    @Transactional
-    private RepositoryResponse<Login> findLoginByToken(@NotNull UUID token) {
+    private RepositoryResponse<Login> findLoginByToken(UUID token) {
         requireNonNull(token);
         var result = manager
             .createQuery("SELECT l FROM Login l WHERE l.token = :token", Login.class)
@@ -93,8 +92,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         return RepositoryResponse.ok(result.get(0));
     }
 
-    @Transactional
-    private RepositoryResponse<List<Login>> findLoginsByUserId(@NotNull UUID userId) {
+    private RepositoryResponse<List<Login>> findLoginsByUserId(UUID userId) {
         requireNonNull(userId);
         var user = userRepository.findById(userId);
         if (user.status() == NOT_FOUND) return RepositoryResponse.notFound();
