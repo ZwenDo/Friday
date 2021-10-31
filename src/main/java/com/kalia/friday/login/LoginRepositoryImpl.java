@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.kalia.friday.util.RepositoryResponse.Status.NOT_FOUND;
+import static com.kalia.friday.util.RepositoryResponse.Status.OK;
 import static java.util.Objects.requireNonNull;
 
 @Singleton
@@ -41,12 +42,13 @@ public class LoginRepositoryImpl implements LoginRepository {
     public RepositoryResponse<Login> checkIdentity(@NotNull UUID userId, @NotNull UUID token) {
         requireNonNull(userId);
         requireNonNull(token);
-        var user = userRepository.findById(userId);
-        if (user.status() == NOT_FOUND) return RepositoryResponse.notFound();
-        var login = manager.find(Login.class, new LoginId(token, user.get()));
-        if (login == null) return RepositoryResponse.unauthorized();
-        login.setLastRefresh(new Date());
-        return RepositoryResponse.ok(login);
+        var login = findLoginByToken(token);
+        if (login.status() != OK ||
+            !login.get().user().id().equals(userId)
+        ) {
+            return RepositoryResponse.notFound();
+        }
+        return login;
     }
 
     @Override
@@ -55,8 +57,11 @@ public class LoginRepositoryImpl implements LoginRepository {
         requireNonNull(username);
         requireNonNull(password);
         var user = userRepository.findByUsername(username);
-        if (user.status() == NOT_FOUND) return RepositoryResponse.notFound();
-        if (!hasher.hash(password).equals(user.get().password())) return RepositoryResponse.unauthorized();
+        if (user.status() != OK ||
+            !hasher.hash(password).equals(user.get().password())
+        ) {
+            return RepositoryResponse.unauthorized();
+        }
         var login = new Login(user.get(), new Date());
         manager.persist(login);
         return RepositoryResponse.ok(login);
@@ -67,9 +72,8 @@ public class LoginRepositoryImpl implements LoginRepository {
     public RepositoryResponse<Login> logout(@NotNull UUID token) {
         requireNonNull(token);
         var login = findLoginByToken(token);
-        if (login.status() == NOT_FOUND) return login;
-        manager.remove(login.get());
-        return RepositoryResponse.ok(login.get());
+        if (login.status() == OK) manager.remove(login.get());
+        return login;
     }
 
     @Override
@@ -77,9 +81,8 @@ public class LoginRepositoryImpl implements LoginRepository {
     public RepositoryResponse<List<Login>> logoutAll(@NotNull UUID userId) {
         requireNonNull(userId);
         var logins = findLoginsByUserId(userId);
-        if (logins.status() == NOT_FOUND) return logins;
-        logins.get().forEach(manager::remove);
-        return RepositoryResponse.ok(logins.get());
+        if (logins.status() == OK) logins.get().forEach(manager::remove);
+        return logins;
     }
 
     private RepositoryResponse<Login> findLoginByToken(UUID token) {
@@ -88,14 +91,14 @@ public class LoginRepositoryImpl implements LoginRepository {
             .createQuery("SELECT l FROM Login l WHERE l.token = :token", Login.class)
             .setParameter("token", token)
             .getResultList();
-        if (result.isEmpty()) return RepositoryResponse.notFound();
+        if (result.isEmpty()) return RepositoryResponse.unauthorized();
         return RepositoryResponse.ok(result.get(0));
     }
 
     private RepositoryResponse<List<Login>> findLoginsByUserId(UUID userId) {
         requireNonNull(userId);
         var user = userRepository.findById(userId);
-        if (user.status() == NOT_FOUND) return RepositoryResponse.notFound();
+        if (user.status() == NOT_FOUND) return RepositoryResponse.unauthorized();
         var result = manager
             .createQuery("SELECT l FROM Login l WHERE l.user.id = :user", Login.class)
             .setParameter("user", userId)

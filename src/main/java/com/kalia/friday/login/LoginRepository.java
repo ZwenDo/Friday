@@ -30,7 +30,7 @@ public interface LoginRepository {
      *
      * @param userId the id of the user
      * @param token the token to check
-     * @return OK if the identity is valid | NOT_FOUND if the userId is unknown | UNAUTHORIZED if the token is invalid
+     * @return OK if the identity is valid | UNAUTHORIZED if the identity is invalid
      */
     @Transactional
     RepositoryResponse<Login> checkIdentity(@NotNull UUID userId, @NotNull UUID token);
@@ -40,7 +40,7 @@ public interface LoginRepository {
      *
      * @param username the username of the user
      * @param password the password of the user
-     * @return OK if the credentials are correct | NOT_FOUND if the username is unknown | UNAUTHORIZED if the password is incorrect
+     * @return OK if the credentials are correct | UNAUTHORIZED if the credentials are incorrect
      */
     @Transactional
     RepositoryResponse<Login> login(@NotNull String username, @NotNull String password);
@@ -49,7 +49,7 @@ public interface LoginRepository {
      * Logs a user out by the given token.
      *
      * @param token the token to delete
-     * @return OK of the deleted token | NOT_FOUND if the token doesn't exist
+     * @return OK of the deleted token | UNAUTHORIZED if the token doesn't exist
      */
     @Transactional
     RepositoryResponse<Login> logout(@NotNull UUID token);
@@ -58,7 +58,7 @@ public interface LoginRepository {
      * Logs a user out by its id.
      *
      * @param userId the id of the user to logout
-     * @return OK of the list of deleted tokens | NOT_FOUND if the user id is unknown
+     * @return OK of the list of deleted tokens | UNAUTHORIZED if the user id is unknown
      */
     @Transactional
     RepositoryResponse<List<Login>> logoutAll(@NotNull UUID userId);
