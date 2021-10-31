@@ -49,7 +49,7 @@ public interface LoginRepository {
      * Logs a user out by the given token.
      *
      * @param token the token to delete
-     * @return the deleted token
+     * @return OK of the deleted token | NOT_FOUND if the token doesn't exist
      */
     @Transactional
     RepositoryResponse<Login> logout(@NotNull UUID token);
@@ -58,7 +58,7 @@ public interface LoginRepository {
      * Logs a user out by its id.
      *
      * @param userId the id of the user to logout
-     * @return the list of deleted tokens
+     * @return OK of the list of deleted tokens | NOT_FOUND if the user id is unknown
      */
     @Transactional
     RepositoryResponse<List<Login>> logoutAll(@NotNull UUID userId);

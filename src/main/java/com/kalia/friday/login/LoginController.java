@@ -1,6 +1,6 @@
 package com.kalia.friday.login;
 
-import com.kalia.friday.dto.LoginResponseDTO;
+import com.kalia.friday.dto.LoginSessionDTO;
 import com.kalia.friday.dto.UserCredsDTO;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
@@ -42,20 +42,40 @@ public class LoginController {
      *                     "password": ""
      *                     }
      * @return {
-     *     "token": "",
-     *     "userId": ""
+     *     "userId": "",
+     *     "token": ""
      * }
      */
     @Post("/login")
-    public HttpResponse<LoginResponseDTO> login(@Body @Valid UserCredsDTO userCredsDTO) {
+    public HttpResponse<LoginSessionDTO> login(@Body @Valid UserCredsDTO userCredsDTO) {
         requireNonNull(userCredsDTO);
         var loginResponse = repository.login(userCredsDTO.username(), userCredsDTO.password());
-        MutableHttpResponse<LoginResponseDTO> httpResponse = loginResponse.status() == OK
-            ? HttpResponse.created(new LoginResponseDTO(
-                loginResponse.get().token(),
-                loginResponse.get().user().id()
+        MutableHttpResponse<LoginSessionDTO> httpResponse = loginResponse.status() == OK
+            ? HttpResponse.created(new LoginSessionDTO(
+                loginResponse.get().user().id(),
+                loginResponse.get().token()
             ))
             : HttpResponse.unauthorized();
         return httpResponse.headers(h -> h.location(URI.create("/auth/login/" + userCredsDTO.username())));
+    }
+
+    /**
+     * Logs a user out and deletes its token.
+     *
+     * @param loginSessionDTO {
+     *                     "userId": "",
+     *                     "token": ""
+     *                     }
+     * @return OK if successfully logged out | UNAUTHORIZED if the sessions credentials are invalid
+     */
+    @Post("/logout")
+    public HttpResponse<Object> logout(@Body @Valid LoginSessionDTO loginSessionDTO) {
+        requireNonNull(loginSessionDTO);
+        var checkResponse = repository.checkIdentity(loginSessionDTO.userId(), loginSessionDTO.token());
+        var httpResponse = checkResponse.status() != OK
+            ? HttpResponse.unauthorized()
+            : HttpResponse.ok();
+        repository.logout(loginSessionDTO.token());
+        return httpResponse.headers(h -> h.location(URI.create("/auth/logout/" + loginSessionDTO.userId())));
     }
 }

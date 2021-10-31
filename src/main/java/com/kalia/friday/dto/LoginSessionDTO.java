@@ -7,18 +7,18 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents the body of a login response from the server to the client.
+ * Represents the body of a login session from.
  */
 @Introspected
-public record LoginResponseDTO(UUID token, UUID userId) {
+public record LoginSessionDTO(UUID userId, UUID token) {
     /**
      * Creates a body for the transaction.
      *
-     * @param token the token of the user session
      * @param userId the id of the user
+     * @param token the token of the user session
      */
-    public LoginResponseDTO {
-        requireNonNull(token);
+    public LoginSessionDTO {
         requireNonNull(userId);
+        requireNonNull(token);
     }
 }
