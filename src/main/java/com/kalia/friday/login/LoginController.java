@@ -103,7 +103,7 @@ public class LoginController {
         var checkResponse = repository.checkIdentity(loginSessionDTO.userId(), loginSessionDTO.token());
         if (checkResponse.status() == OK) {
             request.run();
-            return HttpResponse.ok();
+            return HttpResponse.accepted();
         } else {
             return HttpResponse.unauthorized();
         }

@@ -3,7 +3,6 @@ package com.kalia.friday.login;
 import com.kalia.friday.user.User;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,7 +48,7 @@ public class Login {
     private UUID token;
 
     @Id
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Basic(optional = false)
