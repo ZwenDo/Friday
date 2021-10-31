@@ -2,6 +2,7 @@ package com.kalia.friday.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kalia.friday.event.Event;
+import com.kalia.friday.login.Login;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,6 +62,10 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private final Set<Event> events = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private final Set<Login> logins = new HashSet<>();
 
     /**
      * Gets the id of the user row.
