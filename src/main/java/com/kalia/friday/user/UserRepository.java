@@ -21,7 +21,7 @@ public interface UserRepository {
      * SELECT * FROM User WHERE ID = {id} LIMIT 1;
      *
      * @param id the id of the user
-     * @return an optional of {@code User} (empty if not found)
+     * @return OK if the user is found | NOT_FOUND if the id is unknown
      */
     @ReadOnly
     RepositoryResponse<User> findById(@NotNull UUID id);
@@ -32,7 +32,7 @@ public interface UserRepository {
      * SELECT * FROM User WHERE USERNAME = {username} LIMIT 1;
      *
      * @param username the username of the user
-     * @return an optional of {@code User} (empty if not found)
+     * @return OK if the user is found | NOT_FOUND if the id is unknown
      */
     @ReadOnly
     RepositoryResponse<User> findByUsername(@NotNull String username);
@@ -42,7 +42,7 @@ public interface UserRepository {
      *
      * @param username the unique username of the user
      * @param password the password of the user (will be hashed SHA-512)
-     * @return Ok if created
+     * @return OK if created
      */
     @Transactional
     RepositoryResponse<User> save(@NotNull String username, @NotNull String password);
@@ -52,7 +52,7 @@ public interface UserRepository {
      *
      * @param id       the id of the user to delete
      * @param password the password of the user to delete
-     * @return Ok if deleted | NotFound if the id is unknown | Unauthorized if the password is incorrect
+     * @return OK if deleted | NOT_FOUND if the id is unknown | UNAUTHORIZED if the password is incorrect
      */
     @Transactional
     RepositoryResponse<User> deleteById(@NotNull UUID id, @NotNull String password);
@@ -63,7 +63,7 @@ public interface UserRepository {
      * @param id          the id of the user of whom to update the password
      * @param oldPassword the old password of the user
      * @param newPassword the new password to replace the old one with
-     * @return Ok if updated | NotFound if the id is unknown | Unauthorized if the old password is incorrect
+     * @return OK if updated | NOT_FOUND if the id is unknown | UNAUTHORIZED if the old password is incorrect
      */
     @Transactional
     RepositoryResponse<User> updatePassword(@NotNull UUID id, @NotNull String oldPassword, @NotNull String newPassword);

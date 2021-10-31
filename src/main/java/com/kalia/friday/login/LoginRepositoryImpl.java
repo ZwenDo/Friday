@@ -7,6 +7,7 @@ import jakarta.inject.Singleton;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
@@ -22,14 +23,24 @@ public class LoginRepositoryImpl implements LoginRepository {
     private final UserRepository userRepository;
     private final SHA512Hasher hasher = SHA512Hasher.getHasher();
 
-    public LoginRepositoryImpl(EntityManager manager, UserRepository userRepository) throws NoSuchAlgorithmException {
+    public LoginRepositoryImpl(@NotNull EntityManager manager, @NotNull UserRepository userRepository) throws NoSuchAlgorithmException {
         this.manager = requireNonNull(manager);
         this.userRepository = requireNonNull(userRepository);
     }
 
     @Override
+    public RepositoryResponse<List<Login>> allLogins() {
+        var result = manager
+            .createQuery("SELECT l FROM Login l", Login.class)
+            .getResultList();
+        return RepositoryResponse.ok(result);
+    }
+
+    @Override
     @Transactional
-    public RepositoryResponse<Login> checkIdentity(UUID userId, UUID token) {
+    public RepositoryResponse<Login> checkIdentity(@NotNull UUID userId, @NotNull UUID token) {
+        requireNonNull(userId);
+        requireNonNull(token);
         var user = userRepository.findById(userId);
         if (user.status() == NOT_FOUND) return RepositoryResponse.notFound();
         var login = manager.find(Login.class, new LoginId(token, user.get()));
@@ -40,7 +51,9 @@ public class LoginRepositoryImpl implements LoginRepository {
 
     @Override
     @Transactional
-    public RepositoryResponse<Login> login(String username, String password) {
+    public RepositoryResponse<Login> login(@NotNull String username, @NotNull String password) {
+        requireNonNull(username);
+        requireNonNull(password);
         var user = userRepository.findByUsername(username);
         if (user.status() == NOT_FOUND) return RepositoryResponse.notFound();
         if (!hasher.hash(password).equals(user.get().password())) return RepositoryResponse.unauthorized();
@@ -51,7 +64,8 @@ public class LoginRepositoryImpl implements LoginRepository {
 
     @Override
     @Transactional
-    public RepositoryResponse<Login> logout(UUID token) {
+    public RepositoryResponse<Login> logout(@NotNull UUID token) {
+        requireNonNull(token);
         var login = findLoginByToken(token);
         if (login.status() == NOT_FOUND) return login;
         manager.remove(login.get());
@@ -60,7 +74,8 @@ public class LoginRepositoryImpl implements LoginRepository {
 
     @Override
     @Transactional
-    public RepositoryResponse<List<Login>> logoutAll(UUID userId) {
+    public RepositoryResponse<List<Login>> logoutAll(@NotNull UUID userId) {
+        requireNonNull(userId);
         var logins = findLoginsByUserId(userId);
         if (logins.status() == NOT_FOUND) return logins;
         logins.get().forEach(manager::remove);
@@ -68,7 +83,8 @@ public class LoginRepositoryImpl implements LoginRepository {
     }
 
     @Transactional
-    private RepositoryResponse<Login> findLoginByToken(UUID token) {
+    private RepositoryResponse<Login> findLoginByToken(@NotNull UUID token) {
+        requireNonNull(token);
         var result = manager
             .createQuery("SELECT l FROM Login l WHERE l.token = :token", Login.class)
             .setParameter("token", token)
@@ -78,7 +94,8 @@ public class LoginRepositoryImpl implements LoginRepository {
     }
 
     @Transactional
-    private RepositoryResponse<List<Login>> findLoginsByUserId(UUID userId) {
+    private RepositoryResponse<List<Login>> findLoginsByUserId(@NotNull UUID userId) {
+        requireNonNull(userId);
         var user = userRepository.findById(userId);
         if (user.status() == NOT_FOUND) return RepositoryResponse.notFound();
         var result = manager
