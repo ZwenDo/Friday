@@ -6,6 +6,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -35,7 +36,7 @@ public class Login {
     private UUID token;
 
     @Id
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private User user;
 
     @Basic(optional = false)
