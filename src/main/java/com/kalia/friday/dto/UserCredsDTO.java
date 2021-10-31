@@ -5,17 +5,17 @@ import io.micronaut.core.annotation.Introspected;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents the body of a user creation transaction from the client to the server.
+ * Represents the body of a user credentials.
  */
 @Introspected
-public record UserSaveDTO(String username, String password) {
+public record UserCredsDTO(String username, String password) {
     /**
      * Creates a body for the transaction.
      *
-     * @param username the name of the user to create
-     * @param password the password of the user to create
+     * @param username the name of the user
+     * @param password the password of the user
      */
-    public UserSaveDTO {
+    public UserCredsDTO {
         requireNonNull(username);
         requireNonNull(password);
     }

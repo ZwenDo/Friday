@@ -42,6 +42,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @ReadOnly
+    public RepositoryResponse<User> findByUsername(String username) {
+        requireNonNull(username);
+        var result = manager
+            .createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+            .setParameter("username", username)
+            .getResultList();
+        if (result.isEmpty()) return RepositoryResponse.notFound();
+        return RepositoryResponse.ok(result.get(0));
+    }
+
+    @Override
     @Transactional
     public RepositoryResponse<User> save(String username, String password) {
         requireNonNull(username);
