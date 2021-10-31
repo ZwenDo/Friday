@@ -1,9 +1,9 @@
 package com.kalia.friday.user;
 
+import com.kalia.friday.dto.UserCredsDTO;
 import com.kalia.friday.dto.UserDeleteDTO;
 import com.kalia.friday.dto.UserPasswordUpdateDTO;
 import com.kalia.friday.dto.UserResponseDTO;
-import com.kalia.friday.dto.UserSaveDTO;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
@@ -42,7 +42,7 @@ public class UserController {
     /**
      * Creates and saves a user, provided a correct body.
      *
-     * @param userSaveDTO {
+     * @param userCredsDTO {
      *                    "username": "",
      *                    "password": ""
      *                    }
@@ -52,9 +52,9 @@ public class UserController {
      * }
      */
     @Post
-    public HttpResponse<UserResponseDTO> save(@Body @Valid UserSaveDTO userSaveDTO) {
-        requireNonNull(userSaveDTO);
-        var saveResponse = repository.save(userSaveDTO.username(), userSaveDTO.password());
+    public HttpResponse<UserResponseDTO> save(@Body @Valid UserCredsDTO userCredsDTO) {
+        requireNonNull(userCredsDTO);
+        var saveResponse = repository.save(userCredsDTO.username(), userCredsDTO.password());
         var user = saveResponse.get();
         return HttpResponse
             .created(new UserResponseDTO(user.id(), user.username()))

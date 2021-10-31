@@ -1,9 +1,9 @@
 package com.kalia.friday;
 
+import com.kalia.friday.dto.UserCredsDTO;
 import com.kalia.friday.dto.UserDeleteDTO;
 import com.kalia.friday.dto.UserPasswordUpdateDTO;
 import com.kalia.friday.dto.UserResponseDTO;
-import com.kalia.friday.dto.UserSaveDTO;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -41,7 +41,7 @@ public class UserControllerTest {
             .toBlocking()
             .exchange(HttpRequest.POST(
                 "/",
-                new UserSaveDTO("notKamui", "1234")
+                new UserCredsDTO("notKamui", "1234")
             ));
         assertEquals(HttpStatus.CREATED, responseSave.getStatus());
         var header = responseSave.header(HttpHeaders.LOCATION);
