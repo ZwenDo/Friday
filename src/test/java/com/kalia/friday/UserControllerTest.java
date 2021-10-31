@@ -4,9 +4,7 @@ import com.kalia.friday.dto.UserCredsDTO;
 import com.kalia.friday.dto.UserDeleteDTO;
 import com.kalia.friday.dto.UserPasswordUpdateDTO;
 import com.kalia.friday.dto.UserResponseDTO;
-import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -37,17 +35,16 @@ public class UserControllerTest {
     @Test
     @Order(1)
     public void testSaveUser() {
-        HttpResponse<UserResponseDTO> responseSave = client
+        var responseSave = client
             .toBlocking()
             .exchange(HttpRequest.POST(
                 "/",
                 new UserCredsDTO("notKamui", "1234")
-            ));
+            ), UserResponseDTO.class);
         assertEquals(HttpStatus.CREATED, responseSave.getStatus());
-        var header = responseSave.header(HttpHeaders.LOCATION);
-        assertNotNull(responseSave);
-        assert header != null;
-        retrievedId = UUID.fromString(header.substring("/user/".length()));
+        var body = responseSave.body();
+        assertNotNull(body);
+        retrievedId = body.id();
     }
 
     @Test

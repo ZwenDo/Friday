@@ -97,7 +97,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         var user = userRepository.findById(userId);
         if (user.status() == NOT_FOUND) return RepositoryResponse.notFound();
         var result = manager
-            .createQuery("SELECT l FROM Login l WHERE l.user = :user", Login.class)
+            .createQuery("SELECT l FROM Login l WHERE l.user.id = :user", Login.class)
             .setParameter("user", userId)
             .getResultList();
         return RepositoryResponse.ok(result);
