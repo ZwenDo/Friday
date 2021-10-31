@@ -27,6 +27,17 @@ public interface UserRepository {
     RepositoryResponse<User> findById(@NotNull UUID id);
 
     /**
+     * Finds a user by its username.
+     *
+     * SELECT * FROM User WHERE USERNAME = {username} LIMIT 1;
+     *
+     * @param username the username of the user
+     * @return an optional of {@code User} (empty if not found)
+     */
+    @ReadOnly
+    RepositoryResponse<User> findByUsername(@NotNull String username);
+
+    /**
      * Saves a new user.
      *
      * @param username the unique username of the user
