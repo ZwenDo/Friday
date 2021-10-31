@@ -60,7 +60,7 @@ public class LoginController {
     }
 
     /**
-     * Logs a user out and deletes its token.
+     * Logs a user out and deletes their token.
      *
      * @param loginSessionDTO {
      *                     "userId": "",
@@ -71,11 +71,41 @@ public class LoginController {
     @Post("/logout")
     public HttpResponse<Object> logout(@Body @Valid LoginSessionDTO loginSessionDTO) {
         requireNonNull(loginSessionDTO);
-        var checkResponse = repository.checkIdentity(loginSessionDTO.userId(), loginSessionDTO.token());
-        var httpResponse = checkResponse.status() != OK
-            ? HttpResponse.unauthorized()
-            : HttpResponse.ok();
-        repository.logout(loginSessionDTO.token());
+        var httpResponse = checkAndRun(
+            loginSessionDTO,
+            () -> repository.logout(loginSessionDTO.token())
+        );
         return httpResponse.headers(h -> h.location(URI.create("/auth/logout/" + loginSessionDTO.userId())));
+    }
+
+    /**
+     * Logs a user out and deletes all their tokens.
+     *
+     * @param loginSessionDTO {
+     *                     "userId": "",
+     *                     "token": ""
+     *                     }
+     * @return OK if successfully logged out | UNAUTHORIZED if the sessions credentials are invalid
+     */
+    @Post("/logout/all")
+    public HttpResponse<Object> logoutAll(@Body @Valid LoginSessionDTO loginSessionDTO) {
+        requireNonNull(loginSessionDTO);
+        var httpResponse = checkAndRun(
+            loginSessionDTO,
+            () -> repository.logoutAll(loginSessionDTO.userId())
+        );
+        return httpResponse.headers(h -> h.location(URI.create("/auth/logout/all/" + loginSessionDTO.userId())));
+    }
+
+    private MutableHttpResponse<Object> checkAndRun(LoginSessionDTO loginSessionDTO, Runnable request) {
+        requireNonNull(loginSessionDTO);
+        requireNonNull(request);
+        var checkResponse = repository.checkIdentity(loginSessionDTO.userId(), loginSessionDTO.token());
+        if (checkResponse.status() == OK) {
+            request.run();
+            return HttpResponse.ok();
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
 }
