@@ -58,6 +58,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         ) {
             return RepositoryResponse.notFound();
         }
+        login.get().setLastRefresh(LocalDateTime.now());
         return login;
     }
 
