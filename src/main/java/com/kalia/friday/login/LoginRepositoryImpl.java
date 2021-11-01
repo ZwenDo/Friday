@@ -17,6 +17,10 @@ import static com.kalia.friday.util.RepositoryResponse.Status.NOT_FOUND;
 import static com.kalia.friday.util.RepositoryResponse.Status.OK;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Implementation of {@code LoginRepository} used by Micronaut for dependency injection.
+ * (is actually used)
+ */
 @Singleton
 public class LoginRepositoryImpl implements LoginRepository {
 
@@ -24,6 +28,12 @@ public class LoginRepositoryImpl implements LoginRepository {
     private final UserRepository userRepository;
     private final SHA512Hasher hasher = SHA512Hasher.getHasher();
 
+    /**
+     * Used by Micronaut to create a singleton repository by injection.
+     *
+     * @param manager the injected {@code EntityManager}
+     * @param userRepository the injected {@code UserRepository}
+     */
     public LoginRepositoryImpl(@NotNull EntityManager manager, @NotNull UserRepository userRepository) throws NoSuchAlgorithmException {
         this.manager = requireNonNull(manager);
         this.userRepository = requireNonNull(userRepository);
