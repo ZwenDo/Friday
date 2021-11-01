@@ -30,8 +30,9 @@ public class LoginController {
      *
      * @param repository the login repository which serves to manipulate the database
      */
-    public LoginController(LoginRepository repository) {
+    public LoginController(LoginRepository repository, SessionManagerService sessionManager) {
         this.repository = requireNonNull(repository);
+        sessionManager.start();
     }
 
     /**

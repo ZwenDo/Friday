@@ -11,10 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -38,7 +36,7 @@ public class Login {
      * @param user the user (id) to create a token for
      * @param lastRefresh the timestamp of the last token refresh
      */
-    public Login(@NotNull User user, @NotNull Date lastRefresh) {
+    public Login(@NotNull User user, @NotNull LocalDateTime lastRefresh) {
         this.user = requireNonNull(user);
         this.lastRefresh = requireNonNull(lastRefresh);
     }
@@ -53,8 +51,7 @@ public class Login {
 
     @Basic(optional = false)
     @Column(name = "last_refresh", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastRefresh;
+    private LocalDateTime lastRefresh;
 
     /**
      * Gets the token of the user session.
@@ -79,7 +76,7 @@ public class Login {
      *
      * @return the timestamp of the last token refresh
      */
-    public Date lastRefresh() {
+    public LocalDateTime lastRefresh() {
         return lastRefresh;
     }
 
@@ -88,7 +85,7 @@ public class Login {
      *
      * @param lastRefresh the timestamp of the last token refresh
      */
-    public void setLastRefresh(Date lastRefresh) {
+    public void setLastRefresh(LocalDateTime lastRefresh) {
         this.lastRefresh = requireNonNull(lastRefresh);
     }
 }

@@ -94,4 +94,8 @@ public class User {
     public String password() {
         return password;
     }
+
+    public Set<Login> logins() {
+        return logins;
+    }
 }
