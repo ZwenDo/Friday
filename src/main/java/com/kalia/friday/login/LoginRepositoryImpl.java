@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.kalia.friday.util.RepositoryResponse.Status.OK;
@@ -91,17 +90,18 @@ public class LoginRepositoryImpl implements LoginRepository {
 
     @Override
     @Transactional
-    public RepositoryResponse<Set<Login>> logoutAll(@NotNull UUID userId) {
+    public RepositoryResponse<Integer> logoutAll(@NotNull UUID userId) {
         requireNonNull(userId);
         var user = userRepository.findById(userId);
         if (user.status() != OK) return RepositoryResponse.unauthorized();
         var logins = user.get().logins();
+        var size = logins.size();
         var iterator = logins.iterator();
         iterator.forEachRemaining(l -> {
             iterator.remove();
             manager.remove(l);
         }); // clears all the logins by two-ways ManyToOne binding
-        return RepositoryResponse.ok(logins);
+        return RepositoryResponse.ok(size);
     }
 
     private RepositoryResponse<Login> findLoginByToken(UUID token) {

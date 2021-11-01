@@ -6,7 +6,6 @@ import io.micronaut.transaction.annotation.ReadOnly;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -62,5 +61,5 @@ public interface LoginRepository {
      * @return OK of the set of deleted tokens | UNAUTHORIZED if the user id is unknown
      */
     @Transactional
-    RepositoryResponse<Set<Login>> logoutAll(@NotNull UUID userId);
+    RepositoryResponse<Integer> logoutAll(@NotNull UUID userId);
 }
