@@ -49,7 +49,7 @@ public class SessionManagerService {
         LOGGER.info("Service started");
     }
 
-    private synchronized void purgeExpiredTokens() throws InterruptedException {
+    private void purgeExpiredTokens() throws InterruptedException {
         LOGGER.info("Purging outdated tokens");
         var logins = repository.allLogins().get();
         var limit = LocalDateTime.now().minusDays(TOKEN_LIFETIME_IN_DAYS);
