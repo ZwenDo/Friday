@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,7 +62,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         ) {
             return RepositoryResponse.unauthorized();
         }
-        var login = new Login(user.get(), new Date());
+        var login = new Login(user.get(), LocalDateTime.now());
         manager.persist(login);
         return RepositoryResponse.ok(login);
     }
