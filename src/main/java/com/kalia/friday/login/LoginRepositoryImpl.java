@@ -3,6 +3,7 @@ package com.kalia.friday.login;
 import com.kalia.friday.user.UserRepository;
 import com.kalia.friday.util.RepositoryResponse;
 import com.kalia.friday.util.SHA512Hasher;
+import io.micronaut.transaction.annotation.ReadOnly;
 import jakarta.inject.Singleton;
 
 import javax.persistence.EntityManager;
@@ -11,9 +12,9 @@ import javax.validation.constraints.NotNull;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-import static com.kalia.friday.util.RepositoryResponse.Status.NOT_FOUND;
 import static com.kalia.friday.util.RepositoryResponse.Status.OK;
 import static java.util.Objects.requireNonNull;
 
@@ -40,6 +41,7 @@ public class LoginRepositoryImpl implements LoginRepository {
     }
 
     @Override
+    @ReadOnly
     public RepositoryResponse<List<Login>> allLogins() {
         var result = manager
             .createQuery("SELECT l FROM Login l", Login.class)
@@ -74,7 +76,7 @@ public class LoginRepositoryImpl implements LoginRepository {
             return RepositoryResponse.unauthorized();
         }
         var login = new Login(user.get(), LocalDateTime.now());
-        manager.persist(login);
+        user.get().logins().add(login); // persists a login in the db
         return RepositoryResponse.ok(login);
     }
 
@@ -89,11 +91,17 @@ public class LoginRepositoryImpl implements LoginRepository {
 
     @Override
     @Transactional
-    public RepositoryResponse<List<Login>> logoutAll(@NotNull UUID userId) {
+    public RepositoryResponse<Set<Login>> logoutAll(@NotNull UUID userId) {
         requireNonNull(userId);
-        var logins = findLoginsByUserId(userId);
-        if (logins.status() == OK) logins.get().forEach(manager::remove);
-        return logins;
+        var user = userRepository.findById(userId);
+        if (user.status() != OK) return RepositoryResponse.unauthorized();
+        var logins = user.get().logins();
+        var iterator = logins.iterator();
+        iterator.forEachRemaining(l -> {
+            iterator.remove();
+            manager.remove(l);
+        }); // clears all the logins by two-ways ManyToOne binding
+        return RepositoryResponse.ok(logins);
     }
 
     private RepositoryResponse<Login> findLoginByToken(UUID token) {
@@ -104,16 +112,5 @@ public class LoginRepositoryImpl implements LoginRepository {
             .getResultList();
         if (result.isEmpty()) return RepositoryResponse.unauthorized();
         return RepositoryResponse.ok(result.get(0));
-    }
-
-    private RepositoryResponse<List<Login>> findLoginsByUserId(UUID userId) {
-        requireNonNull(userId);
-        var user = userRepository.findById(userId);
-        if (user.status() == NOT_FOUND) return RepositoryResponse.unauthorized();
-        var result = manager
-            .createQuery("SELECT l FROM Login l WHERE l.user.id = :user", Login.class)
-            .setParameter("user", userId)
-            .getResultList();
-        return RepositoryResponse.ok(result);
     }
 }
