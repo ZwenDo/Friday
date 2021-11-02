@@ -17,9 +17,6 @@
 
 <style>
     .selected {
-        @apply bg-white;
-        @apply relative;
-        @apply transform;
-        @apply -translate-y-2;
+        @apply bg-white relative transform -translate-y-2;
     }
 </style>
