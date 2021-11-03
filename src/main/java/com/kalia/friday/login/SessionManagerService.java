@@ -18,7 +18,7 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 public class SessionManagerService {
 
-    private static final long PURGE_DELAY = 5000;//10_800_000; // 3h
+    private static final long PURGE_DELAY = 10_800_000; // 3h
     private static final long TOKEN_LIFETIME_IN_DAYS = 7;
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionManagerService.class);
 
