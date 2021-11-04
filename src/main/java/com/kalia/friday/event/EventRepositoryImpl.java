@@ -18,7 +18,6 @@ import static java.util.Objects.requireNonNull;
  */
 @Singleton
 public class EventRepositoryImpl implements EventRepository {
-
     private final EntityManager manager;
     private final UserRepository userRepository;
 
@@ -84,24 +83,18 @@ public class EventRepositoryImpl implements EventRepository {
 
     @Override
     @Transactional
-    public RepositoryResponse<Event> edit(UUID id, String title, String description, String place, String recurRuleParts) {
+    public RepositoryResponse<Event> update(UUID id, String title, String description, String place, String recurRuleParts) {
         requireNonNull(id);
         requireNonNull(title);
-        var event = findById(id);
-        if (event.status() == RepositoryResponse.Status.NOT_FOUND) {
-            return event;
+        var eventGetResponse = findById(id);
+        if (eventGetResponse.status() == RepositoryResponse.Status.NOT_FOUND) {
+            return eventGetResponse;
         }
-        manager.createQuery("UPDATE Event SET title = :title," +
-                        "description = :description," +
-                        "place = :place," +
-                        "recurRuleParts = :recurRuleParts" +
-                        " WHERE id = :id")
-                .setParameter("title", title)
-                .setParameter("description", description)
-                .setParameter("place", place)
-                .setParameter("recurRuleParts", recurRuleParts)
-                .setParameter("id", id)
-                .executeUpdate();
-        return RepositoryResponse.ok(event.get());
+        var event = eventGetResponse.get();
+        event.setTitle(title);
+        event.setDescription(description);
+        event.setPlace(place);
+        event.setRecurRuleParts(recurRuleParts);
+        return RepositoryResponse.ok(eventGetResponse.get());
     }
 }

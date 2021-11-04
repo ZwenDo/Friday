@@ -75,4 +75,44 @@ public class Event {
     @NotBlank
     @Column(name = "recur_rule_parts", nullable = false)
     private String recurRuleParts;
+
+    public UUID id() {
+        return id;
+    }
+
+    public User user() {
+        return user;
+    }
+
+    public String title() {
+        return title;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public String place() {
+        return place;
+    }
+
+    public String recurRuleParts() {
+        return recurRuleParts;
+    }
+
+    public void setTitle(@NotNull @NotBlank String title) {
+        this.title = requireNonNull(title);
+    }
+
+    public void setDescription(@NotBlank String description) {
+        this.description = description;
+    }
+
+    public void setPlace(@NotBlank String place) {
+        this.place = place;
+    }
+
+    public void setRecurRuleParts(@NotBlank String recurRuleParts) {
+        this.recurRuleParts = recurRuleParts;
+    }
 }

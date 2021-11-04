@@ -46,7 +46,7 @@ public interface EventRepository {
      * @param description the description of the event
      * @param place the place of the event
      * @param recurRuleParts the recurrence rule parts of the event
-     * @return Ok if saved | No
+     * @return Ok if saved | NotFound if the id is unknown
      */
     @Transactional
     RepositoryResponse<Event> save(
@@ -57,11 +57,27 @@ public interface EventRepository {
             @NotNull @NotBlank String recurRuleParts
     );
 
+    /**
+     * Deletes an event by its id.
+     *
+     * @param id the id of the event to delete
+     * @return Ok if deleted | NotFound if the id is unknown
+     */
     @Transactional
     RepositoryResponse<Event> deleteById(@NotNull UUID id);
 
+    /**
+     * Edits an event.
+     *
+     * @param id the id of the event to edit
+     * @param title the new title of the event
+     * @param description the new description of the event
+     * @param place the new place of the event
+     * @param recurRuleParts the new {@code recurRuleParts} of the event
+     * @return the edited event
+     */
     @Transactional
-    RepositoryResponse<Event> edit(
+    RepositoryResponse<Event> update(
             @NotNull UUID id,
             @NotNull @NotBlank String title,
             @NotBlank String description,
