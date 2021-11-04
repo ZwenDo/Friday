@@ -2,12 +2,15 @@
 
 ## CREANTOR-TEILLARD
 
+- Download the dependencies beforehand : `./mvnw clean install -U`
+  - Don't let IntelliJ do that for you because it will give you false flags
+    due to Java 17.
 - Running backend : `./mvnw mn:run`
 - Launching backend tests : `./mvnw test`
   - **Notice** : It is recommended to run `export JDBC_URL=jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`
     before launching the tests to run on a temporary database for test suite.
     ```sh
-    export JDBC_URL=jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    export JDBC_URL="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
     ./mvnw test
     ```
 - Building jar and svelte app : `./mvnw package`

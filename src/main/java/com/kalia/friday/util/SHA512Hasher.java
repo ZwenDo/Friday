@@ -41,6 +41,7 @@ public final class SHA512Hasher {
         byte[] salt = new byte[16];
         try {
             salt = Files.readString(SALT_PATH).substring(0, 16).getBytes(StandardCharsets.UTF_8);
+            LOGGER.info("Hasher initialized");
         } catch (IOException e) {
             LOGGER.warn("No salt found ; an empty salt will be added");
         }

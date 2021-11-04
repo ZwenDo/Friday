@@ -2,7 +2,9 @@ package com.kalia.friday.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kalia.friday.event.Event;
+import com.kalia.friday.login.Login;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -59,8 +61,12 @@ public class User {
     private String password;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private final Set<Event> events = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private final Set<Login> logins = new HashSet<>();
 
     /**
      * Gets the id of the user row.
@@ -87,5 +93,9 @@ public class User {
      */
     public String password() {
         return password;
+    }
+
+    public Set<Login> logins() {
+        return logins;
     }
 }

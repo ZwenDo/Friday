@@ -2,9 +2,9 @@ package com.kalia.friday.event;
 
 import com.kalia.friday.user.User;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -55,7 +55,7 @@ public class Event {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @NotNull
