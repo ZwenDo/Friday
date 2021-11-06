@@ -19,18 +19,19 @@ import static java.util.Objects.requireNonNull;
 @Controller("/event")
 public class EventController {
 
-    private final EventRepository repository;
+    private final EventRepository eventRepository;
 
-    public EventController(EventRepository repository) {
-        this.repository = requireNonNull(repository);
+    public EventController(EventRepository eventRepository) {
+        this.eventRepository = requireNonNull(eventRepository);
     }
 
     @Post
     @JoinColumn
     public HttpResponse<EventResponseDTO> save(@Body @Valid EventSaveDTO eventSaveDTO) {
         requireNonNull(eventSaveDTO);
-        var saveResponse = repository.save(
+        var saveResponse = eventRepository.authenticatedSave(
                 eventSaveDTO.userId(),
+                eventSaveDTO.userToken(),
                 eventSaveDTO.title(),
                 eventSaveDTO.description(),
                 eventSaveDTO.place(),
