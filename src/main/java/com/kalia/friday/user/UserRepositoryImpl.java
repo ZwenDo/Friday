@@ -8,7 +8,6 @@ import jakarta.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -21,16 +20,19 @@ import static java.util.Objects.requireNonNull;
 public class UserRepositoryImpl implements UserRepository {
 
     private final EntityManager manager;
-    private final SHA512Hasher hasher = SHA512Hasher.getHasher();
+    private final SHA512Hasher hasher;
 
     /**
      * Used by Micronaut to create a singleton repository by injection.
      *
      * @param manager the injected {@code EntityManager}
-     * @throws NoSuchAlgorithmException (should never happen unless SHA-512 doesn't exist anymore)
      */
-    public UserRepositoryImpl(@NotNull EntityManager manager) throws NoSuchAlgorithmException {
+    public UserRepositoryImpl(
+        @NotNull EntityManager manager,
+        @NotNull SHA512Hasher hasher
+    ) {
         this.manager = requireNonNull(manager);
+        this.hasher = requireNonNull(hasher);
     }
 
     @Override

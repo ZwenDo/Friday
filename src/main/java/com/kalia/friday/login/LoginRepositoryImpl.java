@@ -9,7 +9,6 @@ import jakarta.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -26,17 +25,22 @@ public class LoginRepositoryImpl implements LoginRepository {
 
     private final EntityManager manager;
     private final UserRepository userRepository;
-    private final SHA512Hasher hasher = SHA512Hasher.getHasher();
+    private final SHA512Hasher hasher;
 
     /**
      * Used by Micronaut to create a singleton repository by injection.
      *
-     * @param manager the injected {@code EntityManager}
+     * @param manager        the injected {@code EntityManager}
      * @param userRepository the injected {@code UserRepository}
      */
-    public LoginRepositoryImpl(@NotNull EntityManager manager, @NotNull UserRepository userRepository) throws NoSuchAlgorithmException {
+    public LoginRepositoryImpl(
+        @NotNull EntityManager manager,
+        @NotNull UserRepository userRepository,
+        @NotNull SHA512Hasher hasher
+    ) {
         this.manager = requireNonNull(manager);
         this.userRepository = requireNonNull(userRepository);
+        this.hasher = requireNonNull(hasher);
     }
 
     @Override
