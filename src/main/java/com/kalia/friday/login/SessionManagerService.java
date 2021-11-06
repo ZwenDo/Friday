@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +17,7 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 public class SessionManagerService {
 
-    private static final long PURGE_DELAY = 10_800_000; // 3h
+    private static final long PURGE_DELAY = 1000; // 3h
     private static final long TOKEN_LIFETIME_IN_DAYS = 7;
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionManagerService.class);
 
@@ -49,12 +48,6 @@ public class SessionManagerService {
 
     private void purgeExpiredTokens() {
         LOGGER.info("Purging outdated tokens");
-        var logins = repository.allLogins().get();
-        var limit = LocalDateTime.now().minusDays(TOKEN_LIFETIME_IN_DAYS);
-        for (var login : logins) {
-            if (login.lastRefresh().isBefore(limit)) {
-                repository.logout(login.token());
-            }
-        }
+        repository.purgeExpiredTokens(TOKEN_LIFETIME_IN_DAYS);
     }
 }
