@@ -108,6 +108,18 @@ public class LoginRepositoryImpl implements LoginRepository {
         return RepositoryResponse.ok(size);
     }
 
+    @Override
+    @Transactional
+    public void purgeExpiredTokens(long lifetime) {
+        var logins = allLogins().get();
+        var limit = LocalDateTime.now().minusDays(lifetime);
+        for (var login : logins) {
+            if (login.lastRefresh().isBefore(limit)) {
+                logout(login.token());
+            }
+        }
+    }
+
     private RepositoryResponse<Login> findLoginByToken(UUID token) {
         requireNonNull(token);
         var result = manager
