@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -20,7 +21,7 @@ import static java.util.Objects.requireNonNull;
  */
 @Entity
 @Table(name = "event")
-public class Event {
+public class Event implements Serializable {
 
     /**
      * Necessary empty constructor for Micronaut and JPA.
