@@ -120,7 +120,6 @@ public class EventRepositoryImpl implements EventRepository {
     /**
      * @return unauthorized if wrong creds or if user is not the owner of the event | not found if event is not found
      */
-    @ReadOnly
     private RepositoryResponse<Event> getIfAuthenticated(UUID eventId, UUID userId, UUID userToken) {
         var userAuthenticate = loginRepository.checkIdentity(userId, userToken);
         if (userAuthenticate.status() != RepositoryResponse.Status.OK) { // invalid user.
@@ -139,7 +138,6 @@ public class EventRepositoryImpl implements EventRepository {
         return eventRepository; // ok.
     }
 
-    @ReadOnly
     private RepositoryResponse<Event> findById(UUID id) {
         var event = manager.find(Event.class, id);
         return event == null ? RepositoryResponse.notFound() : RepositoryResponse.ok(event);

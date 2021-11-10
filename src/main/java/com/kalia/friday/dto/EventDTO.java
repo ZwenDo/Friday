@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
  * Represents the body of an event save request from the client to the server.
  */
 @Introspected
-public record EventSaveDTO(
+public record EventDTO(
         @NotNull UUID userId,
         @NotNull UUID userToken,
         @NotNull @NotBlank String title,
@@ -30,7 +30,7 @@ public record EventSaveDTO(
      * @param place the place of the event
      * @param recurRuleParts the {@code recurRuleParts} of the event
      */
-    public EventSaveDTO {
+    public EventDTO {
         requireNonNull(userId);
         requireNonNull(userToken);
         requireNonNull(title);
