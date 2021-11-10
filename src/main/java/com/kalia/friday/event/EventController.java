@@ -19,16 +19,43 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * API endpoint for communicating with the event side of the database.
+ */
 @ExecuteOn(value = TaskExecutors.IO)
 @Controller("/event")
 public class EventController {
 
     private final EventRepository eventRepository;
 
+    /**
+     * Creates a controller by injection with Micronaut
+     *
+     * @param eventRepository the event repository which serves to manipulate the database.
+     */
     public EventController(EventRepository eventRepository) {
         this.eventRepository = requireNonNull(eventRepository);
     }
 
+    /**
+     * Creates and saves an event, provided a correct body.
+     *
+     * @param eventDTO {
+     *                 "userId": "",
+     *                 "userToken": "",
+     *                 "title": "",
+     *                 "description": "",
+     *                 "place": "",
+     *                 "recurRule": ""
+     *                 }
+     * @return {
+     * "id": "",
+     * "title": "",
+     * "description": "",
+     * "place": "",
+     * "recurRule": ""
+     * }
+     */
     @Post
     public HttpResponse<EventResponseDTO> save(@Body @Valid EventDTO eventDTO) {
         requireNonNull(eventDTO);
@@ -54,6 +81,18 @@ public class EventController {
         return httpResponse.headers(h -> h.location(URI.create("/event/" + createdEvent.id())));
     }
 
+    /**
+     * Deletes an event by its id, provided a correct body
+     * which holds the valid password of the user.
+     *
+     * @param id              the id of the event to delete
+     * @param loginSessionDTO {
+     *                        "userId": "",
+     *                        "token": ""
+     *                        }
+     * @return OK if deleted | NOT_FOUND if the id is unknown | BAD_REQUEST if the credentials are invalid or the user doesn't
+     * own the event
+     */
     @Delete("/delete/{id}")
     public HttpResponse<?> delete(UUID id, @Body @Valid LoginSessionDTO loginSessionDTO) {
         requireNonNull(id);
@@ -63,11 +102,33 @@ public class EventController {
                 loginSessionDTO.userId(),
                 loginSessionDTO.token()
         );
+
         return RepositoryResponse
                 .toEmptyHttpResponse(deleteResponse.status())
                 .headers(h -> h.location(URI.create("/event/delete/" + id)));
     }
 
+    /**
+     * Updates an event by its id, provided a correct body
+     * which holds the valid used credentials and the updated data.
+     *
+     * @param id       the id of the event to update
+     * @param eventDTO {
+     *                 "userId": "",
+     *                 "userToken": "",
+     *                 "title": "",
+     *                 "description": "",
+     *                 "place": "",
+     *                 "recurRule"
+     *                 }
+     * @return {
+     * "id": "",
+     * "title": "",
+     * "description": "",
+     * "place": "",
+     * "recurRule": ""
+     * }
+     */
     @Put("/update/{id}")
     public HttpResponse<EventResponseDTO> update(UUID id, @Body @Valid EventDTO eventDTO) {
         requireNonNull(id);
