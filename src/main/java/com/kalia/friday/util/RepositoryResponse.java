@@ -1,5 +1,8 @@
 package com.kalia.friday.util;
 
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpResponse;
+
 import java.util.NoSuchElementException;
 
 import static java.util.Objects.requireNonNull;
@@ -82,5 +85,13 @@ public final class RepositoryResponse<T> {
      */
     public static <T> RepositoryResponse<T> unauthorized() {
         return new RepositoryResponse<>(Status.UNAUTHORIZED, null);
+    }
+
+    public static MutableHttpResponse<?> toEmptyHttpResponse(RepositoryResponse.Status repositoryResponseStatus) {
+        return switch (repositoryResponseStatus) {
+            case OK -> HttpResponse.noContent();
+            case NOT_FOUND -> HttpResponse.notFound();
+            case UNAUTHORIZED -> HttpResponse.badRequest();
+        };
     }
 }

@@ -64,7 +64,8 @@ public class EventRepositoryImpl implements EventRepository {
             String title,
             String description,
             String place,
-            String recurRuleParts) {
+            String recurRuleParts
+    ) {
         requireNonNull(userId);
         requireNonNull(title);
         requireNonNull(recurRuleParts);
@@ -100,7 +101,8 @@ public class EventRepositoryImpl implements EventRepository {
             String title,
             String description,
             String place,
-            String recurRuleParts) {
+            String recurRuleParts
+    ) {
         requireNonNull(id);
         requireNonNull(title);
         var eventGetResponse = getIfAuthenticated(id, userId, userToken);
@@ -115,6 +117,9 @@ public class EventRepositoryImpl implements EventRepository {
         return RepositoryResponse.ok(eventGetResponse.get());
     }
 
+    /**
+     * @return unauthorized if wrong creds or if user is not the owner of the event | not found if event is not found
+     */
     @ReadOnly
     private RepositoryResponse<Event> getIfAuthenticated(UUID eventId, UUID userId, UUID userToken) {
         var userAuthenticate = loginRepository.checkIdentity(userId, userToken);
@@ -123,7 +128,7 @@ public class EventRepositoryImpl implements EventRepository {
         }
 
         var eventRepository = findById(eventId);
-        if (eventRepository.status() != RepositoryResponse.Status.OK) { // not ok.
+        if (eventRepository.status() == RepositoryResponse.Status.NOT_FOUND) { // not found.
             return eventRepository;
         }
 
