@@ -12,6 +12,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import jakarta.inject.Inject;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -26,16 +27,8 @@ import static java.util.Objects.requireNonNull;
 @Controller("/event")
 public class EventController {
 
-    private final EventRepository eventRepository;
-
-    /**
-     * Creates a controller by injection with Micronaut
-     *
-     * @param eventRepository the event repository which serves to manipulate the database.
-     */
-    public EventController(EventRepository eventRepository) {
-        this.eventRepository = requireNonNull(eventRepository);
-    }
+    @Inject
+    private EventRepository eventRepository;
 
     /**
      * Creates and saves an event, provided a correct body.
