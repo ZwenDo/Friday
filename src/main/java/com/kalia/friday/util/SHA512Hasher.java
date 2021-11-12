@@ -19,8 +19,8 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 public final class SHA512Hasher {
 
-    private static final Path SALT_PATH = Path.of("resources", "salt.txt");
-    private static final Logger LOGGER = LoggerFactory.getLogger(SHA512Hasher.class);
+    private final Path saltPath = Path.of("resources", "salt.txt");
+    private final Logger logger = LoggerFactory.getLogger(SHA512Hasher.class);
 
     private final MessageDigest md;
     private final byte[] salt;
@@ -37,14 +37,14 @@ public final class SHA512Hasher {
         }
     }
 
-    private static byte[] getSalt() {
+    private byte[] getSalt() {
         byte[] salt;
         try {
-            salt = Files.readString(SALT_PATH).substring(0, 16).getBytes(StandardCharsets.UTF_8);
-            LOGGER.info("Hasher initialized");
+            salt = Files.readString(saltPath).substring(0, 16).getBytes(StandardCharsets.UTF_8);
+            logger.info("Hasher initialized");
         } catch (IOException e) {
             salt = new byte[16];
-            LOGGER.warn("No salt found ; an empty salt will be added");
+            logger.warn("No salt found ; an empty salt will be added");
         }
         return salt;
     }
