@@ -9,6 +9,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import jakarta.inject.Inject;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -23,15 +24,15 @@ import static java.util.Objects.requireNonNull;
 @Controller("/auth")
 public class LoginController {
 
-    private final LoginRepository repository;
+    @Inject
+    private LoginRepository repository;
 
     /**
      * Creates a controller by injection with Micronaut.
      *
-     * @param repository the login repository which serves to manipulate the database
+     * @param sessionManager the session manager to launch
      */
-    public LoginController(LoginRepository repository, SessionManagerService sessionManager) {
-        this.repository = requireNonNull(repository);
+    public LoginController(SessionManagerService sessionManager) {
         sessionManager.start();
     }
 

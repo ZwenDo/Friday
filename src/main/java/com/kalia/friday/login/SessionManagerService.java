@@ -5,11 +5,8 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Singleton manager to check tokens periodically.
@@ -22,16 +19,7 @@ public class SessionManagerService {
     private final Logger logger = LoggerFactory.getLogger(SessionManagerService.class);
 
     @Inject
-    private final LoginRepository repository;
-
-    /**
-     * Used by Micronaut to create a singleton repository by injection.
-     *
-     * @param repository the login repository to be injected
-     */
-    public SessionManagerService(@NotNull LoginRepository repository) {
-        this.repository = requireNonNull(repository);
-    }
+    private LoginRepository repository;
 
     /**
      * Starts the service and periodically checks for expired tokens.

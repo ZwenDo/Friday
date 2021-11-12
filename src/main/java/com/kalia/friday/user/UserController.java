@@ -14,6 +14,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import jakarta.inject.Inject;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -28,16 +29,8 @@ import static java.util.Objects.requireNonNull;
 @Controller("/user")
 public class UserController {
 
-    private final UserRepository repository;
-
-    /**
-     * Creates a controller by injection with Micronaut.
-     *
-     * @param repository the user repository which serves to manipulate the database
-     */
-    public UserController(UserRepository repository) {
-        this.repository = requireNonNull(repository);
-    }
+    @Inject
+    private UserRepository repository;
 
     /**
      * Creates and saves a user, provided a correct body.
