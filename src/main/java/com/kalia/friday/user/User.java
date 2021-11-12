@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -24,7 +25,7 @@ import static java.util.Objects.requireNonNull;
  */
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
 
     /**
      * Necessary empty constructor for Micronaut and JPA.

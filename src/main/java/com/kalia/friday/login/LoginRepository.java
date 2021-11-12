@@ -62,4 +62,12 @@ public interface LoginRepository {
      */
     @Transactional
     RepositoryResponse<Integer> logoutAll(@NotNull UUID userId);
+
+    /**
+     * Purges all the logins that are too old.
+     *
+     * @param lifetime the limit in days at which a login can be kept alive
+     */
+    @Transactional
+    void purgeExpiredTokens(long lifetime);
 }

@@ -1,5 +1,6 @@
 package com.kalia.friday.util;
 
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +14,9 @@ import java.security.NoSuchAlgorithmException;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Utility class to obtain a hasher to hash character strings with SHA-512
+ * Utility class to inject a hasher to hash character strings with SHA-512
  */
+@Singleton
 public final class SHA512Hasher {
 
     private static final Path SALT_PATH = Path.of("resources", "salt.txt");
@@ -23,30 +25,28 @@ public final class SHA512Hasher {
     private final MessageDigest md;
     private final byte[] salt;
 
-    private SHA512Hasher(MessageDigest md, byte[] salt) {
-        this.md = requireNonNull(md);
-        this.salt = requireNonNull(salt);
+    /**
+     * Constructs an SHA-512 hasher with (or without) a salt located in resources/salt.txt.
+     */
+    public SHA512Hasher() {
+        salt = getSalt();
+        try {
+            md = MessageDigest.getInstance("SHA-512");
+        } catch (NoSuchAlgorithmException e) {
+            throw new AssertionError("SHA-512 algorithm doesn't exist anymore");
+        }
     }
 
-    /**
-     * Obtains a SHA-512 hasher.
-     * If a file `resources/salt.txt` exists, it will take the first 16 bytes
-     * of said file to create a salt for the hasher.
-     * <p><b>Warning</b> : if the salt is lost... all your passwords will be unrecoverable.</p>
-     *
-     * @return a salted SHA-512 hasher
-     * @throws NoSuchAlgorithmException (should never happen, unless SHA-512 doesn't exist anymore)
-     */
-    public static SHA512Hasher getHasher() throws NoSuchAlgorithmException {
-        byte[] salt = new byte[16];
+    private static byte[] getSalt() {
+        byte[] salt;
         try {
             salt = Files.readString(SALT_PATH).substring(0, 16).getBytes(StandardCharsets.UTF_8);
             LOGGER.info("Hasher initialized");
         } catch (IOException e) {
+            salt = new byte[16];
             LOGGER.warn("No salt found ; an empty salt will be added");
         }
-        var md = MessageDigest.getInstance("SHA-512");
-        return new SHA512Hasher(md, salt);
+        return salt;
     }
 
     /**
