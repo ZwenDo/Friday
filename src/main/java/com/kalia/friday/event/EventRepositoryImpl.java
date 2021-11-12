@@ -3,6 +3,7 @@ package com.kalia.friday.event;
 import com.kalia.friday.user.UserRepository;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.transaction.annotation.ReadOnly;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import javax.persistence.EntityManager;
@@ -19,19 +20,11 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 public class EventRepositoryImpl implements EventRepository {
 
-    private final EntityManager manager;
-    private final UserRepository userRepository;
+    @Inject
+    private EntityManager manager;
 
-    /**
-     * Used by Micronaut to create a singleton repository by injection.
-     *
-     * @param manager the injected {@code EntityManager}
-     * @param userRepository the injected {@code UserRepository}
-     */
-    public EventRepositoryImpl(EntityManager manager, UserRepository userRepository) {
-        this.manager = requireNonNull(manager);
-        this.userRepository = requireNonNull(userRepository);
-    }
+    @Inject
+    private UserRepository userRepository;
 
     @Override
     @ReadOnly

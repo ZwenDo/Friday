@@ -4,6 +4,7 @@ import com.kalia.friday.user.UserRepository;
 import com.kalia.friday.util.RepositoryResponse;
 import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.transaction.annotation.ReadOnly;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import javax.persistence.EntityManager;
@@ -23,25 +24,14 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 public class LoginRepositoryImpl implements LoginRepository {
 
-    private final EntityManager manager;
-    private final UserRepository userRepository;
-    private final SHA512Hasher hasher;
+    @Inject
+    private EntityManager manager;
 
-    /**
-     * Used by Micronaut to create a singleton repository by injection.
-     *
-     * @param manager        the injected {@code EntityManager}
-     * @param userRepository the injected {@code UserRepository}
-     */
-    public LoginRepositoryImpl(
-        @NotNull EntityManager manager,
-        @NotNull UserRepository userRepository,
-        @NotNull SHA512Hasher hasher
-    ) {
-        this.manager = requireNonNull(manager);
-        this.userRepository = requireNonNull(userRepository);
-        this.hasher = requireNonNull(hasher);
-    }
+    @Inject
+    private UserRepository userRepository;
+
+    @Inject
+    private SHA512Hasher hasher;
 
     @Override
     @ReadOnly

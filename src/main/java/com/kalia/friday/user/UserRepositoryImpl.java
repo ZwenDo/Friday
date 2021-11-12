@@ -3,11 +3,11 @@ package com.kalia.friday.user;
 import com.kalia.friday.util.RepositoryResponse;
 import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.transaction.annotation.ReadOnly;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -19,21 +19,11 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 public class UserRepositoryImpl implements UserRepository {
 
-    private final EntityManager manager;
-    private final SHA512Hasher hasher;
+    @Inject
+    private EntityManager manager;
 
-    /**
-     * Used by Micronaut to create a singleton repository by injection.
-     *
-     * @param manager the injected {@code EntityManager}
-     */
-    public UserRepositoryImpl(
-        @NotNull EntityManager manager,
-        @NotNull SHA512Hasher hasher
-    ) {
-        this.manager = requireNonNull(manager);
-        this.hasher = requireNonNull(hasher);
-    }
+    @Inject
+    private SHA512Hasher hasher;
 
     @Override
     @ReadOnly
