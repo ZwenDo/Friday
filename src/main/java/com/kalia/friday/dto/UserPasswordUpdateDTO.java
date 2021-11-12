@@ -2,6 +2,7 @@ package com.kalia.friday.dto;
 
 import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import static java.util.Objects.requireNonNull;
@@ -11,8 +12,8 @@ import static java.util.Objects.requireNonNull;
  */
 @Introspected
 public record UserPasswordUpdateDTO(
-    @NotNull String oldPassword,
-    @NotNull String newPassword) {
+    @NotNull @NotBlank String oldPassword,
+    @NotNull @NotBlank String newPassword) {
     /**
      * Creates a body for the transaction.
      *

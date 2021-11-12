@@ -2,6 +2,7 @@ package com.kalia.friday.dto;
 
 import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 @Introspected
 public record UserResponseDTO(
     @NotNull UUID id,
-    @NotNull String username
+    @NotNull @NotBlank String username
 ) {
     /**
      * Creates a body for the response

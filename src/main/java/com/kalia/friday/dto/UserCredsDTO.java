@@ -2,6 +2,7 @@ package com.kalia.friday.dto;
 
 import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import static java.util.Objects.requireNonNull;
@@ -11,8 +12,8 @@ import static java.util.Objects.requireNonNull;
  */
 @Introspected
 public record UserCredsDTO(
-    @NotNull String username,
-    @NotNull String password
+    @NotNull @NotBlank String username,
+    @NotNull @NotBlank String password
 ) {
     /**
      * Creates a body for the transaction.
