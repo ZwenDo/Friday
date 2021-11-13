@@ -87,6 +87,12 @@ public final class RepositoryResponse<T> {
         return new RepositoryResponse<>(Status.UNAUTHORIZED, null);
     }
 
+    /**
+     * Creates an empty {@code MutableHttpResponse} corresponding to the given {@code RepositoryResponse.Status}.
+     *
+     * @param repositoryResponseStatus the repository response status to create the http response
+     * @return the created mutable http response
+     */
     public static MutableHttpResponse<?> toEmptyHttpResponse(RepositoryResponse.Status repositoryResponseStatus) {
         return switch (repositoryResponseStatus) {
             case OK -> HttpResponse.noContent();
