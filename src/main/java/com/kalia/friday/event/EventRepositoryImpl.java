@@ -26,7 +26,6 @@ public class EventRepositoryImpl implements EventRepository {
     @Inject
     private LoginRepository loginRepository;
 
-
     @Override
     @ReadOnly
     public RepositoryResponse<Event> authenticatedFindById(UUID id, UUID userId, UUID userToken) {
