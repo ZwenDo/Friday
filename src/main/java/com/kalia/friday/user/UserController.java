@@ -1,9 +1,5 @@
 package com.kalia.friday.user;
 
-import com.kalia.friday.dto.UserCredsDTO;
-import com.kalia.friday.dto.UserDeleteDTO;
-import com.kalia.friday.dto.UserPasswordUpdateDTO;
-import com.kalia.friday.dto.UserResponseDTO;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;

@@ -1,10 +1,7 @@
-package com.kalia.friday;
+package com.kalia.friday.event;
 
-import com.kalia.friday.dto.EventDTO;
-import com.kalia.friday.dto.EventResponseDTO;
-import com.kalia.friday.dto.LoginSessionDTO;
-import com.kalia.friday.event.Event;
 import com.kalia.friday.login.Login;
+import com.kalia.friday.login.LoginSessionDTO;
 import com.kalia.friday.user.User;
 import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.http.HttpRequest;

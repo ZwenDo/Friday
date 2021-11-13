@@ -1,8 +1,6 @@
 package com.kalia.friday.event;
 
-import com.kalia.friday.dto.EventDTO;
-import com.kalia.friday.dto.EventResponseDTO;
-import com.kalia.friday.dto.LoginSessionDTO;
+import com.kalia.friday.login.LoginSessionDTO;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;

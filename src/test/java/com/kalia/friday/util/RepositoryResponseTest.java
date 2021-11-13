@@ -1,6 +1,5 @@
-package com.kalia.friday;
+package com.kalia.friday.util;
 
-import com.kalia.friday.util.RepositoryResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

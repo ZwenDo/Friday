@@ -1,7 +1,6 @@
 package com.kalia.friday.login;
 
-import com.kalia.friday.dto.LoginSessionDTO;
-import com.kalia.friday.dto.UserCredsDTO;
+import com.kalia.friday.user.UserCredsDTO;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;

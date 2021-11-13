@@ -1,15 +1,12 @@
-package com.kalia.friday;
+package com.kalia.friday.util;
 
-import com.kalia.friday.util.SHA512Hasher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.security.NoSuchAlgorithmException;
 
 public class HasherTest {
 
     @Test
-    public void testHasherTwiceWithOneInstance() throws NoSuchAlgorithmException {
+    public void testHasherTwiceWithOneInstance() {
         var toHash = "APZOEI102938";
 
         var hasher = new SHA512Hasher();
@@ -21,7 +18,7 @@ public class HasherTest {
     }
 
     @Test
-    public void testHasherTwiceWithTwoInstances() throws NoSuchAlgorithmException {
+    public void testHasherTwiceWithTwoInstances() {
         var toHash = "APZOEI102938";
 
         var hasher1 = new SHA512Hasher();
