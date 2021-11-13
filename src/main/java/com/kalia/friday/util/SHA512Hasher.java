@@ -21,6 +21,7 @@ public final class SHA512Hasher {
 
     private final Path saltPath = Path.of("resources", "salt.txt");
     private final Logger logger = LoggerFactory.getLogger(SHA512Hasher.class);
+
     private final MessageDigest md;
     private final byte[] salt;
 

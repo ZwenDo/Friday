@@ -1,8 +1,9 @@
 package com.kalia.friday.event;
 
-import com.kalia.friday.login.LoginRepository;
+import com.kalia.friday.user.UserRepository;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.transaction.annotation.ReadOnly;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import javax.persistence.EntityManager;
@@ -18,37 +19,28 @@ import static java.util.Objects.requireNonNull;
  */
 @Singleton
 public class EventRepositoryImpl implements EventRepository {
-    private final EntityManager manager;
-    private final LoginRepository loginRepository;
 
-    /**
-     * Used by Micronaut to create a singleton repository by injection.
-     *
-     * @param manager the injected {@code EntityManager}
-     * @param loginRepository the injected {@code LoginRepository}
-     */
-    public EventRepositoryImpl(EntityManager manager, LoginRepository loginRepository) {
-        this.manager = requireNonNull(manager);
-        this.loginRepository = requireNonNull(loginRepository);
-    }
+    @Inject
+    private EntityManager manager;
+
+    @Inject
+    private UserRepository userRepository;
 
     @Override
     @ReadOnly
-    public RepositoryResponse<Event> authenticatedFindById(UUID id, UUID userId, UUID userToken) {
+    public RepositoryResponse<Event> findById(UUID id) {
         requireNonNull(id);
-        requireNonNull(userId);
-        requireNonNull(userToken);
-        return getIfAuthenticated(id, userId, userToken);
+        var event = manager.find(Event.class, id);
+        return event == null ? RepositoryResponse.notFound() : RepositoryResponse.ok(event);
     }
 
     @Override
     @ReadOnly
-    public RepositoryResponse<List<Event>> authenticatedFindByUserId(UUID userId, UUID userToken) {
+    public RepositoryResponse<List<Event>> findByUserId(UUID userId) {
         requireNonNull(userId);
-        requireNonNull(userToken);
-        var userAuthenticate = loginRepository.checkIdentity(userId, userToken);
-        if (userAuthenticate.status() != RepositoryResponse.Status.OK) { // invalid user.
-            return RepositoryResponse.unauthorized();
+        var user = userRepository.findById(userId);
+        if (user.status() == RepositoryResponse.Status.NOT_FOUND) {
+            return RepositoryResponse.notFound();
         }
         var result = manager.createQuery("SELECT e FROM Event e WHERE e.id = :userId", Event.class)
                 .setParameter("userId", userId)
@@ -58,34 +50,25 @@ public class EventRepositoryImpl implements EventRepository {
 
     @Override
     @Transactional
-    public RepositoryResponse<Event> authenticatedSave(
-            UUID userId,
-            UUID userToken,
-            String title,
-            String description,
-            String place,
-            String recurRuleParts
-    ) {
+    public RepositoryResponse<Event> save(UUID userId, String title, String description, String place, String recurRuleParts) {
         requireNonNull(userId);
         requireNonNull(title);
         requireNonNull(recurRuleParts);
-        var login = loginRepository.checkIdentity(userId, userToken);
-        if (login.status() != RepositoryResponse.Status.OK) {
-            return RepositoryResponse.unauthorized();
+        var user = userRepository.findById(userId);
+        if (user.status() == RepositoryResponse.Status.NOT_FOUND) {
+            return RepositoryResponse.notFound();
         }
-        var event = new Event(login.get().user(), title, description, place, recurRuleParts);
+        var event = new Event(user.get(), title, description, place, recurRuleParts);
         manager.persist(event);
         return RepositoryResponse.ok(event);
     }
 
     @Override
     @Transactional
-    public RepositoryResponse<Event> authenticatedDeleteById(UUID id, UUID userId, UUID userToken) {
+    public RepositoryResponse<Event> deleteById(UUID id) {
         requireNonNull(id);
-        requireNonNull(userId);
-        requireNonNull(userToken);
-        var event = getIfAuthenticated(id, userId, userToken);
-        if (event.status() != RepositoryResponse.Status.OK) {
+        var event = findById(id);
+        if (event.status() == RepositoryResponse.Status.NOT_FOUND) {
             return event;
         }
         manager.remove(event.get());
@@ -94,52 +77,24 @@ public class EventRepositoryImpl implements EventRepository {
 
     @Override
     @Transactional
-    public RepositoryResponse<Event> authenticatedUpdate(
-            UUID id,
-            UUID userId,
-            UUID userToken,
-            String title,
-            String description,
-            String place,
-            String recurRuleParts
-    ) {
+    public RepositoryResponse<Event> edit(UUID id, String title, String description, String place, String recurRuleParts) {
         requireNonNull(id);
         requireNonNull(title);
-        var eventGetResponse = getIfAuthenticated(id, userId, userToken);
-        if (eventGetResponse.status() != RepositoryResponse.Status.OK) {
-            return eventGetResponse;
+        var event = findById(id);
+        if (event.status() == RepositoryResponse.Status.NOT_FOUND) {
+            return event;
         }
-        var event = eventGetResponse.get();
-        event.setTitle(title);
-        event.setDescription(description);
-        event.setPlace(place);
-        event.setRecurRuleParts(recurRuleParts);
-        return RepositoryResponse.ok(eventGetResponse.get());
-    }
-
-    /**
-     * @return unauthorized if wrong creds or if user is not the owner of the event | not found if event is not found
-     */
-    private RepositoryResponse<Event> getIfAuthenticated(UUID eventId, UUID userId, UUID userToken) {
-        var userAuthenticate = loginRepository.checkIdentity(userId, userToken);
-        if (userAuthenticate.status() != RepositoryResponse.Status.OK) { // invalid user.
-            return RepositoryResponse.unauthorized();
-        }
-
-        var eventRepository = findById(eventId);
-        if (eventRepository.status() == RepositoryResponse.Status.NOT_FOUND) { // not found.
-            return eventRepository;
-        }
-
-        if (!eventRepository.get().user().equals(userAuthenticate.get().user())) { // unauthorized access.
-            return RepositoryResponse.unauthorized();
-        }
-
-        return eventRepository; // ok.
-    }
-
-    private RepositoryResponse<Event> findById(UUID id) {
-        var event = manager.find(Event.class, id);
-        return event == null ? RepositoryResponse.notFound() : RepositoryResponse.ok(event);
+        manager.createQuery("UPDATE Event SET title = :title," +
+                        "description = :description," +
+                        "place = :place," +
+                        "recurRuleParts = :recurRuleParts" +
+                        " WHERE id = :id")
+                .setParameter("title", title)
+                .setParameter("description", description)
+                .setParameter("place", place)
+                .setParameter("recurRuleParts", recurRuleParts)
+                .setParameter("id", id)
+                .executeUpdate();
+        return RepositoryResponse.ok(event.get());
     }
 }
