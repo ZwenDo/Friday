@@ -30,7 +30,9 @@ public class UserRepositoryImpl implements UserRepository {
     public RepositoryResponse<User> findById(UUID id) {
         requireNonNull(id);
         var user = manager.find(User.class, id);
-        return user == null ? RepositoryResponse.notFound() : RepositoryResponse.ok(user);
+        if (user == null) return RepositoryResponse.notFound();
+        manager.detach(user); // detach before return
+        return RepositoryResponse.ok(user);
     }
 
     @Override
@@ -38,11 +40,14 @@ public class UserRepositoryImpl implements UserRepository {
     public RepositoryResponse<User> findByUsername(String username) {
         requireNonNull(username);
         var result = manager
-            .createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
-            .setParameter("username", username)
-            .getResultList();
+                .createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", username)
+                .getResultList()
+                .stream()
+                .findFirst();
         if (result.isEmpty()) return RepositoryResponse.notFound();
-        return RepositoryResponse.ok(result.get(0));
+        manager.detach(result.get()); // detach before return
+        return RepositoryResponse.ok(result.get());
     }
 
     @Override
@@ -53,6 +58,8 @@ public class UserRepositoryImpl implements UserRepository {
         var hashedPwd = hasher.hash(password);
         var user = new User(username, hashedPwd);
         manager.persist(user);
+        manager.flush(); // flush before detach
+        manager.detach(user);
         return RepositoryResponse.ok(user);
     }
 
@@ -61,11 +68,11 @@ public class UserRepositoryImpl implements UserRepository {
     public RepositoryResponse<User> deleteById(UUID id, String password) {
         requireNonNull(id);
         requireNonNull(password);
-        var response = checkIdentity(id, password);
-        if (response.status() == RepositoryResponse.Status.OK) {
-            manager.remove(response.get());
+        var getResponse = checkIdentity(id, password);
+        if (getResponse.status() == RepositoryResponse.Status.OK) {
+            manager.remove(getResponse.get());
         }
-        return response;
+        return getResponse;
     }
 
     @Override
@@ -75,10 +82,11 @@ public class UserRepositoryImpl implements UserRepository {
         requireNonNull(oldPassword);
         requireNonNull(newPassword);
         var response = checkIdentity(id, oldPassword);
-        if (response.status() == RepositoryResponse.Status.OK) {
-            var hashed = hasher.hash(newPassword);
-            response.get().setPassword(hashed);
-        }
+        if (response.status() != RepositoryResponse.Status.OK) return response;
+        var hashed = hasher.hash(newPassword);
+        var user = response.get();
+        manager.flush();
+        manager.detach(user);
         return response;
     }
 

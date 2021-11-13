@@ -32,7 +32,11 @@ public class EventRepositoryImpl implements EventRepository {
         requireNonNull(id);
         requireNonNull(userId);
         requireNonNull(userToken);
-        return getIfAuthenticated(id, userId, userToken);
+        var event = getIfAuthenticated(id, userId, userToken);
+        if (event.status() == RepositoryResponse.Status.OK) {
+            manager.detach(event); // if present detach before return
+        }
+        return event;
     }
 
     @Override
@@ -47,6 +51,7 @@ public class EventRepositoryImpl implements EventRepository {
         var result = manager.createQuery("SELECT e FROM Event e WHERE e.id = :userId", Event.class)
                 .setParameter("userId", userId)
                 .getResultList();
+        result.forEach(it -> manager.detach(it)); // detach before return
         return RepositoryResponse.ok(result);
     }
 
@@ -69,6 +74,8 @@ public class EventRepositoryImpl implements EventRepository {
         }
         var event = new Event(login.get().user(), title, description, place, recurRuleParts);
         manager.persist(event);
+        manager.flush();
+        manager.detach(event);
         return RepositoryResponse.ok(event);
     }
 
@@ -78,12 +85,12 @@ public class EventRepositoryImpl implements EventRepository {
         requireNonNull(id);
         requireNonNull(userId);
         requireNonNull(userToken);
-        var event = getIfAuthenticated(id, userId, userToken);
-        if (event.status() != RepositoryResponse.Status.OK) {
-            return event;
+        var eventGetResponse = getIfAuthenticated(id, userId, userToken);
+        if (eventGetResponse.status() != RepositoryResponse.Status.OK) {
+            return eventGetResponse;
         }
-        manager.remove(event.get());
-        return RepositoryResponse.ok(event.get());
+        manager.remove(eventGetResponse.get());
+        return eventGetResponse;
     }
 
     @Override
@@ -108,7 +115,9 @@ public class EventRepositoryImpl implements EventRepository {
         event.setDescription(description);
         event.setPlace(place);
         event.setRecurRuleParts(recurRuleParts);
-        return RepositoryResponse.ok(eventGetResponse.get());
+        manager.flush(); // flush changes before detach
+        manager.detach(event);
+        return eventGetResponse;
     }
 
     /**

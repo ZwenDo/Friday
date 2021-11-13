@@ -39,6 +39,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         var result = manager
             .createQuery("SELECT l FROM Login l", Login.class)
             .getResultList();
+        result.forEach(it -> manager.detach(it)); // detach before return
         return RepositoryResponse.ok(result);
     }
 
@@ -47,14 +48,17 @@ public class LoginRepositoryImpl implements LoginRepository {
     public RepositoryResponse<Login> checkIdentity(@NotNull UUID userId, @NotNull UUID token) {
         requireNonNull(userId);
         requireNonNull(token);
-        var login = findLoginByToken(token);
-        if (login.status() != OK ||
-            !login.get().user().id().equals(userId)
+        var loginResponse = findLoginByToken(token);
+        if (loginResponse.status() != OK ||
+            !loginResponse.get().user().id().equals(userId)
         ) {
             return RepositoryResponse.notFound();
         }
-        login.get().setLastRefresh(LocalDateTime.now());
-        return login;
+        var login = loginResponse.get();
+        login.setLastRefresh(LocalDateTime.now());
+        manager.flush(); // flush before detach
+        manager.detach(login);
+        return loginResponse;
     }
 
     @Override
@@ -62,14 +66,17 @@ public class LoginRepositoryImpl implements LoginRepository {
     public RepositoryResponse<Login> login(@NotNull String username, @NotNull String password) {
         requireNonNull(username);
         requireNonNull(password);
-        var user = userRepository.findByUsername(username);
-        if (user.status() != OK ||
-            !hasher.hash(password).equals(user.get().password())
+        var userResponse = userRepository.findByUsername(username);
+        if (userResponse.status() != OK ||
+            !hasher.hash(password).equals(userResponse.get().password())
         ) {
             return RepositoryResponse.unauthorized();
         }
-        var login = new Login(user.get(), LocalDateTime.now());
-        user.get().logins().add(login); // persists a login in the db
+        var user = userResponse.get();
+        var login = new Login(user, LocalDateTime.now());
+        user.logins().add(login);
+        manager.flush(); // flush before detach
+        manager.detach(login);// persists a login in the db
         return RepositoryResponse.ok(login);
     }
 
