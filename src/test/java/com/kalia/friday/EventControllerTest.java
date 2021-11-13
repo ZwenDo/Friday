@@ -21,7 +21,6 @@ import org.junit.jupiter.api.TestInstance;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -46,7 +45,6 @@ public class EventControllerTest {
     private Login login;
 
     @BeforeEach
-    @Transactional
     public void setupUserAndLogin() {
         var username = UUID.randomUUID().toString(); // generate random username to avoid conflicts with DB contents
         user = new User(username, hasher.hash("password"));
@@ -56,7 +54,6 @@ public class EventControllerTest {
     }
 
     @AfterEach
-    @Transactional
     public void removeUserAndLogin() {
         manager.remove(manager.find(User.class, user.id()));
     }
@@ -80,7 +77,7 @@ public class EventControllerTest {
     }
 
     @Test
-    public void testSaveUnknownUserFails() {
+    public void testSaveWithWrongUserIdFails() {
         var saveBody = new EventDTO(
                 UUID.randomUUID(),
                 login.token(),
@@ -98,7 +95,7 @@ public class EventControllerTest {
     }
 
     @Test
-    public void testSaveUnknownTokenFails() {
+    public void testSaveWithWrongLoginTokenFails() {
         var saveBody = new EventDTO(
                 user.id(),
                 UUID.randomUUID(),
@@ -144,7 +141,7 @@ public class EventControllerTest {
     }
 
     @Test
-    public void testDeleteWithWrongIdFails() {
+    public void testDeleteWithWrongEventIdFails() {
         var event = new Event(user, "title", null, null, "rules");
         manager.persist(event);
         manager.getTransaction().commit();
@@ -170,7 +167,7 @@ public class EventControllerTest {
     }
 
     @Test
-    public void testDeleteWithWrongTokenFails() {
+    public void testDeleteWithWrongLoginTokenFails() {
         var event = new Event(user, "title", null, null, "rules");
         manager.persist(event);
         manager.getTransaction().commit();
@@ -179,7 +176,6 @@ public class EventControllerTest {
                 .toBlocking()
                 .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO))
         );
-        manager.remove(event);
     }
 
     @Test
@@ -201,12 +197,13 @@ public class EventControllerTest {
                 .toBlocking()
                 .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO))
         );
-
-        manager.remove(event);
+        var tr = manager.getTransaction();
+        tr.begin();
+        manager.remove(otherLogin);
         manager.remove(otherUser);
+        tr.commit();
     }
 
-    // FIXME
     @Test
     public void testUpdate() {
         var event = new Event(user, "title", null, null, "rules");
@@ -224,6 +221,83 @@ public class EventControllerTest {
                 .toBlocking()
                 .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class);
         assertEquals(HttpStatus.OK, updateResponse.getStatus());
+        manager.refresh(event);
         assertEquals("description", event.description());
+    }
+
+    @Test
+    public void testUpdateWrongEventIdFails() {
+        var event = new Event(user, "title", null, null, "rules");
+        manager.persist(event);
+        manager.getTransaction().commit();
+        var updateDTO = new EventDTO(
+                user.id(),
+                login.token(),
+                "title",
+                "description",
+                "place",
+                "rules"
+        );
+        assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("/update/" + UUID.randomUUID(), updateDTO), EventResponseDTO.class)
+        );
+    }
+
+    @Test
+    public void testUpdateWrongUserIdFails() {
+        var event = new Event(user, "title", null, null, "rules");
+        manager.persist(event);
+        manager.getTransaction().commit();
+        var updateDTO = new EventDTO(
+                UUID.randomUUID(),
+                login.token(),
+                "title",
+                "description",
+                "place",
+                "rules"
+        );
+        assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
+        );
+    }
+
+    @Test
+    public void testUpdateWrongLoginTokenFails() {
+        var event = new Event(user, "title", null, null, "rules");
+        manager.persist(event);
+        manager.getTransaction().commit();
+        var updateDTO = new EventDTO(
+                user.id(),
+                UUID.randomUUID(),
+                "title",
+                "description",
+                "place",
+                "rules"
+        );
+        assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
+        );
+    }
+
+    @Test
+    public void testUpdateWithInvalidValuesFails() {
+        var event = new Event(user, "title", null, null, "rules");
+        manager.persist(event);
+        manager.getTransaction().commit();
+        var updateDTO = new EventDTO(
+                user.id(),
+                login.token(),
+                "title",
+                "", // invalid blank desc
+                "place",
+                "rules"
+        );
+        assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
+        );
     }
 }
