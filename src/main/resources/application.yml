@@ -3,7 +3,7 @@ micronaut:
     name: friday
 datasources:
   default:
-    url: ${JDBC_URL:`jdbc:h2:file:./db/friday;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`}
+    url: ${JDBC_URL:`jdbc:h2:file:./db/friday`}
     username: ${JDBC_USER:root}
     password: ${JDBC_PASSWORD:root}
     driverClassName: ${JDBC_DRIVER:org.h2.Driver}

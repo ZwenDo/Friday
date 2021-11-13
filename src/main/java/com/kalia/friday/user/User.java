@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +27,9 @@ import static java.util.Objects.requireNonNull;
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 234567543562L;
 
     /**
      * Necessary empty constructor for Micronaut and JPA.

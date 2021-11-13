@@ -6,7 +6,6 @@ import com.kalia.friday.dto.UserPasswordUpdateDTO;
 import com.kalia.friday.dto.UserResponseDTO;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -65,12 +64,13 @@ public class UserController {
      * @return OK if deleted | NOT_FOUND if the id is unknown | BAD_REQUEST if the password is incorrect
      */
     @Delete("/delete/{id}")
-    public HttpResponse<Object> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
+    public HttpResponse<?> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         requireNonNull(id);
         requireNonNull(userDeleteDTO);
         var deleteUserResponse = repository.deleteById(id, userDeleteDTO.password());
-        var httpResponse = toEmptyHttpResponse(deleteUserResponse.status());
-        return httpResponse.headers(h -> h.location(URI.create("/user/delete/" + id)));
+        return RepositoryResponse
+                .toEmptyHttpResponse(deleteUserResponse.status())
+                .headers(h -> h.location(URI.create("/user/delete/" + id)));
     }
 
     /**
@@ -85,19 +85,12 @@ public class UserController {
      * @return OK if updated | NOT_FOUND if the id is unknown | BAD_REQUEST if the old password is incorrect
      */
     @Put("/update/{id}")
-    public HttpResponse<Object> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
+    public HttpResponse<?> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
         requireNonNull(id);
         requireNonNull(upuDTO);
         var updatePwdResponse = repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword());
-        var httpResponse = toEmptyHttpResponse(updatePwdResponse.status());
-        return httpResponse.headers(h -> h.location(URI.create("/user/update/" + id)));
-    }
-
-    private static MutableHttpResponse<Object> toEmptyHttpResponse(RepositoryResponse.Status repositoryResponseStatus) {
-        return switch (repositoryResponseStatus) {
-            case OK -> HttpResponse.noContent();
-            case NOT_FOUND -> HttpResponse.notFound();
-            case UNAUTHORIZED -> HttpResponse.badRequest();
-        };
+        return RepositoryResponse
+                .toEmptyHttpResponse(updatePwdResponse.status())
+                .headers(h -> h.location(URI.create("/user/update/" + id)));
     }
 }
