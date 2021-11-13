@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -22,6 +23,9 @@ import static java.util.Objects.requireNonNull;
 @Entity
 @Table(name = "event")
 public class Event implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 23456766L;
 
     /**
      * Necessary empty constructor for Micronaut and JPA.
@@ -47,8 +51,8 @@ public class Event implements Serializable {
     ) {
         this.user = requireNonNull(user);
         this.title = requireNonNull(title);
-        this.description = requireNonNull(description);
-        this.place = requireNonNull(place);
+        this.description = description;
+        this.place = place;
         this.recurRuleParts = requireNonNull(recurRuleParts);
     }
 

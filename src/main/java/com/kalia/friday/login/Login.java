@@ -12,6 +12,7 @@ import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -25,6 +26,9 @@ import static java.util.Objects.requireNonNull;
 @Table(name = "login")
 @IdClass(LoginId.class)
 public class Login implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 423453456L;
 
     /**
      * Necessary empty constructor for Micronaut and JPA.
