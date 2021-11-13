@@ -116,6 +116,22 @@ public class EventControllerTest {
     }
 
     @Test
+    public void testSaveInvalidEvent() {
+        var saveBody = new EventDTO(
+                user.id(),
+                login.token(),
+                "",
+                null,
+                "place",
+                ""
+        );
+        assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class)
+        );
+    }
+
+    @Test
     public void testDelete() {
         var event = new Event(user, "title", null, null, "rules");
         manager.persist(event);
@@ -188,5 +204,26 @@ public class EventControllerTest {
 
         manager.remove(event);
         manager.remove(otherUser);
+    }
+
+    // FIXME
+    @Test
+    public void testUpdate() {
+        var event = new Event(user, "title", null, null, "rules");
+        manager.persist(event);
+        manager.getTransaction().commit();
+        var updateDTO = new EventDTO(
+                user.id(),
+                login.token(),
+                "title",
+                "description",
+                "place",
+                "rules"
+        );
+        var updateResponse = client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class);
+        assertEquals(HttpStatus.OK, updateResponse.getStatus());
+        assertEquals("description", event.description());
     }
 }
