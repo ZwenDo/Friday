@@ -96,7 +96,21 @@ public class User implements Serializable {
         return password;
     }
 
+    /**
+     * Gets the logins of the user row.
+     *
+     * @return the logins of the user
+     */
     public Set<Login> logins() {
         return logins;
+    }
+
+    /**
+     * Sets the password of the user row.
+     *
+     * @param password the new password to be set
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

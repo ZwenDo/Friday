@@ -76,7 +76,8 @@ public class UserRepositoryImpl implements UserRepository {
         requireNonNull(newPassword);
         var response = checkIdentity(id, oldPassword);
         if (response.status() == RepositoryResponse.Status.OK) {
-            updatePasswordQuery(id, newPassword);
+            var hashed = hasher.hash(newPassword);
+            response.get().setPassword(hashed);
         }
         return response;
     }
@@ -92,13 +93,5 @@ public class UserRepositoryImpl implements UserRepository {
         return user.get().password().equals(hashedPwd)
                 ? RepositoryResponse.ok(user.get())
                 : RepositoryResponse.unauthorized();
-    }
-
-    private void updatePasswordQuery(UUID id, String newPassword) {
-        var hashedNewPwd = hasher.hash(newPassword);
-        manager.createQuery("UPDATE User SET password = :password WHERE id = :id")
-                .setParameter("id", id)
-                .setParameter("password", hashedNewPwd)
-                .executeUpdate();
     }
 }
