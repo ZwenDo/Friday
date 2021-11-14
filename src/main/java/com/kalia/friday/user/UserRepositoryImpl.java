@@ -57,9 +57,7 @@ public class UserRepositoryImpl implements UserRepository {
         requireNonNull(password);
         var hashedPwd = hasher.hash(password);
         var user = new User(username, hashedPwd);
-        manager.persist(user);
-        manager.flush(); // flush before detach
-        manager.detach(user);
+        manager.merge(user);
         return RepositoryResponse.ok(user);
     }
 

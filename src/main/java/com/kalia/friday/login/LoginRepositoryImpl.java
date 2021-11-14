@@ -122,8 +122,10 @@ public class LoginRepositoryImpl implements LoginRepository {
         var result = manager
             .createQuery("SELECT l FROM Login l WHERE l.token = :token", Login.class)
             .setParameter("token", token)
-            .getResultList();
+            .getResultList()
+            .stream()
+            .findFirst();
         if (result.isEmpty()) return RepositoryResponse.unauthorized();
-        return RepositoryResponse.ok(result.get(0));
+        return RepositoryResponse.ok(result.get());
     }
 }

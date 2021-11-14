@@ -73,9 +73,7 @@ public class EventRepositoryImpl implements EventRepository {
             return RepositoryResponse.unauthorized();
         }
         var event = new Event(login.get().user(), title, description, place, recurRuleParts);
-        manager.persist(event);
-        manager.flush();
-        manager.detach(event);
+        manager.merge(event);
         return RepositoryResponse.ok(event);
     }
 
