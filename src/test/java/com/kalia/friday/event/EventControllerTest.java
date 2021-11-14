@@ -33,12 +33,12 @@ public class EventControllerTest {
     @Client("/event")
     @Inject
     private HttpClient client;
+
     @PersistenceContext
     private EntityManager manager;
+
     @Inject
     private SHA512Hasher hasher;
-    @Inject
-    private EventRepository repository;
 
     private User user;
     private Login login;

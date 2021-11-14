@@ -97,7 +97,7 @@ public final class RepositoryResponse<T> {
         return switch (repositoryResponseStatus) {
             case OK -> HttpResponse.noContent();
             case NOT_FOUND -> HttpResponse.notFound();
-            case UNAUTHORIZED -> HttpResponse.badRequest();
+            case UNAUTHORIZED -> HttpResponse.unauthorized();
         };
     }
 }
