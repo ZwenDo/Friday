@@ -118,7 +118,6 @@ public class LoginRepositoryImpl implements LoginRepository {
     }
 
     private RepositoryResponse<Login> findLoginByToken(UUID token) {
-        requireNonNull(token);
         var result = manager
             .createQuery("SELECT l FROM Login l WHERE l.token = :token", Login.class)
             .setParameter("token", token)
