@@ -5,6 +5,7 @@ import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
@@ -55,10 +56,10 @@ public interface EventRepository {
     RepositoryResponse<Event> authenticatedSave(
             @NotNull UUID userId,
             @NotNull UUID userToken,
-            @NotNull @NotBlank String title,
+            @NotEmpty String title,
             @NotBlank String description,
             @NotBlank String place,
-            @NotNull @NotBlank String recurRuleParts
+            @NotEmpty String recurRuleParts
     );
 
     /**
@@ -87,9 +88,9 @@ public interface EventRepository {
             @NotNull UUID id,
             @NotNull UUID userId,
             @NotNull UUID userToken,
-            @NotNull @NotBlank String title,
+            @NotEmpty String title,
             @NotBlank String description,
             @NotBlank String place,
-            @NotNull @NotBlank String recurRuleParts
+            @NotEmpty String recurRuleParts
     );
 }
