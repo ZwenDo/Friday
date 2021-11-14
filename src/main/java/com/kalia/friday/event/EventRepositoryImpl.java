@@ -72,8 +72,11 @@ public class EventRepositoryImpl implements EventRepository {
         if (login.status() != RepositoryResponse.Status.OK) {
             return RepositoryResponse.unauthorized();
         }
-        var event = new Event(login.get().user(), title, description, place, recurRuleParts);
-        manager.merge(event);
+        var user = login.get().user();
+        var event = new Event(user, title, description, place, recurRuleParts);
+        user.events().add(event);
+        manager.flush();
+        manager.detach(event);
         return RepositoryResponse.ok(event);
     }
 

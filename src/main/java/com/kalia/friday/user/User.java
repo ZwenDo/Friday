@@ -101,6 +101,15 @@ public class User implements Serializable {
     }
 
     /**
+     * Gets the events of the user row.
+     *
+     * @return the events of the user
+     */
+    public Set<Event> events() {
+        return events;
+    }
+
+    /**
      * Gets the logins of the user row.
      *
      * @return the logins of the user
