@@ -100,7 +100,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         var hashedPwd = hasher.hash(password);
         return user.get().password().equals(hashedPwd)
-                ? RepositoryResponse.ok(user.get())
-                : RepositoryResponse.unauthorized();
+            ? RepositoryResponse.ok(manager.merge(user.get()))
+            : RepositoryResponse.unauthorized();
     }
 }
