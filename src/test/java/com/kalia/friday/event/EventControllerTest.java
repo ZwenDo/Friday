@@ -37,8 +37,6 @@ public class EventControllerTest {
     private EntityManager manager;
     @Inject
     private SHA512Hasher hasher;
-    @Inject
-    private EventRepository repository;
 
     private User user;
     private Login login;
@@ -62,7 +60,8 @@ public class EventControllerTest {
                 "title",
                 "description",
                 "place",
-                "rec"
+                "rec",
+                LocalDateTime.now()
         );
         var responseSave = client
                 .toBlocking()
@@ -80,7 +79,8 @@ public class EventControllerTest {
                 "title",
                 "description",
                 "place",
-                "rec"
+                "rec",
+                LocalDateTime.now()
         );
         var response = assertThrows(
                 HttpClientResponseException.class,
@@ -98,7 +98,8 @@ public class EventControllerTest {
                 "title",
                 "description",
                 "place",
-                "rec"
+                "rec",
+                LocalDateTime.now()
         );
         var response = assertThrows(
                 HttpClientResponseException.class,
@@ -116,7 +117,8 @@ public class EventControllerTest {
                 "",
                 null,
                 "place",
-                ""
+                "",
+                LocalDateTime.now()
         );
         assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
@@ -126,7 +128,7 @@ public class EventControllerTest {
 
     @Test
     public void testDelete() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), login.token());
@@ -138,7 +140,7 @@ public class EventControllerTest {
 
     @Test
     public void testDeleteWithWrongEventIdFails() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), login.token());
@@ -151,7 +153,7 @@ public class EventControllerTest {
 
     @Test
     public void testDeleteWithWrongUserIdFails() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(UUID.randomUUID(), login.token());
@@ -163,7 +165,7 @@ public class EventControllerTest {
 
     @Test
     public void testDeleteWithWrongLoginTokenFails() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), UUID.randomUUID());
@@ -176,11 +178,11 @@ public class EventControllerTest {
     @Test
     public void testDeleteOtherUserEventFails() {
         // creates event for user
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
 
         // creates new user and login
-        var otherUser = new User(UUID.randomUUID().toString(), "password");
+        var otherUser = new User(UUID.randomUUID().toString(), hasher.hash("password"));
         manager.persist(otherUser);
         var otherLogin = new Login(otherUser, LocalDateTime.now());
         manager.persist(otherLogin);
@@ -196,7 +198,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdate() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -205,7 +207,8 @@ public class EventControllerTest {
                 "title",
                 "description",
                 "place",
-                "rules"
+                "rules",
+                LocalDateTime.now()
         );
         var updateResponse = client
                 .toBlocking()
@@ -217,7 +220,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWrongEventIdFails() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -226,7 +229,8 @@ public class EventControllerTest {
                 "title",
                 "description",
                 "place",
-                "rules"
+                "rules",
+                LocalDateTime.now()
         );
         assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
@@ -236,7 +240,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWrongUserIdFails() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -245,7 +249,8 @@ public class EventControllerTest {
                 "title",
                 "description",
                 "place",
-                "rules"
+                "rules",
+                LocalDateTime.now()
         );
         assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
@@ -255,7 +260,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWrongLoginTokenFails() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -264,7 +269,8 @@ public class EventControllerTest {
                 "title",
                 "description",
                 "place",
-                "rules"
+                "rules",
+                LocalDateTime.now()
         );
         assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
@@ -274,7 +280,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWithInvalidValuesFails() {
-        var event = new Event(user, "title", null, null, "rules");
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -283,7 +289,8 @@ public class EventControllerTest {
                 "title",
                 "", // invalid blank desc
                 "place",
-                "rules"
+                "rules",
+                LocalDateTime.now()
         );
         assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()

@@ -8,6 +8,7 @@ import jakarta.inject.Singleton;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,19 +66,21 @@ public class EventRepositoryImpl implements EventRepository {
             String title,
             String description,
             String place,
-            String recurRuleParts
+            String recurRuleParts,
+            LocalDateTime startDate
     ) {
         requireNonNull(userId);
         requireNotEmpty(title);
         requireNotBlank(description);
         requireNotBlank(place);
         requireNotEmpty(recurRuleParts);
+        requireNonNull(startDate);
         var login = loginRepository.checkIdentity(userId, userToken);
         if (login.status() != RepositoryResponse.Status.OK) {
             return RepositoryResponse.unauthorized();
         }
         var user = login.get().user();
-        var event = new Event(user, title, description, place, recurRuleParts);
+        var event = new Event(user, title, description, place, recurRuleParts, startDate);
         manager.merge(user).events().add(event);
         manager.flush();
         manager.detach(event);
@@ -107,7 +110,8 @@ public class EventRepositoryImpl implements EventRepository {
             String title,
             String description,
             String place,
-            String recurRuleParts
+            String recurRuleParts,
+            LocalDateTime localDateTime
     ) {
         requireNonNull(id);
         requireNonNull(userId);
@@ -115,6 +119,7 @@ public class EventRepositoryImpl implements EventRepository {
         requireNotBlank(description);
         requireNotBlank(place);
         requireNotEmpty(recurRuleParts);
+        requireNonNull(localDateTime);
         var eventGetResponse = getIfAuthenticated(id, userId, userToken);
         if (eventGetResponse.status() != RepositoryResponse.Status.OK) {
             return eventGetResponse;

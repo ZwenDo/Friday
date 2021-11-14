@@ -5,6 +5,7 @@ import io.micronaut.core.annotation.Introspected;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -16,5 +17,6 @@ public record EventResponseDTO(
         @NotEmpty String title,
         @NotBlank String description,
         @NotBlank String place,
-        @NotEmpty String recurRuleParts
+        @NotEmpty String recurRuleParts,
+        @NotNull LocalDateTime startDate
 ) {}
