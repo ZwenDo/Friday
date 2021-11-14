@@ -15,8 +15,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.UUID;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * API endpoint for communicating with the user side of the database.
  */
@@ -41,7 +39,6 @@ public class UserController {
      */
     @Post
     public HttpResponse<UserResponseDTO> save(@Body @Valid UserCredsDTO userCredsDTO) {
-        requireNonNull(userCredsDTO);
         var saveResponse = repository.save(userCredsDTO.username(), userCredsDTO.password());
         var user = saveResponse.get();
         return HttpResponse
@@ -61,8 +58,6 @@ public class UserController {
      */
     @Delete("/delete/{id}")
     public HttpResponse<?> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
-        requireNonNull(id);
-        requireNonNull(userDeleteDTO);
         var deleteUserResponse = repository.deleteById(id, userDeleteDTO.password());
         return RepositoryResponse
                 .toEmptyHttpResponse(deleteUserResponse.status())
@@ -82,8 +77,6 @@ public class UserController {
      */
     @Put("/update/{id}")
     public HttpResponse<?> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
-        requireNonNull(id);
-        requireNonNull(upuDTO);
         var updatePwdResponse = repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword());
         return RepositoryResponse
                 .toEmptyHttpResponse(updatePwdResponse.status())

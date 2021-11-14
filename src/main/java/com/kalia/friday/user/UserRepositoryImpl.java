@@ -92,8 +92,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private RepositoryResponse<User> checkIdentity(UUID id, String password) {
-        requireNonNull(id);
-        requireNonNull(password);
         var user = findById(id);
         if (user.status() == RepositoryResponse.Status.NOT_FOUND) {
             return user;

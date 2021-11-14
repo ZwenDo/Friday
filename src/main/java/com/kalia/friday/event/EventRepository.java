@@ -5,7 +5,9 @@ import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,17 +50,19 @@ public interface EventRepository {
      * @param title the title of the event
      * @param description the description of the event
      * @param place the place of the event
-     * @param recurRuleParts the recurrence rule parts of the event
+     * @param recurRuleParts the new {@code recurRuleParts} of the event
+     * @param startDate the date on which begins the event
      * @return Ok if saved | NotFound if the id is unknown
      */
     @Transactional
     RepositoryResponse<Event> authenticatedSave(
             @NotNull UUID userId,
             @NotNull UUID userToken,
-            @NotNull @NotBlank String title,
+            @NotEmpty String title,
             @NotBlank String description,
             @NotBlank String place,
-            @NotNull @NotBlank String recurRuleParts
+            @NotEmpty String recurRuleParts,
+            @NotNull LocalDateTime startDate
     );
 
     /**
@@ -80,6 +84,7 @@ public interface EventRepository {
      * @param description the new description of the event
      * @param place the new place of the event
      * @param recurRuleParts the new {@code recurRuleParts} of the event
+     * @param startDate the date on which begins the event
      * @return the edited event
      */
     @Transactional
@@ -87,9 +92,10 @@ public interface EventRepository {
             @NotNull UUID id,
             @NotNull UUID userId,
             @NotNull UUID userToken,
-            @NotNull @NotBlank String title,
+            @NotEmpty String title,
             @NotBlank String description,
             @NotBlank String place,
-            @NotNull @NotBlank String recurRuleParts
+            @NotEmpty String recurRuleParts,
+            @NotNull LocalDateTime startDate
     );
 }

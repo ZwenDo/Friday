@@ -16,8 +16,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.UUID;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * API endpoint for communicating with the event side of the database.
  */
@@ -49,14 +47,14 @@ public class EventController {
      */
     @Post
     public HttpResponse<@Valid EventResponseDTO> save(@Body @Valid EventDTO eventDTO) {
-        requireNonNull(eventDTO);
         var saveResponse = eventRepository.authenticatedSave(
             eventDTO.userId(),
             eventDTO.userToken(),
             eventDTO.title(),
             eventDTO.description(),
             eventDTO.place(),
-            eventDTO.recurRuleParts()
+            eventDTO.recurRuleParts(),
+            eventDTO.startDate()
         );
         if (saveResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
@@ -67,7 +65,8 @@ public class EventController {
                 createdEvent.title(),
                 createdEvent.description(),
                 createdEvent.place(),
-                createdEvent.recurRuleParts())
+                createdEvent.recurRuleParts(),
+                createdEvent.startDate())
         );
         return httpResponse.headers(h -> h.location(URI.create("/event/" + createdEvent.id())));
     }
@@ -86,8 +85,6 @@ public class EventController {
      */
     @Delete("/delete/{id}")
     public HttpResponse<?> delete(UUID id, @Body @Valid LoginSessionDTO loginSessionDTO) {
-        requireNonNull(id);
-        requireNonNull(loginSessionDTO);
         var deleteResponse = eventRepository.authenticatedDeleteById(
                 id,
                 loginSessionDTO.userId(),
@@ -122,8 +119,6 @@ public class EventController {
      */
     @Put("/update/{id}")
     public HttpResponse<@Valid EventResponseDTO> update(UUID id, @Body @Valid EventDTO eventDTO) {
-        requireNonNull(id);
-        requireNonNull(eventDTO);
         var updateResponse = eventRepository.authenticatedUpdate(
             id,
             eventDTO.userId(),
@@ -131,7 +126,8 @@ public class EventController {
             eventDTO.title(),
             eventDTO.description(),
             eventDTO.place(),
-            eventDTO.recurRuleParts()
+            eventDTO.recurRuleParts(),
+            eventDTO.startDate()
         );
         if (updateResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
@@ -142,7 +138,8 @@ public class EventController {
                 updatedEvent.title(),
                 updatedEvent.description(),
                 updatedEvent.place(),
-                updatedEvent.recurRuleParts())
+                updatedEvent.recurRuleParts(),
+                updatedEvent.startDate())
         );
         return httpResponse.headers(h -> h.location(URI.create("/event/" + updatedEvent.id())));
     }

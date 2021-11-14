@@ -4,6 +4,7 @@ import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -45,7 +46,7 @@ public interface UserRepository {
      * @return OK if created
      */
     @Transactional
-    RepositoryResponse<User> save(@NotNull String username, @NotNull String password);
+    RepositoryResponse<User> save(@NotEmpty String username, @NotEmpty String password);
 
     /**
      * Deletes a user by its id, provided the given password is the correct one.
@@ -55,7 +56,7 @@ public interface UserRepository {
      * @return OK if deleted | NOT_FOUND if the id is unknown | UNAUTHORIZED if the password is incorrect
      */
     @Transactional
-    RepositoryResponse<User> deleteById(@NotNull UUID id, @NotNull String password);
+    RepositoryResponse<User> deleteById(@NotNull UUID id, @NotEmpty String password);
 
     /**
      * Updates a user's password (by id), provided the old password is the correct one.
@@ -66,5 +67,5 @@ public interface UserRepository {
      * @return OK if updated | NOT_FOUND if the id is unknown | UNAUTHORIZED if the old password is incorrect
      */
     @Transactional
-    RepositoryResponse<User> updatePassword(@NotNull UUID id, @NotNull String oldPassword, @NotNull String newPassword);
+    RepositoryResponse<User> updatePassword(@NotNull UUID id, @NotEmpty String oldPassword, @NotEmpty String newPassword);
 }

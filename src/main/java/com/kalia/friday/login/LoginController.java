@@ -14,7 +14,6 @@ import javax.validation.Valid;
 import java.net.URI;
 
 import static com.kalia.friday.util.RepositoryResponse.Status.OK;
-import static java.util.Objects.requireNonNull;
 
 /**
  * API endpoint for communicating with the login side of the database.
@@ -49,7 +48,6 @@ public class LoginController {
      */
     @Post("/login")
     public HttpResponse<LoginSessionDTO> login(@Body @Valid UserCredsDTO userCredsDTO) {
-        requireNonNull(userCredsDTO);
         var loginResponse = repository.login(userCredsDTO.username(), userCredsDTO.password());
         MutableHttpResponse<LoginSessionDTO> httpResponse = loginResponse.status() == OK
             ? HttpResponse.created(new LoginSessionDTO(
@@ -71,7 +69,6 @@ public class LoginController {
      */
     @Post("/logout")
     public HttpResponse<Object> logout(@Body @Valid LoginSessionDTO loginSessionDTO) {
-        requireNonNull(loginSessionDTO);
         var httpResponse = checkAndRun(
             loginSessionDTO,
             () -> repository.logout(loginSessionDTO.token())
@@ -90,7 +87,6 @@ public class LoginController {
      */
     @Post("/logout/all")
     public HttpResponse<Object> logoutAll(@Body @Valid LoginSessionDTO loginSessionDTO) {
-        requireNonNull(loginSessionDTO);
         var httpResponse = checkAndRun(
             loginSessionDTO,
             () -> repository.logoutAll(loginSessionDTO.userId())
@@ -99,8 +95,6 @@ public class LoginController {
     }
 
     private MutableHttpResponse<Object> checkAndRun(LoginSessionDTO loginSessionDTO, Runnable request) {
-        requireNonNull(loginSessionDTO);
-        requireNonNull(request);
         var checkResponse = repository.checkIdentity(loginSessionDTO.userId(), loginSessionDTO.token());
         if (checkResponse.status() == OK) {
             request.run();

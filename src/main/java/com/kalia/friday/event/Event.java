@@ -14,6 +14,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
@@ -44,19 +45,22 @@ public class Event implements Serializable {
      * @param description    the optional description of the event
      * @param place          the optional location of the event
      * @param recurRuleParts the ICal recursion rule parts
+     * @param startDate the date on which begins the event
      */
     public Event(
         @NotNull User user,
         @NotEmpty String title,
         @NotBlank String description,
         @NotBlank String place,
-        @NotEmpty String recurRuleParts
+        @NotEmpty String recurRuleParts,
+        @NotNull LocalDateTime startDate
     ) {
         this.user = requireNonNull(user);
         this.title = requireNotEmpty(title);
         this.description = requireNotBlank(description);
         this.place = requireNotBlank(place);
         this.recurRuleParts = requireNotEmpty(recurRuleParts);
+        this.startDate = startDate;
     }
 
     @Id
@@ -66,8 +70,7 @@ public class Event implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @NotNull
-    @NotBlank
+    @NotEmpty
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -79,10 +82,13 @@ public class Event implements Serializable {
     @Column(name = "place")
     private String place;
 
-    @NotNull
-    @NotBlank
+    @NotEmpty
     @Column(name = "recur_rule_parts", nullable = false)
     private String recurRuleParts;
+
+    @NotNull
+    @Column(name = "start_date", nullable = false)
+    private LocalDateTime startDate;
 
     /**
      * Gets the id of the event.
@@ -139,6 +145,15 @@ public class Event implements Serializable {
     }
 
     /**
+     * Gets the startDate of the event.
+     *
+     * @return the startDate of the event
+     */
+    public LocalDateTime startDate() {
+        return startDate;
+    }
+
+    /**
      * Sets the title of the event.
      *
      * @param title the title to set
@@ -173,5 +188,9 @@ public class Event implements Serializable {
      */
     public void setRecurRuleParts(@NotEmpty String recurRuleParts) {
         this.recurRuleParts = requireNotEmpty(recurRuleParts);
+    }
+
+    public void setStartDate(@NotNull LocalDateTime startDate) {
+        this.startDate = requireNonNull(startDate);
     }
 }
