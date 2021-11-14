@@ -16,8 +16,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.UUID;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * API endpoint for communicating with the event side of the database.
  */
@@ -49,7 +47,6 @@ public class EventController {
      */
     @Post
     public HttpResponse<@Valid EventResponseDTO> save(@Body @Valid EventDTO eventDTO) {
-        requireNonNull(eventDTO);
         var saveResponse = eventRepository.authenticatedSave(
             eventDTO.userId(),
             eventDTO.userToken(),
@@ -86,8 +83,6 @@ public class EventController {
      */
     @Delete("/delete/{id}")
     public HttpResponse<?> delete(UUID id, @Body @Valid LoginSessionDTO loginSessionDTO) {
-        requireNonNull(id);
-        requireNonNull(loginSessionDTO);
         var deleteResponse = eventRepository.authenticatedDeleteById(
                 id,
                 loginSessionDTO.userId(),
@@ -122,8 +117,6 @@ public class EventController {
      */
     @Put("/update/{id}")
     public HttpResponse<@Valid EventResponseDTO> update(UUID id, @Body @Valid EventDTO eventDTO) {
-        requireNonNull(id);
-        requireNonNull(eventDTO);
         var updateResponse = eventRepository.authenticatedUpdate(
             id,
             eventDTO.userId(),
