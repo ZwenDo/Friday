@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static java.util.Objects.requireNonNull;
+import static com.kalia.friday.util.StringUtils.requireNotEmpty;
 
 /**
  * Represents the {@code User} table in the database.
@@ -44,11 +45,11 @@ public class User implements Serializable {
      * @param password the password of the user
      */
     public User(
-        @NotNull @NotBlank String username,
-        @NotNull @NotBlank String password
+        @NotEmpty String username,
+        @NotEmpty @NotBlank String password
     ) {
-        this.username = requireNonNull(username);
-        this.password = requireNonNull(password);
+        this.username = requireNotEmpty(username);
+        this.password = requireNotEmpty(password);
     }
 
     @Id
@@ -123,7 +124,7 @@ public class User implements Serializable {
      *
      * @param password the new password to be set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(@NotEmpty String password) {
+        this.password = requireNotEmpty(password);
     }
 }

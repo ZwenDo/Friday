@@ -91,7 +91,7 @@ public class Login implements Serializable {
      *
      * @param lastRefresh the timestamp of the last token refresh
      */
-    public void setLastRefresh(LocalDateTime lastRefresh) {
+    public void setLastRefresh(@NotNull LocalDateTime lastRefresh) {
         this.lastRefresh = requireNonNull(lastRefresh);
     }
 }
