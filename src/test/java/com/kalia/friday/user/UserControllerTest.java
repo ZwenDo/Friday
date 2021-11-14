@@ -39,7 +39,7 @@ public class UserControllerTest {
     private User user;
 
     @BeforeEach
-    public void insertFakeUser() {
+    public void setupUser() {
         user = new User(UUID.randomUUID().toString(), hasher.hash("1234"));
         manager.persist(user);
         manager.flush();
