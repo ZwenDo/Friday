@@ -53,7 +53,8 @@ public class EventController {
             eventDTO.title(),
             eventDTO.description(),
             eventDTO.place(),
-            eventDTO.recurRuleParts()
+            eventDTO.recurRuleParts(),
+            eventDTO.startDate()
         );
         if (saveResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
@@ -64,7 +65,8 @@ public class EventController {
                 createdEvent.title(),
                 createdEvent.description(),
                 createdEvent.place(),
-                createdEvent.recurRuleParts())
+                createdEvent.recurRuleParts(),
+                createdEvent.startDate())
         );
         return httpResponse.headers(h -> h.location(URI.create("/event/" + createdEvent.id())));
     }
@@ -124,7 +126,8 @@ public class EventController {
             eventDTO.title(),
             eventDTO.description(),
             eventDTO.place(),
-            eventDTO.recurRuleParts()
+            eventDTO.recurRuleParts(),
+            eventDTO.startDate()
         );
         if (updateResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
@@ -135,7 +138,8 @@ public class EventController {
                 updatedEvent.title(),
                 updatedEvent.description(),
                 updatedEvent.place(),
-                updatedEvent.recurRuleParts())
+                updatedEvent.recurRuleParts(),
+                updatedEvent.startDate())
         );
         return httpResponse.headers(h -> h.location(URI.create("/event/" + updatedEvent.id())));
     }
