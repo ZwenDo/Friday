@@ -74,7 +74,7 @@ public class EventRepositoryImpl implements EventRepository {
         }
         var user = login.get().user();
         var event = new Event(user, title, description, place, recurRuleParts);
-        user.events().add(event);
+        manager.merge(user).events().add(event);
         manager.flush();
         manager.detach(event);
         return RepositoryResponse.ok(event);

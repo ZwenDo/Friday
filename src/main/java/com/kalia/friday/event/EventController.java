@@ -48,15 +48,15 @@ public class EventController {
      * }
      */
     @Post
-    public HttpResponse<EventResponseDTO> save(@Body @Valid EventDTO eventDTO) {
+    public HttpResponse<@Valid EventResponseDTO> save(@Body @Valid EventDTO eventDTO) {
         requireNonNull(eventDTO);
         var saveResponse = eventRepository.authenticatedSave(
-                eventDTO.userId(),
-                eventDTO.userToken(),
-                eventDTO.title(),
-                eventDTO.description(),
-                eventDTO.place(),
-                eventDTO.recurRuleParts()
+            eventDTO.userId(),
+            eventDTO.userToken(),
+            eventDTO.title(),
+            eventDTO.description(),
+            eventDTO.place(),
+            eventDTO.recurRuleParts()
         );
         if (saveResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
@@ -121,17 +121,17 @@ public class EventController {
      * }
      */
     @Put("/update/{id}")
-    public HttpResponse<EventResponseDTO> update(UUID id, @Body @Valid EventDTO eventDTO) {
+    public HttpResponse<@Valid EventResponseDTO> update(UUID id, @Body @Valid EventDTO eventDTO) {
         requireNonNull(id);
         requireNonNull(eventDTO);
         var updateResponse = eventRepository.authenticatedUpdate(
-                id,
-                eventDTO.userId(),
-                eventDTO.userToken(),
-                eventDTO.title(),
-                eventDTO.description(),
-                eventDTO.place(),
-                eventDTO.recurRuleParts()
+            id,
+            eventDTO.userId(),
+            eventDTO.userToken(),
+            eventDTO.title(),
+            eventDTO.description(),
+            eventDTO.place(),
+            eventDTO.recurRuleParts()
         );
         if (updateResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();

@@ -74,7 +74,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         }
         var user = userResponse.get();
         var login = new Login(user, LocalDateTime.now());
-        user.logins().add(login);
+        manager.merge(user).logins().add(login);
         manager.flush(); // flush before detach
         manager.detach(login);// persists a login in the db
         return RepositoryResponse.ok(login);
@@ -95,7 +95,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         requireNonNull(userId);
         var user = userRepository.findById(userId);
         if (user.status() != OK) return RepositoryResponse.unauthorized();
-        var logins = user.get().logins();
+        var logins = manager.merge(user.get()).logins();
         var size = logins.size();
         var iterator = logins.iterator();
         iterator.forEachRemaining(l -> {
