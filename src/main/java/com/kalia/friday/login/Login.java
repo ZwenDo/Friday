@@ -55,6 +55,7 @@ public class Login implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @NotNull
     @Basic(optional = false)
     @Column(name = "last_refresh", nullable = false)
     private LocalDateTime lastRefresh;

@@ -66,8 +66,7 @@ public class Event implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @NotNull
-    @NotBlank
+    @NotEmpty
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -79,8 +78,7 @@ public class Event implements Serializable {
     @Column(name = "place")
     private String place;
 
-    @NotNull
-    @NotBlank
+    @NotEmpty
     @Column(name = "recur_rule_parts", nullable = false)
     private String recurRuleParts;
 

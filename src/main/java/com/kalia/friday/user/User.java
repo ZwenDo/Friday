@@ -13,7 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -56,13 +55,11 @@ public class User implements Serializable {
     @GeneratedValue
     private UUID id;
 
-    @NotNull
-    @NotBlank
+    @NotEmpty
     @Column(name = "username", unique = true, nullable = false, length = 64)
     private String username;
 
-    @NotNull
-    @NotBlank
+    @NotEmpty
     @Column(name = "password", nullable = false)
     private String password;
 
