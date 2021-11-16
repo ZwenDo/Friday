@@ -117,6 +117,17 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/ui</directory>
+                <includes>
+                    <include>public/</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin> <!-- Micronaut specific tasks -->
                 <groupId>io.micronaut.build</groupId>
