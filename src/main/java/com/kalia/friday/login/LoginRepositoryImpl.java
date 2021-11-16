@@ -52,7 +52,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         if (loginResponse.status() != OK ||
             !loginResponse.get().user().id().equals(userId)
         ) {
-            return RepositoryResponse.notFound();
+            return RepositoryResponse.unauthorized();
         }
         var login = loginResponse.get();
         login.setLastRefresh(LocalDateTime.now());
@@ -95,14 +95,11 @@ public class LoginRepositoryImpl implements LoginRepository {
         requireNonNull(userId);
         var user = userRepository.findById(userId);
         if (user.status() != OK) return RepositoryResponse.unauthorized();
-        var logins = manager.merge(user.get()).logins();
-        var size = logins.size();
-        var iterator = logins.iterator();
-        iterator.forEachRemaining(l -> {
-            iterator.remove();
-            manager.remove(l);
-        }); // clears all the logins by two-ways ManyToOne binding
-        return RepositoryResponse.ok(size);
+        var n = manager.createQuery("DELETE FROM Login l WHERE l.user = :user")
+            .setParameter("user", user.get())
+            .executeUpdate();
+        manager.flush();
+        return RepositoryResponse.ok(n);
     }
 
     @Override
