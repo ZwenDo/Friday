@@ -7,6 +7,7 @@ import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.test.annotation.TransactionMode;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,11 @@ public class LoginRepositoryTest {
     @AfterEach
     public void clearLogins() {
         manager.createQuery("DELETE FROM Login l").executeUpdate();
+    }
+
+    @AfterAll
+    public void cleanUsers() {
+        manager.createQuery("DELETE FROM User u").executeUpdate();
     }
 
     private List<Login> insert10Logins() {
