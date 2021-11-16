@@ -1,6 +1,6 @@
 package com.kalia.friday.event;
 
-import com.kalia.friday.DbProperties;
+import com.kalia.friday.TestDbProperties;
 import com.kalia.friday.login.Login;
 import com.kalia.friday.user.User;
 import com.kalia.friday.util.RepositoryResponse;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DbProperties
+@TestDbProperties
 public class EventRepositoryTest {
 
     @Inject

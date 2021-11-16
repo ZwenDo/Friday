@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 @Property(name = "datasources.default.url", value = "jdbc:h2:mem:test")
 @Property(name = "datasources.default.driverClassName", value = "org.h2.Driver")
 @Property(name = "jpa.default.properties.hibernate.hbm2ddl.auto", value = "update")
-public @interface DbProperties {
+public @interface TestDbProperties {
 }

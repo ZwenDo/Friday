@@ -1,6 +1,6 @@
 package com.kalia.friday.user;
 
-import com.kalia.friday.DbProperties;
+import com.kalia.friday.TestDbProperties;
 import com.kalia.friday.util.RepositoryResponse;
 import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.test.annotation.TransactionMode;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DbProperties
+@TestDbProperties
 public class UserRepositoryTest {
 
     @Inject

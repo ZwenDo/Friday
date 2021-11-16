@@ -1,6 +1,6 @@
 package com.kalia.friday.user;
 
-import com.kalia.friday.DbProperties;
+import com.kalia.friday.TestDbProperties;
 import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DbProperties
+@TestDbProperties
 public class UserControllerTest {
 
     @Inject

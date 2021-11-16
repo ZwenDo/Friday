@@ -1,6 +1,6 @@
 package com.kalia.friday.login;
 
-import com.kalia.friday.DbProperties;
+import com.kalia.friday.TestDbProperties;
 import com.kalia.friday.user.User;
 import com.kalia.friday.user.UserCredsDTO;
 import com.kalia.friday.util.SHA512Hasher;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DbProperties
+@TestDbProperties
 public class LoginControllerTest {
 
     @Inject
