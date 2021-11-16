@@ -12,4 +12,5 @@ import java.util.UUID;
 public record LoginSessionDTO(
     @NotNull UUID userId,
     @NotNull UUID token
-) {}
+) {
+}

@@ -61,13 +61,13 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     @Transactional
     public RepositoryResponse<Event> authenticatedSave(
-            UUID userId,
-            UUID userToken,
-            String title,
-            String description,
-            String place,
-            String recurRuleParts,
-            LocalDateTime startDate
+        UUID userId,
+        UUID userToken,
+        String title,
+        String description,
+        String place,
+        String recurRuleParts,
+        LocalDateTime startDate
     ) {
         requireNonNull(userId);
         requireNotEmpty(title);
@@ -104,14 +104,14 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     @Transactional
     public RepositoryResponse<Event> authenticatedUpdate(
-            UUID id,
-            UUID userId,
-            UUID userToken,
-            String title,
-            String description,
-            String place,
-            String recurRuleParts,
-            LocalDateTime localDateTime
+        UUID id,
+        UUID userId,
+        UUID userToken,
+        String title,
+        String description,
+        String place,
+        String recurRuleParts,
+        LocalDateTime localDateTime
     ) {
         requireNonNull(id);
         requireNonNull(userId);

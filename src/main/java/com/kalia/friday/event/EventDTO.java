@@ -13,11 +13,12 @@ import java.util.UUID;
  */
 @Introspected
 public record EventDTO(
-        @NotNull UUID userId,
-        @NotNull UUID userToken,
-        @NotEmpty String title,
-        @NotBlank String description,
-        @NotBlank String place,
-        @NotEmpty String recurRuleParts,
-        @NotNull LocalDateTime startDate
-) {}
+    @NotNull UUID userId,
+    @NotNull UUID userToken,
+    @NotEmpty String title,
+    @NotBlank String description,
+    @NotBlank String place,
+    @NotEmpty String recurRuleParts,
+    @NotNull LocalDateTime startDate
+) {
+}

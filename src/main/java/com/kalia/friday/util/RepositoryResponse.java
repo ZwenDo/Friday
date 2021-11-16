@@ -59,7 +59,7 @@ public final class RepositoryResponse<T> {
      * Returns a {@code RepositoryResponse} with an {@code OK} status and a content.
      *
      * @param value the content of the response
-     * @param <T> the type of the content
+     * @param <T>   the type of the content
      * @return a {@code RepositoryResponse} with an {@code OK} status and containing value
      */
     public static <T> RepositoryResponse<T> ok(T value) {

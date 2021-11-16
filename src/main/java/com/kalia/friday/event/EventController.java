@@ -61,12 +61,12 @@ public class EventController {
         }
         var createdEvent = saveResponse.get();
         var httpResponse = HttpResponse.created(new EventResponseDTO(
-                createdEvent.id(),
-                createdEvent.title(),
-                createdEvent.description(),
-                createdEvent.place(),
-                createdEvent.recurRuleParts(),
-                createdEvent.startDate())
+            createdEvent.id(),
+            createdEvent.title(),
+            createdEvent.description(),
+            createdEvent.place(),
+            createdEvent.recurRuleParts(),
+            createdEvent.startDate())
         );
         return httpResponse.headers(h -> h.location(URI.create("/event/" + createdEvent.id())));
     }
@@ -86,14 +86,14 @@ public class EventController {
     @Delete("/delete/{id}")
     public HttpResponse<?> delete(UUID id, @Body @Valid LoginSessionDTO loginSessionDTO) {
         var deleteResponse = eventRepository.authenticatedDeleteById(
-                id,
-                loginSessionDTO.userId(),
-                loginSessionDTO.token()
+            id,
+            loginSessionDTO.userId(),
+            loginSessionDTO.token()
         );
 
         return RepositoryResponse
-                .toEmptyHttpResponse(deleteResponse.status())
-                .headers(h -> h.location(URI.create("/event/delete/" + id)));
+            .toEmptyHttpResponse(deleteResponse.status())
+            .headers(h -> h.location(URI.create("/event/delete/" + id)));
     }
 
     /**
@@ -134,12 +134,12 @@ public class EventController {
         }
         var updatedEvent = updateResponse.get();
         var httpResponse = HttpResponse.ok(new EventResponseDTO(
-                updatedEvent.id(),
-                updatedEvent.title(),
-                updatedEvent.description(),
-                updatedEvent.place(),
-                updatedEvent.recurRuleParts(),
-                updatedEvent.startDate())
+            updatedEvent.id(),
+            updatedEvent.title(),
+            updatedEvent.description(),
+            updatedEvent.place(),
+            updatedEvent.recurRuleParts(),
+            updatedEvent.startDate())
         );
         return httpResponse.headers(h -> h.location(URI.create("/event/" + updatedEvent.id())));
     }

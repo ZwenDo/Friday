@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * Interface used by Micronaut to inject a LoginRepository when requested.
- *
+ * <p>
  * Serves to manage the {@code login} table.
  *
  * @see Login
@@ -29,7 +29,7 @@ public interface LoginRepository {
      * Checks the identity of a user by its id and token, and refreshes the token.
      *
      * @param userId the id of the user
-     * @param token the token to check
+     * @param token  the token to check
      * @return OK if the identity is valid | UNAUTHORIZED if the identity is invalid
      */
     @Transactional

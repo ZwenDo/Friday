@@ -29,9 +29,9 @@ public class UserController {
      * Creates and saves a user, provided a correct body.
      *
      * @param userCredsDTO {
-     *                    "username": "",
-     *                    "password": ""
-     *                    }
+     *                     "username": "",
+     *                     "password": ""
+     *                     }
      * @return {
      * "id": "",
      * "username": ""
@@ -60,8 +60,8 @@ public class UserController {
     public HttpResponse<?> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         var deleteUserResponse = repository.deleteById(id, userDeleteDTO.password());
         return RepositoryResponse
-                .toEmptyHttpResponse(deleteUserResponse.status())
-                .headers(h -> h.location(URI.create("/user/delete/" + id)));
+            .toEmptyHttpResponse(deleteUserResponse.status())
+            .headers(h -> h.location(URI.create("/user/delete/" + id)));
     }
 
     /**
@@ -79,7 +79,7 @@ public class UserController {
     public HttpResponse<?> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
         var updatePwdResponse = repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword());
         return RepositoryResponse
-                .toEmptyHttpResponse(updatePwdResponse.status())
-                .headers(h -> h.location(URI.create("/user/update/" + id)));
+            .toEmptyHttpResponse(updatePwdResponse.status())
+            .headers(h -> h.location(URI.create("/user/update/" + id)));
     }
 }

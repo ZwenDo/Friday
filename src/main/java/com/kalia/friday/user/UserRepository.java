@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * Interface used by Micronaut to inject a UserRepository when requested.
- *
+ * <p>
  * Serves to manage the {@code user} table.
  *
  * @see User
@@ -18,7 +18,7 @@ import java.util.UUID;
 public interface UserRepository {
     /**
      * Finds a user by its id.
-     *
+     * <p>
      * SELECT * FROM User WHERE ID = {id} LIMIT 1;
      *
      * @param id the id of the user
@@ -29,7 +29,7 @@ public interface UserRepository {
 
     /**
      * Finds a user by its username.
-     *
+     * <p>
      * SELECT * FROM User WHERE USERNAME = {username} LIMIT 1;
      *
      * @param username the username of the user

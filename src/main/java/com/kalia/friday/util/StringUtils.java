@@ -6,14 +6,15 @@ import static java.util.Objects.requireNonNull;
  * Class that contains string utils methods.
  */
 public final class StringUtils {
-    private StringUtils() {}
+    private StringUtils() {
+    }
 
     /**
      * Asserts that a string is not null and not blank.
      *
      * @param s the string to test
      * @return the string
-     * @throws NullPointerException if string is null
+     * @throws NullPointerException     if string is null
      * @throws IllegalArgumentException if string is blank
      */
     public static String requireNotEmpty(String s) {

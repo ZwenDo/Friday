@@ -42,8 +42,8 @@ public class LoginController {
      *                     "password": ""
      *                     }
      * @return {
-     *     "userId": "",
-     *     "token": ""
+     * "userId": "",
+     * "token": ""
      * }
      */
     @Post("/login")
@@ -51,9 +51,9 @@ public class LoginController {
         var loginResponse = repository.login(userCredsDTO.username(), userCredsDTO.password());
         MutableHttpResponse<LoginSessionDTO> httpResponse = loginResponse.status() == OK
             ? HttpResponse.created(new LoginSessionDTO(
-                loginResponse.get().user().id(),
-                loginResponse.get().token()
-            ))
+            loginResponse.get().user().id(),
+            loginResponse.get().token()
+        ))
             : HttpResponse.unauthorized();
         return httpResponse.headers(h -> h.location(URI.create("/auth/login/" + userCredsDTO.username())));
     }
@@ -62,9 +62,9 @@ public class LoginController {
      * Logs a user out and deletes their token.
      *
      * @param loginSessionDTO {
-     *                     "userId": "",
-     *                     "token": ""
-     *                     }
+     *                        "userId": "",
+     *                        "token": ""
+     *                        }
      * @return OK if successfully logged out | UNAUTHORIZED if the sessions credentials are invalid
      */
     @Post("/logout")
@@ -80,9 +80,9 @@ public class LoginController {
      * Logs a user out and deletes all their tokens.
      *
      * @param loginSessionDTO {
-     *                     "userId": "",
-     *                     "token": ""
-     *                     }
+     *                        "userId": "",
+     *                        "token": ""
+     *                        }
      * @return OK if successfully logged out | UNAUTHORIZED if the sessions credentials are invalid
      */
     @Post("/logout/all")

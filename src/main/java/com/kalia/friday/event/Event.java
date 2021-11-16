@@ -45,7 +45,7 @@ public class Event implements Serializable {
      * @param description    the optional description of the event
      * @param place          the optional location of the event
      * @param recurRuleParts the ICal recursion rule parts
-     * @param startDate the date on which begins the event
+     * @param startDate      the date on which begins the event
      */
     public Event(
         @NotNull User user,

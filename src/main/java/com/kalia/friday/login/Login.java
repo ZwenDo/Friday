@@ -39,7 +39,7 @@ public class Login implements Serializable {
     /**
      * Creates a {@code login} row.
      *
-     * @param user the user (id) to create a token for
+     * @param user        the user (id) to create a token for
      * @param lastRefresh the timestamp of the last token refresh
      */
     public Login(@NotNull User user, @NotNull LocalDateTime lastRefresh) {
