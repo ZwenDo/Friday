@@ -6,14 +6,12 @@ import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.transaction.annotation.ReadOnly;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import static com.kalia.friday.util.RepositoryResponse.Status.OK;
 import static java.util.Objects.requireNonNull;
 
@@ -98,7 +96,6 @@ public class LoginRepositoryImpl implements LoginRepository {
         var n = manager.createQuery("DELETE FROM Login l WHERE l.user = :user")
             .setParameter("user", user.get())
             .executeUpdate();
-        manager.flush();
         return RepositoryResponse.ok(n);
     }
 
