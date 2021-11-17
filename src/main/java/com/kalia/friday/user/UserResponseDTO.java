@@ -13,4 +13,5 @@ import java.util.UUID;
 public record UserResponseDTO(
     @NotNull UUID id,
     @NotEmpty String username
-) {}
+) {
+}

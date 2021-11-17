@@ -1,108 +1,134 @@
 package com.kalia.friday.user;
 
+import com.kalia.friday.TestDbProperties;
+import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.test.annotation.TransactionMode;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.TestInstance;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@MicronautTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestDbProperties
 public class UserControllerTest {
 
     @Inject
     @Client("/user")
     private HttpClient client;
 
-    private static UUID retrievedId;
+    @Inject
+    @PersistenceContext
+    private EntityManager manager;
+
+    @Inject
+    private SHA512Hasher hasher;
+
+    private User user;
+
+    @BeforeEach
+    public void setupUser() {
+        user = new User(UUID.randomUUID().toString(), hasher.hash("1234"));
+        manager.persist(user);
+        manager.flush();
+        manager.getTransaction().commit();
+        manager.getTransaction().begin();
+    }
 
     @Test
-    @Order(1)
     public void testSaveUser() {
+        var username = UUID.randomUUID().toString();
         var responseSave = client
             .toBlocking()
             .exchange(HttpRequest.POST(
                 "/",
-                new UserCredsDTO("notKamui", "1234")
+                new UserCredsDTO(username, "1234")
             ), UserResponseDTO.class);
         assertEquals(HttpStatus.CREATED, responseSave.getStatus());
         var body = responseSave.body();
         assertNotNull(body);
-        retrievedId = body.id();
+        var user = manager.find(User.class, body.id());
+        assertNotNull(user);
+        assertEquals(username, user.username());
+        assertEquals(hasher.hash("1234"), user.password());
     }
 
     @Test
-    @Order(2)
     public void testUpdatePasswordWrongPassword() {
         var thrownUpdate = assertThrows(
             HttpClientResponseException.class,
             () -> client.toBlocking().exchange(HttpRequest.PUT(
-                "/update/" + retrievedId,
+                "/update/" + user.id(),
                 new UserPasswordUpdateDTO("FAKE", "abcd")
             ))
         );
         assertNotNull(thrownUpdate.getResponse());
-        assertEquals(HttpStatus.BAD_REQUEST, thrownUpdate.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED, thrownUpdate.getStatus());
     }
 
     @Test
-    @Order(3)
     public void testUpdatePassword() {
         var responseUpdate = client
             .toBlocking()
             .exchange(HttpRequest.PUT(
-                "/update/" + retrievedId,
+                "/update/" + user.id(),
                 new UserPasswordUpdateDTO("1234", "abcd")
             ));
         assertEquals(HttpStatus.NO_CONTENT, responseUpdate.getStatus());
+        manager.refresh(user);
+        assertNotNull(user);
+        assertEquals(hasher.hash("abcd"), user.password());
     }
 
     @Test
-    @Order(4)
     public void testDeleteWrongPassword() {
         var thrownDelete = assertThrows(
             HttpClientResponseException.class,
             () -> client.toBlocking().exchange(HttpRequest.DELETE(
-                "/delete/" + retrievedId,
+                "/delete/" + user.id(),
                 new UserDeleteDTO("FAKE")
             ))
         );
         assertNotNull(thrownDelete.getResponse());
-        assertEquals(HttpStatus.BAD_REQUEST, thrownDelete.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED, thrownDelete.getStatus());
     }
 
     @Test
-    @Order(5)
     public void testDelete() {
+        manager.detach(user);
         var responseDelete = client
             .toBlocking()
             .exchange(HttpRequest.DELETE(
-                "/delete/" + retrievedId,
-                new UserDeleteDTO("abcd")
+                "/delete/" + user.id(),
+                new UserDeleteDTO("1234")
             ));
         assertEquals(HttpStatus.NO_CONTENT, responseDelete.getStatus());
+        var user = manager.find(User.class, this.user.id());
+        assertNull(user);
     }
 
     @Test
-    @Order(6)
     public void testUpdatePasswordWithUnknownId() {
         var thrownUpdateUnknown = assertThrows(
             HttpClientResponseException.class,
             () -> client.toBlocking().exchange(HttpRequest.PUT(
-                "/update/" + UUID.nameUUIDFromBytes(new byte[16]),
-                new UserPasswordUpdateDTO("abcd", "foobar")
+                "/update/" + UUID.randomUUID(),
+                new UserPasswordUpdateDTO("1234", "foobar")
             ))
         );
         assertNotNull(thrownUpdateUnknown.getResponse());
@@ -110,13 +136,12 @@ public class UserControllerTest {
     }
 
     @Test
-    @Order(7)
     public void testDeleteWithUnknownId() {
         var thrownDeleteUnknown = assertThrows(
             HttpClientResponseException.class,
             () -> client.toBlocking().exchange(HttpRequest.DELETE(
-                "/delete/" + UUID.nameUUIDFromBytes(new byte[16]),
-                new UserDeleteDTO("abcd")
+                "/delete/" + UUID.randomUUID(),
+                new UserDeleteDTO("1234")
             ))
         );
         assertNotNull(thrownDeleteUnknown.getResponse());

@@ -6,14 +6,12 @@ import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.transaction.annotation.ReadOnly;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import static com.kalia.friday.util.RepositoryResponse.Status.OK;
 import static java.util.Objects.requireNonNull;
 
@@ -52,7 +50,7 @@ public class LoginRepositoryImpl implements LoginRepository {
         if (loginResponse.status() != OK ||
             !loginResponse.get().user().id().equals(userId)
         ) {
-            return RepositoryResponse.notFound();
+            return RepositoryResponse.unauthorized();
         }
         var login = loginResponse.get();
         login.setLastRefresh(LocalDateTime.now());
@@ -95,14 +93,10 @@ public class LoginRepositoryImpl implements LoginRepository {
         requireNonNull(userId);
         var user = userRepository.findById(userId);
         if (user.status() != OK) return RepositoryResponse.unauthorized();
-        var logins = manager.merge(user.get()).logins();
-        var size = logins.size();
-        var iterator = logins.iterator();
-        iterator.forEachRemaining(l -> {
-            iterator.remove();
-            manager.remove(l);
-        }); // clears all the logins by two-ways ManyToOne binding
-        return RepositoryResponse.ok(size);
+        var n = manager.createQuery("DELETE FROM Login l WHERE l.user = :user")
+            .setParameter("user", user.get())
+            .executeUpdate();
+        return RepositoryResponse.ok(n);
     }
 
     @Override

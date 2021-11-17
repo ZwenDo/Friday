@@ -24,8 +24,8 @@ public interface EventRepository {
      * Finds an event by its id.
      * <p>SELECT * FROM Event WHERE id = {id} LIMIT 1;</p>
      *
-     * @param id the id of the event
-     * @param userId the id of the user to which the event belongs
+     * @param id        the id of the event
+     * @param userId    the id of the user to which the event belongs
      * @param userToken the token of the user
      * @return an optional of {@code Event} (empty if not found)
      */
@@ -35,7 +35,7 @@ public interface EventRepository {
     /**
      * Finds all events of a user by its user id.
      *
-     * @param userId the id of the user to which the event belongs
+     * @param userId    the id of the user to which the event belongs
      * @param userToken the token of the user
      * @return Ok if found | NotFound if the id is unknown
      */
@@ -45,24 +45,24 @@ public interface EventRepository {
     /**
      * Saves a new event.
      *
-     * @param userId the id of the user related to the event
-     * @param userToken the token of the user
-     * @param title the title of the event
-     * @param description the description of the event
-     * @param place the place of the event
+     * @param userId         the id of the user related to the event
+     * @param userToken      the token of the user
+     * @param title          the title of the event
+     * @param description    the description of the event
+     * @param place          the place of the event
      * @param recurRuleParts the new {@code recurRuleParts} of the event
-     * @param startDate the date on which begins the event
+     * @param startDate      the date on which begins the event
      * @return Ok if saved | NotFound if the id is unknown
      */
     @Transactional
     RepositoryResponse<Event> authenticatedSave(
-            @NotNull UUID userId,
-            @NotNull UUID userToken,
-            @NotEmpty String title,
-            @NotBlank String description,
-            @NotBlank String place,
-            @NotEmpty String recurRuleParts,
-            @NotNull LocalDateTime startDate
+        @NotNull UUID userId,
+        @NotNull UUID userToken,
+        @NotEmpty String title,
+        @NotBlank String description,
+        @NotBlank String place,
+        @NotEmpty String recurRuleParts,
+        @NotNull LocalDateTime startDate
     );
 
     /**
@@ -77,25 +77,25 @@ public interface EventRepository {
     /**
      * Edits an event.
      *
-     * @param id the id of the event to edit
-     * @param userId the id of the user to which the event belongs
-     * @param userToken the token of the user
-     * @param title the new title of the event
-     * @param description the new description of the event
-     * @param place the new place of the event
+     * @param id             the id of the event to edit
+     * @param userId         the id of the user to which the event belongs
+     * @param userToken      the token of the user
+     * @param title          the new title of the event
+     * @param description    the new description of the event
+     * @param place          the new place of the event
      * @param recurRuleParts the new {@code recurRuleParts} of the event
-     * @param startDate the date on which begins the event
+     * @param startDate      the date on which begins the event
      * @return the edited event
      */
     @Transactional
     RepositoryResponse<Event> authenticatedUpdate(
-            @NotNull UUID id,
-            @NotNull UUID userId,
-            @NotNull UUID userToken,
-            @NotEmpty String title,
-            @NotBlank String description,
-            @NotBlank String place,
-            @NotEmpty String recurRuleParts,
-            @NotNull LocalDateTime startDate
+        @NotNull UUID id,
+        @NotNull UUID userId,
+        @NotNull UUID userToken,
+        @NotEmpty String title,
+        @NotBlank String description,
+        @NotBlank String place,
+        @NotEmpty String recurRuleParts,
+        @NotNull LocalDateTime startDate
     );
 }

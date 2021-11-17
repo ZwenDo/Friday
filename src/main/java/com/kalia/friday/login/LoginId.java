@@ -16,7 +16,8 @@ public class LoginId implements Serializable {
     private UUID token;
     private User user;
 
-    public LoginId() {}
+    public LoginId() {
+    }
 
     public LoginId(UUID token, User user) {
         this.token = requireNonNull(token);

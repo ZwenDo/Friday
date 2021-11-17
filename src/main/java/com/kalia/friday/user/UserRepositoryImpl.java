@@ -40,11 +40,11 @@ public class UserRepositoryImpl implements UserRepository {
     public RepositoryResponse<User> findByUsername(String username) {
         requireNonNull(username);
         var result = manager
-                .createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
-                .setParameter("username", username)
-                .getResultList()
-                .stream()
-                .findFirst();
+            .createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+            .setParameter("username", username)
+            .getResultList()
+            .stream()
+            .findFirst();
         if (result.isEmpty()) return RepositoryResponse.notFound();
         manager.detach(result.get()); // detach before return
         return RepositoryResponse.ok(result.get());
@@ -98,7 +98,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         var hashedPwd = hasher.hash(password);
         return user.get().password().equals(hashedPwd)
-                ? RepositoryResponse.ok(user.get())
-                : RepositoryResponse.unauthorized();
+            ? RepositoryResponse.ok(manager.merge(user.get()))
+            : RepositoryResponse.unauthorized();
     }
 }

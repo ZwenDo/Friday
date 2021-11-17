@@ -1,28 +1,35 @@
 package com.kalia.friday.login;
 
+import com.kalia.friday.TestDbProperties;
+import com.kalia.friday.user.User;
 import com.kalia.friday.user.UserCredsDTO;
-import com.kalia.friday.user.UserDeleteDTO;
-import com.kalia.friday.user.UserResponseDTO;
+import com.kalia.friday.util.SHA512Hasher;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.test.annotation.TransactionMode;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.TestInstance;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@MicronautTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestDbProperties
 public class LoginControllerTest {
 
     @Inject
@@ -30,29 +37,24 @@ public class LoginControllerTest {
     private HttpClient client;
 
     @Inject
-    @Client("/user")
-    private HttpClient userClient;
+    @PersistenceContext
+    private EntityManager manager;
 
-    private static UUID userId;
-    private static UUID token;
+    @Inject
+    private SHA512Hasher hasher;
 
-    @Test
-    @Order(1)
-    public void setup() {
-        var responseSave = userClient
-            .toBlocking()
-            .exchange(HttpRequest.POST(
-                "/",
-                new UserCredsDTO("notKamui", "1234")
-            ), UserResponseDTO.class);
-        assertEquals(HttpStatus.CREATED, responseSave.getStatus());
-        var body = responseSave.body();
-        assertNotNull(body);
-        userId = body.id();
+    private User user;
+
+    @BeforeEach
+    public void setupUser() {
+        user = new User(UUID.randomUUID().toString(), hasher.hash("1234"));
+        manager.persist(user);
+        manager.flush();
+        manager.getTransaction().commit();
+        manager.getTransaction().begin();
     }
 
     @Test
-    @Order(2)
     public void testLoginInvalidUser() {
         var response = assertThrows(
             HttpClientResponseException.class,
@@ -68,7 +70,6 @@ public class LoginControllerTest {
     }
 
     @Test
-    @Order(3)
     public void testLoginInvalidPassword() {
         var response = assertThrows(
             HttpClientResponseException.class,
@@ -76,7 +77,7 @@ public class LoginControllerTest {
                 .toBlocking()
                 .exchange(HttpRequest.POST(
                     "/login",
-                    new UserCredsDTO("notKamui", "FAKE")
+                    new UserCredsDTO(user.username(), "FAKE")
                 ))
         );
         assertNotNull(response.getResponse());
@@ -84,30 +85,38 @@ public class LoginControllerTest {
     }
 
     @Test
-    @Order(4)
     public void testLogin() {
         var response = client
             .toBlocking()
             .exchange(HttpRequest.POST(
                 "/login",
-                new UserCredsDTO("notKamui", "1234")
+                new UserCredsDTO(user.username(), "1234")
             ), LoginSessionDTO.class);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         var body = response.body();
         assertNotNull(body);
-        token = body.token();
+        var login = manager.find(Login.class, new LoginId(body.token(), user));
+        assertNotNull(login);
+    }
+
+    private Login insertLogin() {
+        var login = new Login(user, LocalDateTime.now());
+        manager.persist(login);
+        manager.flush();
+        manager.getTransaction().commit();
+        return login;
     }
 
     @Test
-    @Order(5)
     public void testLogoutInvalidUser() {
+        var login = insertLogin();
         var response = assertThrows(
             HttpClientResponseException.class,
             () -> client
                 .toBlocking()
                 .exchange(HttpRequest.POST(
                     "/logout",
-                    new LoginSessionDTO(UUID.nameUUIDFromBytes(new byte[16]), token)
+                    new LoginSessionDTO(UUID.randomUUID(), login.token())
                 ))
         );
         assertNotNull(response.getResponse());
@@ -115,15 +124,15 @@ public class LoginControllerTest {
     }
 
     @Test
-    @Order(6)
     public void testLogoutInvalidToken() {
+        var login = insertLogin();
         var response = assertThrows(
             HttpClientResponseException.class,
             () -> client
                 .toBlocking()
                 .exchange(HttpRequest.POST(
                     "/logout",
-                    new LoginSessionDTO(userId, UUID.nameUUIDFromBytes(new byte[16]))
+                    new LoginSessionDTO(login.user().id(), UUID.randomUUID())
                 ))
         );
         assertNotNull(response.getResponse());
@@ -131,27 +140,30 @@ public class LoginControllerTest {
     }
 
     @Test
-    @Order(7)
     public void testLogout() {
+        var login = insertLogin();
+        manager.detach(login);
         var response = client
             .toBlocking()
             .exchange(HttpRequest.POST(
                 "/logout",
-                new LoginSessionDTO(userId, token)
+                new LoginSessionDTO(login.user().id(), login.token())
             ));
         assertEquals(HttpStatus.ACCEPTED, response.getStatus());
+        login = manager.find(Login.class, new LoginId(login.token(), login.user()));
+        assertNull(login);
     }
 
     @Test
-    @Order(8)
     public void testLogoutAllInvalidUser() {
+        var login = insertLogin();
         var response = assertThrows(
             HttpClientResponseException.class,
             () -> client
                 .toBlocking()
                 .exchange(HttpRequest.POST(
                     "/logout/all",
-                    new LoginSessionDTO(UUID.nameUUIDFromBytes(new byte[16]), token)
+                    new LoginSessionDTO(UUID.randomUUID(), login.token())
                 ))
         );
         assertNotNull(response.getResponse());
@@ -159,15 +171,15 @@ public class LoginControllerTest {
     }
 
     @Test
-    @Order(9)
     public void testLogoutAllInvalidToken() {
+        var login = insertLogin();
         var response = assertThrows(
             HttpClientResponseException.class,
             () -> client
                 .toBlocking()
                 .exchange(HttpRequest.POST(
                     "/logout/all",
-                    new LoginSessionDTO(userId, UUID.nameUUIDFromBytes(new byte[16]))
+                    new LoginSessionDTO(login.user().id(), UUID.randomUUID())
                 ))
         );
         assertNotNull(response.getResponse());
@@ -175,32 +187,25 @@ public class LoginControllerTest {
     }
 
     @Test
-    @Order(10)
     public void testLogoutAll() {
+        var login = insertLogin();
         for (var i = 0; i < 10; i++) {
-            token = client.toBlocking().exchange(HttpRequest.POST(
+            client.toBlocking().exchange(HttpRequest.POST(
                 "/login",
-                new UserCredsDTO("notKamui", "1234")
-            ), LoginSessionDTO.class).body().token();
+                new UserCredsDTO(user.username(), "1234")
+            ));
         }
         var response = client
             .toBlocking()
             .exchange(HttpRequest.POST(
                 "/logout/all",
-                new LoginSessionDTO(userId, token)
+                new LoginSessionDTO(login.user().id(), login.token())
             ));
         assertEquals(HttpStatus.ACCEPTED, response.getStatus());
-    }
-
-    @Test
-    @Order(11)
-    public void end() {
-        var responseDelete = userClient
-            .toBlocking()
-            .exchange(HttpRequest.DELETE(
-                "/delete/" + userId,
-                new UserDeleteDTO("1234")
-            ));
-        assertEquals(HttpStatus.NO_CONTENT, responseDelete.getStatus());
+        var logins = manager
+            .createQuery("SELECT l FROM Login l WHERE l.user = :user")
+            .setParameter("user", user)
+            .getResultList();
+        assertTrue(logins.isEmpty());
     }
 }

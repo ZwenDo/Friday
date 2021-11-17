@@ -37,7 +37,7 @@ public class EventRepositoryImpl implements EventRepository {
         requireNonNull(userToken);
         var event = getIfAuthenticated(id, userId, userToken);
         if (event.status() == RepositoryResponse.Status.OK) {
-            manager.detach(event); // if present detach before return
+            manager.detach(event.get()); // if present detach before return
         }
         return event;
     }
@@ -51,9 +51,9 @@ public class EventRepositoryImpl implements EventRepository {
         if (userAuthenticate.status() != RepositoryResponse.Status.OK) { // invalid user.
             return RepositoryResponse.unauthorized();
         }
-        var result = manager.createQuery("SELECT e FROM Event e WHERE e.id = :userId", Event.class)
-                .setParameter("userId", userId)
-                .getResultList();
+        var result = manager.createQuery("SELECT e FROM Event e WHERE e.user.id = :userId", Event.class)
+            .setParameter("userId", userId)
+            .getResultList();
         result.forEach(it -> manager.detach(it)); // detach before return
         return RepositoryResponse.ok(result);
     }
@@ -61,13 +61,13 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     @Transactional
     public RepositoryResponse<Event> authenticatedSave(
-            UUID userId,
-            UUID userToken,
-            String title,
-            String description,
-            String place,
-            String recurRuleParts,
-            LocalDateTime startDate
+        UUID userId,
+        UUID userToken,
+        String title,
+        String description,
+        String place,
+        String recurRuleParts,
+        LocalDateTime startDate
     ) {
         requireNonNull(userId);
         requireNotEmpty(title);
@@ -104,14 +104,14 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     @Transactional
     public RepositoryResponse<Event> authenticatedUpdate(
-            UUID id,
-            UUID userId,
-            UUID userToken,
-            String title,
-            String description,
-            String place,
-            String recurRuleParts,
-            LocalDateTime localDateTime
+        UUID id,
+        UUID userId,
+        UUID userToken,
+        String title,
+        String description,
+        String place,
+        String recurRuleParts,
+        LocalDateTime localDateTime
     ) {
         requireNonNull(id);
         requireNonNull(userId);

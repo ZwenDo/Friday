@@ -59,7 +59,7 @@ public final class RepositoryResponse<T> {
      * Returns a {@code RepositoryResponse} with an {@code OK} status and a content.
      *
      * @param value the content of the response
-     * @param <T> the type of the content
+     * @param <T>   the type of the content
      * @return a {@code RepositoryResponse} with an {@code OK} status and containing value
      */
     public static <T> RepositoryResponse<T> ok(T value) {
@@ -98,7 +98,7 @@ public final class RepositoryResponse<T> {
         return switch (repositoryResponseStatus) {
             case OK -> HttpResponse.noContent();
             case NOT_FOUND -> HttpResponse.notFound();
-            case UNAUTHORIZED -> HttpResponse.badRequest();
+            case UNAUTHORIZED -> HttpResponse.unauthorized();
         };
     }
 }

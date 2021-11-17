@@ -11,4 +11,5 @@ import javax.validation.constraints.NotEmpty;
 public record UserPasswordUpdateDTO(
     @NotEmpty String oldPassword,
     @NotEmpty String newPassword
-) {}
+) {
+}

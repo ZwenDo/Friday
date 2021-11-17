@@ -11,4 +11,5 @@ import javax.validation.constraints.NotEmpty;
 public record UserCredsDTO(
     @NotEmpty String username,
     @NotEmpty String password
-) {}
+) {
+}
