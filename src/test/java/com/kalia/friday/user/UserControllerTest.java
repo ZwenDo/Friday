@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UserControllerTest {
 
     @Inject
-    @Client("/user")
+    @Client("/api/user")
     private HttpClient client;
 
     @Inject

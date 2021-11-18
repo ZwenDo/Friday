@@ -20,7 +20,7 @@ import java.util.UUID;
  * API endpoint for communicating with the event side of the database.
  */
 @ExecuteOn(value = TaskExecutors.IO)
-@Controller("/event")
+@Controller("/api/event")
 public class EventController {
 
     @Inject

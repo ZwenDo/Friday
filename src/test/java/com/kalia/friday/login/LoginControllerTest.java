@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LoginControllerTest {
 
     @Inject
-    @Client("/auth")
+    @Client("/api/auth")
     private HttpClient client;
 
     @Inject

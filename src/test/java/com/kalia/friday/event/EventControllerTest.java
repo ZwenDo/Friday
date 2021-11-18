@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @TestDbProperties
 public class EventControllerTest {
 
-    @Client("/event")
+    @Client("/api/event")
     @Inject
     private HttpClient client;
 

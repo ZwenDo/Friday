@@ -19,7 +19,7 @@ import java.util.UUID;
  * API endpoint for communicating with the user side of the database.
  */
 @ExecuteOn(value = TaskExecutors.IO)
-@Controller("/user")
+@Controller("/api/user")
 public class UserController {
 
     @Inject

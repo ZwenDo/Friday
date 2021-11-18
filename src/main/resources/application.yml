@@ -6,7 +6,7 @@ micronaut:
       default:
         enabled: true
         paths: classpath:public
-        mapping: /**
+        mapping: /**/
 datasources:
   default:
     url: ${JDBC_URL:`jdbc:h2:file:./db/friday`}

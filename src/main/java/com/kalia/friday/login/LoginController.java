@@ -19,7 +19,7 @@ import static com.kalia.friday.util.RepositoryResponse.Status.OK;
  * API endpoint for communicating with the login side of the database.
  */
 @ExecuteOn(value = TaskExecutors.IO)
-@Controller("/auth")
+@Controller("/api/auth")
 public class LoginController {
 
     @Inject
