@@ -4,7 +4,7 @@
 </script>
 
 <section
-        class="
+    class="
     font-serif
     p-5 sm:p-10 my-5
     m-auto w-full

@@ -3,7 +3,7 @@
 </script>
 
 <main
-        class="
+    class="
     flex-auto
     bg-white
     z-0 px-5
