@@ -1,7 +1,3 @@
-<script>
-    import Navbar from './Navbar.svelte';
-</script>
-
 <header class="w-full flex-initial flex justify-between">
     <h1
         class="
@@ -13,5 +9,4 @@
     >
         <a href="/">Friday</a>
     </h1>
-    <Navbar menuChoices="{['Overview', 'Today', 'This month']}" />
 </header>
