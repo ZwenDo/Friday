@@ -1,5 +1,6 @@
 <script>
     import Section from "./Section.svelte";
+    import LoginForm from "./LoginForm.svelte";
 </script>
 
 <main
@@ -11,34 +12,35 @@
     rounded-lg shadow-2xl
     overflow-y-auto"
 >
-    <Section title="Next">
-        <p>
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </p>
-    </Section>
-    <Section title="Today">
-        <p>
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </p>
-    </Section>
-    <Section title="This month">
-        <p>
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-            lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </p>
-    </Section>
+    <LoginForm/>
+<!--    <Section title="Next">-->
+<!--        <p>-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--        </p>-->
+<!--    </Section>-->
+<!--    <Section title="Today">-->
+<!--        <p>-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--        </p>-->
+<!--    </Section>-->
+<!--    <Section title="This month">-->
+<!--        <p>-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--        </p>-->
+<!--    </Section>-->
 </main>
