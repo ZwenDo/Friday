@@ -1,6 +1,6 @@
 <script>
     export let title = null;
-    export let submitButton = null;
+    export let submitText = null;
 </script>
 
 <div class="
@@ -11,7 +11,16 @@
         <h2 class="font-extrabold text-4xl">{title}</h2>
         <form on:submit|preventDefault>
             <slot></slot>
-            <button type="submit">{submitButton}</button>
+            <button
+                type="submit"
+                class="
+                submit-button text-xl text-white px-4 py-2 my-2
+                bg-purple-500 rounded-full
+                transform hover:bg-purple-600 hover:scale-110
+                transition duration-200 ease-in-out"
+            >
+                {submitText}
+            </button>
         </form>
     </div>
 </div>

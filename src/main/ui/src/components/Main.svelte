@@ -1,5 +1,4 @@
 <script>
-    import Section from "./Section.svelte";
     import LoginForm from "./LoginForm.svelte";
 </script>
 

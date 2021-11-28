@@ -11,12 +11,13 @@
     }
 </script>
 
-<Form on:submit={onSubmit} title="Connection" submitButton="Log in">
+<Form on:submit={onSubmit} title="Connection" submitText="Log in">
     <FormField
         label="Username"
         name="username"
         type="text"
         placeholder="Username"
+        required="true"
         bind:value="{username}"
     />
     <FormField
@@ -24,6 +25,7 @@
         name="password"
         type="password"
         placeholder="Password"
+        required="true"
         bind:value="{password}"
     />
 </Form>
