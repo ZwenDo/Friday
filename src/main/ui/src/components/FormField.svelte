@@ -1,10 +1,10 @@
 <script>
-    export let value = "";
     export let label = null;
     export let name = label?.toLowerCase() ?? "";
     export let type = "text";
-    export let placeholder = null;
+    export let placeholder = label ?? "";
     export let required = false;
+    export let value = "";
 
     function handleInputType(event) {
         event.target.type = type;
