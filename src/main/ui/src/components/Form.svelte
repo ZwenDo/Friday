@@ -17,7 +17,7 @@
                 submit-button text-xl text-white px-4 py-2 my-2
                 bg-purple-500 rounded-full
                 transform hover:bg-purple-600 hover:scale-110
-                transition duration-200 ease-in-out"
+                transition-all"
             >
                 {submitText}
             </button>
