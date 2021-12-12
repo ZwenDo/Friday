@@ -1,5 +1,6 @@
 <script>
     import Button from "./Button.svelte";
+    import Heading from "./Heading.svelte";
 
     export let title = null;
     export let submitText = null;
@@ -7,12 +8,14 @@
 
 <div class="
     main-container font-serif
-    w-full h-full flex flex-auto items-center justify-center"
+    w-full h-full
+    flex flex-auto items-center justify-center"
 >
-    <div class="form-container">
-        <h2 class="font-extrabold text-4xl">{title}</h2>
+    <div>
+        <Heading>{title}</Heading>
+        <hr class="w-full mt-4"/>
         <form on:submit|preventDefault>
-            <slot></slot>
+            <slot/>
             <Button type="submit">{submitText}</Button>
         </form>
     </div>

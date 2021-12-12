@@ -4,7 +4,7 @@
 
 <main
     class="
-    flex-auto flex justify-center
+    flex-auto flex justify-center flex-col
     bg-white
     z-0 px-5
     m-auto w-11/12

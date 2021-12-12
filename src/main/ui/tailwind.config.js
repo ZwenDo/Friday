@@ -4,7 +4,7 @@ module.exports = {
     darkMode: false, // or 'media' or 'class'
     theme: {
         fontFamily: {
-            cursive: ['Abril Fatface', 'cursive'],
+            cursive: ['Playball', 'cursive'],
             serif: ['Raleway', 'serif']
         },
         extend: {

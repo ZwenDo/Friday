@@ -5,6 +5,6 @@
 
 <div class="h-full w-full flex items-center justify-between">
     <LoginForm/>
-    <div class="w-1 h-2/3 border-r-2"></div>
+    <div class="hidden h-2/3 border rounded-full sm:block"></div>
     <RegisterForm/>
 </div>
