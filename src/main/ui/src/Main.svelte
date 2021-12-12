@@ -1,5 +1,5 @@
 <script>
-    import ConnectionPage from "./ConnectionPage.svelte";
+    import ConnectionPage from "./pages/ConnectionPage.svelte";
 </script>
 
 <main

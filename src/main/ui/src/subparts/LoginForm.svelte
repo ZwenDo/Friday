@@ -1,6 +1,6 @@
 <script>
-    import FormField from "./FormField.svelte";
-    import Form from "./Form.svelte";
+    import FormField from "../components/FormField.svelte";
+    import Form from "../components/Form.svelte";
 
     let logUsername = "";
     let logPassword = "";

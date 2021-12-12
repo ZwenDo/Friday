@@ -1,6 +1,6 @@
 <script>
-    import LoginForm from "./LoginForm.svelte";
-    import RegisterForm from "./RegisterForm.svelte";
+    import LoginForm from "../subparts/LoginForm.svelte";
+    import RegisterForm from "../subparts/RegisterForm.svelte";
 </script>
 
 <div class="h-full w-full flex items-center justify-between">
