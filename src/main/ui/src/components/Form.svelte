@@ -2,6 +2,8 @@
     import Button from "./Button.svelte";
     import Heading from "./Heading.svelte";
 
+    export let extendClass = "";
+
     export let title = null;
     export let submitText = null;
 </script>
@@ -9,7 +11,8 @@
 <div class="
     main-container font-serif
     w-full h-full
-    flex flex-auto items-center justify-center"
+    flex flex-auto items-center justify-center
+    {extendClass}"
 >
     <div>
         <Heading>{title}</Heading>

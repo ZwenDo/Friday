@@ -2,6 +2,8 @@
     import FormField from "../components/FormField.svelte";
     import Form from "../components/Form.svelte";
 
+    export let extendClass = "";
+
     let regUsername = "";
     let regPassword = "";
     let regPasswordR = "";
@@ -11,7 +13,7 @@
     }
 </script>
 
-<Form on:submit={onSubmit} title="Register" submitText="Sign up">
+<Form {extendClass} on:submit={onSubmit} submitText="Sign up" title="Register">
     <FormField
         label="Username"
         name="regUsername"

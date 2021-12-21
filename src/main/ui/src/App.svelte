@@ -6,8 +6,8 @@
     import Footer from './subparts/Footer.svelte';
 </script>
 
-<Tailwindcss />
-<Background />
-<Header />
-<Main />
-<Footer />
+<Tailwindcss/>
+<Background/>
+<Header/>
+<Main/>
+<Footer/>

@@ -2,6 +2,8 @@
     import FormField from "../components/FormField.svelte";
     import Form from "../components/Form.svelte";
 
+    export let extendClass = "";
+
     let logUsername = "";
     let logPassword = "";
 
@@ -10,7 +12,7 @@
     }
 </script>
 
-<Form on:submit={onSubmit} title="Connection" submitText="Log in">
+<Form {extendClass} on:submit={onSubmit} submitText="Log in" title="Connection">
     <FormField
         label="Username"
         name="logUsername"
