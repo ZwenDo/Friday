@@ -1,6 +1,7 @@
 <script>
     import FormField from "../components/FormField.svelte";
     import Form from "../components/Form.svelte";
+    import {loginUser} from "../repositories/login_repository";
 
     export let extendClass = "";
 
@@ -8,7 +9,11 @@
     let logPassword = "";
 
     function onSubmit() {
-        // TODO: Validate form
+        if (!loginUser(logUsername, logPassword)) {
+            alert("Invalid username or password");
+            logUsername = "";
+            logPassword = "";
+        }
     }
 </script>
 
