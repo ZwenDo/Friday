@@ -12,5 +12,5 @@
     transform hover:bg-purple-600 hover:scale-110
     transition-all"
 >
-    <slot></slot>
+    <slot/>
 </button>
