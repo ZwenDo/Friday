@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
+        "postinstall": "node editICal",
         "build": "rollup -c",
         "dev": "rollup -c -w",
         "start": "sirv public --no-clear"
@@ -20,7 +21,10 @@
         "rollup-plugin-terser": "^7.0.0",
         "svelte": "^3.0.0",
         "svelte-preprocess": "^4.9.8",
-        "tailwindcss": "^2.2.17"
+        "tailwindcss": "^2.2.17",
+        "svelte-fullcalendar": "^1.1.1",
+        "@fullcalendar/daygrid": "^5.10.1",
+        "@fullcalendar/icalendar": "^5.10.1"
     },
     "dependencies": {
         "build": "^0.1.4",
