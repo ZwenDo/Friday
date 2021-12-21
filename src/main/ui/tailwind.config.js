@@ -4,12 +4,12 @@ module.exports = {
     darkMode: false, // or 'media' or 'class'
     theme: {
         fontFamily: {
-            cursive: ['Great Vibes', 'cursive'],
+            cursive: ['Playball', 'cursive'],
             serif: ['Raleway', 'serif']
         },
         extend: {
             backgroundSize: {
-                '300': '300%'
+                '300': '200%'
             },
             zIndex: {
                 '-20': '-20',
@@ -20,7 +20,7 @@ module.exports = {
             },
             keyframes: {
                 fader: {
-                    '0%': {'background-position': 0},
+                    '0%': {'background-position': '0%'},
                     '100%': {'background-position': '100%'}
                 }
             },

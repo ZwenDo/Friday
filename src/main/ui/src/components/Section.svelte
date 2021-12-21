@@ -1,4 +1,6 @@
 <script>
+    import Heading from "./Heading.svelte";
+
     export let title;
     export let subtitle = null;
 </script>
@@ -10,9 +12,9 @@
     m-auto w-full
     rounded-lg shadow-inner shadow-2xl"
 >
-    <h2 class="font-extrabold text-2xl">{title}</h2>
+    <Heading>{title}</Heading>
     {#if subtitle != null}
         <h3>{subtitle}</h3>
     {/if}
-    <slot></slot>
+    <slot/>
 </section>
