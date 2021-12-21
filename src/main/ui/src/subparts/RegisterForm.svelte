@@ -1,6 +1,7 @@
 <script>
     import FormField from "../components/FormField.svelte";
     import Form from "../components/Form.svelte";
+    import {registerUser} from "../repositories/login_repository";
 
     export let extendClass = "";
 
@@ -9,7 +10,16 @@
     let regPasswordR = "";
 
     function onSubmit() {
-        // TODO: Validate form
+        if (regPassword !== regPasswordR) {
+            alert("Passwords do not match");
+            return;
+        }
+        if (!registerUser(regUsername, regPassword)) {
+            alert("Username already exists");
+            regUsername = "";
+            regPassword = "";
+            regPasswordR = "";
+        }
     }
 </script>
 
