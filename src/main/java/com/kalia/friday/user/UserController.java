@@ -2,6 +2,7 @@ package com.kalia.friday.user;
 
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -40,10 +41,15 @@ public class UserController {
     @Post("/save")
     public HttpResponse<UserResponseDTO> save(@Body @Valid UserCredsDTO userCredsDTO) {
         var saveResponse = repository.save(userCredsDTO.username(), userCredsDTO.password());
+        if (saveResponse.status() != RepositoryResponse.Status.OK) {
+            return HttpResponse
+                .<UserResponseDTO>status(HttpStatus.CONFLICT)
+                .headers(h -> h.location(URI.create("/user/save")));
+        }
         var user = saveResponse.get();
         return HttpResponse
             .created(new UserResponseDTO(user.id(), user.username()))
-            .headers(h -> h.location(URI.create("/user/" + user.id())));
+            .headers(h -> h.location(URI.create("/user/save/" + user.id())));
     }
 
     /**

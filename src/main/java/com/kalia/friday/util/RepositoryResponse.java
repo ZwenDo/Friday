@@ -1,6 +1,7 @@
 package com.kalia.friday.util;
 
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MutableHttpResponse;
 
 import java.util.NoSuchElementException;
@@ -21,7 +22,8 @@ public final class RepositoryResponse<T> {
     public enum Status {
         OK,
         NOT_FOUND,
-        UNAUTHORIZED
+        UNAUTHORIZED,
+        CONFLICT
     }
 
     private final Status status;
@@ -88,6 +90,16 @@ public final class RepositoryResponse<T> {
     }
 
     /**
+     * Returns {@code RepositoryResponse} with a {@code CONFLICT} status and no content.
+     *
+     * @param <T> the theoretical type of the content
+     * @return a {@code RepositoryResponse} with a {@code CONFLICT} status and no content
+     */
+    public static <T> RepositoryResponse<T> conflict() {
+        return new RepositoryResponse<>(Status.CONFLICT, null);
+    }
+
+    /**
      * Creates an empty {@code MutableHttpResponse} corresponding to the given {@code RepositoryResponse.Status}.
      *
      * @param repositoryResponseStatus the repository response status to create the http response
@@ -99,6 +111,7 @@ public final class RepositoryResponse<T> {
             case OK -> HttpResponse.noContent();
             case NOT_FOUND -> HttpResponse.notFound();
             case UNAUTHORIZED -> HttpResponse.unauthorized();
+            case CONFLICT -> HttpResponse.status(HttpStatus.CONFLICT);
         };
     }
 }
