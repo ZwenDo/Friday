@@ -93,7 +93,7 @@ public final class RepositoryResponse<T> {
      * @param repositoryResponseStatus the repository response status to create the http response
      * @return the created mutable http response
      */
-    public static MutableHttpResponse<?> toEmptyHttpResponse(RepositoryResponse.Status repositoryResponseStatus) {
+    public static MutableHttpResponse<Void> toEmptyHttpResponse(RepositoryResponse.Status repositoryResponseStatus) {
         requireNonNull(repositoryResponseStatus);
         return switch (repositoryResponseStatus) {
             case OK -> HttpResponse.noContent();
