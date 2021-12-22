@@ -21,10 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -71,7 +68,10 @@ public class EventRepositoryTest {
                 null,
                 null,
                 "rec",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null,
+                null,
+                1
             );
             events.add(event);
             manager.persist(event);
@@ -89,7 +89,10 @@ public class EventRepositoryTest {
             null,
             null,
             "rec",
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null,
+            null,
+            1
         );
         manager.persist(event);
         manager.flush();
@@ -165,7 +168,10 @@ public class EventRepositoryTest {
             null,
             null,
             "rec",
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertEquals(RepositoryResponse.Status.OK, response.status());
         var event = response.get();
@@ -185,7 +191,10 @@ public class EventRepositoryTest {
             null,
             null,
             "rec",
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertEquals(RepositoryResponse.Status.UNAUTHORIZED, response.status());
     }
@@ -199,7 +208,10 @@ public class EventRepositoryTest {
             null,
             null,
             "rec",
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertEquals(RepositoryResponse.Status.UNAUTHORIZED, response.status());
     }
@@ -244,7 +256,10 @@ public class EventRepositoryTest {
             "description",
             "somewhere",
             "rec",
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertEquals(RepositoryResponse.Status.OK, response.status());
         manager.refresh(event);
@@ -264,7 +279,10 @@ public class EventRepositoryTest {
             "description",
             "somewhere",
             "rec",
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertEquals(RepositoryResponse.Status.NOT_FOUND, response.status());
     }
@@ -280,7 +298,10 @@ public class EventRepositoryTest {
             "description",
             "somewhere",
             "rec",
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertEquals(RepositoryResponse.Status.UNAUTHORIZED, response.status());
     }
@@ -296,7 +317,10 @@ public class EventRepositoryTest {
             "description",
             "somewhere",
             "rec",
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertEquals(RepositoryResponse.Status.UNAUTHORIZED, response.status());
     }

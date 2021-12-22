@@ -19,6 +19,9 @@ public record EventDTO(
     @NotBlank String description,
     @NotBlank String place,
     @NotEmpty String recurRuleParts,
-    @NotNull LocalDateTime startDate
+    @NotNull LocalDateTime startDate,
+    Double latitude,
+    Double longitude,
+    long duration
 ) {
 }
