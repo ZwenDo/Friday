@@ -2,13 +2,7 @@ package com.kalia.friday.event;
 
 import com.kalia.friday.user.User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -53,7 +47,10 @@ public class Event implements Serializable {
         @NotBlank String description,
         @NotBlank String place,
         @NotEmpty String recurRuleParts,
-        @NotNull LocalDateTime startDate
+        @NotNull LocalDateTime startDate,
+        Double latitude,
+        Double longitude,
+        long duration
     ) {
         this.user = requireNonNull(user);
         this.title = requireNotEmpty(title);
@@ -61,6 +58,9 @@ public class Event implements Serializable {
         this.place = requireNotBlank(place);
         this.recurRuleParts = requireNotEmpty(recurRuleParts);
         this.startDate = startDate;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.duration = duration;
     }
 
     @Id
@@ -89,6 +89,15 @@ public class Event implements Serializable {
     @NotNull
     @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "duration", nullable = false)
+    private long duration;
 
     /**
      * Gets the id of the event.
@@ -145,12 +154,39 @@ public class Event implements Serializable {
     }
 
     /**
-     * Gets the startDate of the event.
+     * Gets the start date of the event.
      *
      * @return the startDate of the event
      */
     public LocalDateTime startDate() {
         return startDate;
+    }
+
+    /**
+     * Gets the latitude of the event.
+     *
+     * @return the latitude of the event
+     */
+    public Double latitude() {
+        return latitude;
+    }
+
+    /**
+     * Gets the longitude of the event.
+     *
+     * @return the longitude of the event
+     */
+    public Double longitude() {
+        return longitude;
+    }
+
+    /**
+     * Gets the duration (in seconds) of the event.
+     *
+     * @return the duration of the event
+     */
+    public long duration() {
+        return duration;
     }
 
     /**
@@ -190,7 +226,41 @@ public class Event implements Serializable {
         this.recurRuleParts = requireNotEmpty(recurRuleParts);
     }
 
+    /**
+     * Sets the start date of the event.
+     *
+     * @param startDate the start date to set
+     */
     public void setStartDate(@NotNull LocalDateTime startDate) {
         this.startDate = requireNonNull(startDate);
     }
+
+    /**
+     * Sets the latitude of the event.
+     *
+     * @param latitude the latitude to set
+     */
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    /**
+     * Sets the longitude of the event.
+     *
+     * @param longitude the longitude to set
+     */
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    /**
+     * Sets the duration (in seconds) of the event.
+     *
+     * @param duration the duration to set
+     */
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+
 }

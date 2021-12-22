@@ -22,9 +22,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
@@ -60,17 +58,20 @@ public class EventControllerTest {
     @Test
     public void testSave() {
         var saveBody = new EventDTO(
-                user.id(),
-                login.token(),
-                "title",
-                "description",
-                "place",
-                "rec",
-                LocalDateTime.now()
+            user.id(),
+            login.token(),
+            "title",
+            "description",
+            "place",
+            "rec",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         var responseSave = client
-                .toBlocking()
-                .exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class);
+            .toBlocking()
+            .exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class);
         assertEquals(HttpStatus.CREATED, responseSave.getStatus());
         var body = responseSave.body();
         assertNotNull(body);
@@ -79,17 +80,20 @@ public class EventControllerTest {
     @Test
     public void testSaveWithWrongUserIdFails() {
         var saveBody = new EventDTO(
-                UUID.randomUUID(),
-                login.token(),
-                "title",
-                "description",
-                "place",
-                "rec",
-                LocalDateTime.now()
+            UUID.randomUUID(),
+            login.token(),
+            "title",
+            "description",
+            "place",
+            "rec",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         var response = assertThrows(
-                HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class)
+            HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class)
         );
         assertNotNull(response.getResponse());
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatus());
@@ -98,17 +102,20 @@ public class EventControllerTest {
     @Test
     public void testSaveWithWrongLoginTokenFails() {
         var saveBody = new EventDTO(
-                user.id(),
-                UUID.randomUUID(),
-                "title",
-                "description",
-                "place",
-                "rec",
-                LocalDateTime.now()
+            user.id(),
+            UUID.randomUUID(),
+            "title",
+            "description",
+            "place",
+            "rec",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         var response = assertThrows(
-                HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class)
+            HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class)
         );
         assertNotNull(response.getResponse());
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatus());
@@ -117,73 +124,76 @@ public class EventControllerTest {
     @Test
     public void testSaveInvalidEvent() {
         var saveBody = new EventDTO(
-                user.id(),
-                login.token(),
-                "",
-                null,
-                "place",
-                "",
-                LocalDateTime.now()
+            user.id(),
+            login.token(),
+            "",
+            null,
+            "place",
+            "",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class)
+            .toBlocking()
+            .exchange(HttpRequest.POST("/", saveBody), EventResponseDTO.class)
         );
     }
 
     @Test
     public void testDelete() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), login.token());
         var responseDelete = client
-                .toBlocking()
-                .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO));
+            .toBlocking()
+            .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO));
         assertEquals(HttpStatus.NO_CONTENT, responseDelete.getStatus());
     }
 
     @Test
     public void testDeleteWithWrongEventIdFails() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), login.token());
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.DELETE("/delete/" + UUID.randomUUID(), loginDTO))
+            .toBlocking()
+            .exchange(HttpRequest.DELETE("/delete/" + UUID.randomUUID(), loginDTO))
         );
         manager.remove(event);
     }
 
     @Test
     public void testDeleteWithWrongUserIdFails() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(UUID.randomUUID(), login.token());
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO))
+            .toBlocking()
+            .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO))
         );
     }
 
     @Test
     public void testDeleteWithWrongLoginTokenFails() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), UUID.randomUUID());
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO))
+            .toBlocking()
+            .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO))
         );
     }
 
     @Test
     public void testDeleteOtherUserEventFails() {
         // creates event for user
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
 
         // creates new user and login
@@ -196,28 +206,31 @@ public class EventControllerTest {
 
         var loginDTO = new LoginSessionDTO(otherUser.id(), otherLogin.token()); // other user login
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO))
+            .toBlocking()
+            .exchange(HttpRequest.DELETE("/delete/" + event.id(), loginDTO))
         );
     }
 
     @Test
     public void testUpdate() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
-                user.id(),
-                login.token(),
-                "title",
-                "description",
-                "place",
-                "rules",
-                LocalDateTime.now()
+            user.id(),
+            login.token(),
+            "title",
+            "description",
+            "place",
+            "rules",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         var updateResponse = client
-                .toBlocking()
-                .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class);
+            .toBlocking()
+            .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class);
         assertEquals(HttpStatus.OK, updateResponse.getStatus());
         manager.refresh(event);
         assertEquals("description", event.description());
@@ -225,81 +238,93 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWrongEventIdFails() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
-                user.id(),
-                login.token(),
-                "title",
-                "description",
-                "place",
-                "rules",
-                LocalDateTime.now()
+            user.id(),
+            login.token(),
+            "title",
+            "description",
+            "place",
+            "rules",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.PUT("/update/" + UUID.randomUUID(), updateDTO), EventResponseDTO.class)
+            .toBlocking()
+            .exchange(HttpRequest.PUT("/update/" + UUID.randomUUID(), updateDTO), EventResponseDTO.class)
         );
     }
 
     @Test
     public void testUpdateWrongUserIdFails() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
-                UUID.randomUUID(),
-                login.token(),
-                "title",
-                "description",
-                "place",
-                "rules",
-                LocalDateTime.now()
+            UUID.randomUUID(),
+            login.token(),
+            "title",
+            "description",
+            "place",
+            "rules",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
+            .toBlocking()
+            .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
         );
     }
 
     @Test
     public void testUpdateWrongLoginTokenFails() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
-                user.id(),
-                UUID.randomUUID(),
-                "title",
-                "description",
-                "place",
-                "rules",
-                LocalDateTime.now()
+            user.id(),
+            UUID.randomUUID(),
+            "title",
+            "description",
+            "place",
+            "rules",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
+            .toBlocking()
+            .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
         );
     }
 
     @Test
     public void testUpdateWithInvalidValuesFails() {
-        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now());
+        var event = new Event(user, "title", null, null, "rules", LocalDateTime.now(), null, null, 1);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
-                user.id(),
-                login.token(),
-                "title",
-                "", // invalid blank desc
-                "place",
-                "rules",
-                LocalDateTime.now()
+            user.id(),
+            login.token(),
+            "title",
+            "", // invalid blank desc
+            "place",
+            "rules",
+            LocalDateTime.now(),
+            null,
+            null,
+            0
         );
         assertThrows(HttpClientResponseException.class, () -> client
-                .toBlocking()
-                .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
+            .toBlocking()
+            .exchange(HttpRequest.PUT("/update/" + event.id(), updateDTO), EventResponseDTO.class)
         );
     }
 }

@@ -67,7 +67,10 @@ public class EventRepositoryImpl implements EventRepository {
         String description,
         String place,
         String recurRuleParts,
-        LocalDateTime startDate
+        LocalDateTime startDate,
+        Double latitude,
+        Double longitude,
+        long duration
     ) {
         requireNonNull(userId);
         requireNotEmpty(title);
@@ -80,7 +83,7 @@ public class EventRepositoryImpl implements EventRepository {
             return RepositoryResponse.unauthorized();
         }
         var user = login.get().user();
-        var event = new Event(user, title, description, place, recurRuleParts, startDate);
+        var event = new Event(user, title, description, place, recurRuleParts, startDate, latitude, longitude, duration);
         manager.merge(user).events().add(event);
         manager.flush();
         manager.detach(event);
@@ -111,7 +114,10 @@ public class EventRepositoryImpl implements EventRepository {
         String description,
         String place,
         String recurRuleParts,
-        LocalDateTime localDateTime
+        LocalDateTime localDateTime,
+        Double latitude,
+        Double longitude,
+        long duration
     ) {
         requireNonNull(id);
         requireNonNull(userId);
@@ -129,6 +135,10 @@ public class EventRepositoryImpl implements EventRepository {
         event.setDescription(description);
         event.setPlace(place);
         event.setRecurRuleParts(recurRuleParts);
+        event.setStartDate(localDateTime);
+        event.setLatitude(latitude);
+        event.setLongitude(longitude);
+        event.setDuration(duration);
         manager.flush(); // flush changes before detach
         manager.detach(event);
         return eventGetResponse;

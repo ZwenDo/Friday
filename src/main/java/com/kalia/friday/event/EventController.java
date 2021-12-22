@@ -3,12 +3,7 @@ package com.kalia.friday.event;
 import com.kalia.friday.login.LoginSessionDTO;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
@@ -70,27 +65,12 @@ public class EventController {
      */
     @Post
     public HttpResponse<@Valid EventResponseDTO> save(@Body @Valid EventDTO eventDTO) {
-        var saveResponse = eventRepository.authenticatedSave(
-            eventDTO.userId(),
-            eventDTO.userToken(),
-            eventDTO.title(),
-            eventDTO.description(),
-            eventDTO.place(),
-            eventDTO.recurRuleParts(),
-            eventDTO.startDate()
-        );
+        var saveResponse = eventRepository.authenticatedSave(eventDTO);
         if (saveResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
         }
         var createdEvent = saveResponse.get();
-        var httpResponse = HttpResponse.created(new EventResponseDTO(
-            createdEvent.id(),
-            createdEvent.title(),
-            createdEvent.description(),
-            createdEvent.place(),
-            createdEvent.recurRuleParts(),
-            createdEvent.startDate())
-        );
+        var httpResponse = HttpResponse.created(EventResponseDTO.fromEvent(createdEvent));
         return httpResponse.headers(h -> h.location(URI.create("/event/" + createdEvent.id())));
     }
 
@@ -142,28 +122,12 @@ public class EventController {
      */
     @Put("/update/{id}")
     public HttpResponse<@Valid EventResponseDTO> update(UUID id, @Body @Valid EventDTO eventDTO) {
-        var updateResponse = eventRepository.authenticatedUpdate(
-            id,
-            eventDTO.userId(),
-            eventDTO.userToken(),
-            eventDTO.title(),
-            eventDTO.description(),
-            eventDTO.place(),
-            eventDTO.recurRuleParts(),
-            eventDTO.startDate()
-        );
+        var updateResponse = eventRepository.authenticatedUpdate(id, eventDTO);
         if (updateResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
         }
         var updatedEvent = updateResponse.get();
-        var httpResponse = HttpResponse.ok(new EventResponseDTO(
-            updatedEvent.id(),
-            updatedEvent.title(),
-            updatedEvent.description(),
-            updatedEvent.place(),
-            updatedEvent.recurRuleParts(),
-            updatedEvent.startDate())
-        );
+        var httpResponse = HttpResponse.ok(EventResponseDTO.fromEvent(updatedEvent));
         return httpResponse.headers(h -> h.location(URI.create("/event/" + updatedEvent.id())));
     }
 }

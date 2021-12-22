@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -18,6 +19,24 @@ public record EventResponseDTO(
     @NotBlank String description,
     @NotBlank String place,
     @NotEmpty String recurRuleParts,
-    @NotNull LocalDateTime startDate
+    @NotNull LocalDateTime startDate,
+    Double latitude,
+    Double longitude,
+    long duration
 ) {
+
+    public static EventResponseDTO fromEvent(Event event) {
+        Objects.requireNonNull(event);
+        return new EventResponseDTO(
+            event.id(),
+            event.title(),
+            event.description(),
+            event.place(),
+            event.recurRuleParts(),
+            event.startDate(),
+            event.latitude(),
+            event.longitude(),
+            event.duration()
+        );
+    }
 }
