@@ -37,7 +37,7 @@ public class UserController {
      * "username": ""
      * }
      */
-    @Post
+    @Post("/save")
     public HttpResponse<UserResponseDTO> save(@Body @Valid UserCredsDTO userCredsDTO) {
         var saveResponse = repository.save(userCredsDTO.username(), userCredsDTO.password());
         var user = saveResponse.get();
@@ -57,7 +57,7 @@ public class UserController {
      * @return OK if deleted | NOT_FOUND if the id is unknown | BAD_REQUEST if the password is incorrect
      */
     @Delete("/delete/{id}")
-    public HttpResponse<?> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
+    public HttpResponse<Void> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         var deleteUserResponse = repository.deleteById(id, userDeleteDTO.password());
         return RepositoryResponse
             .toEmptyHttpResponse(deleteUserResponse.status())
@@ -76,7 +76,7 @@ public class UserController {
      * @return OK if updated | NOT_FOUND if the id is unknown | BAD_REQUEST if the old password is incorrect
      */
     @Put("/update/{id}")
-    public HttpResponse<?> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
+    public HttpResponse<Void> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
         var updatePwdResponse = repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword());
         return RepositoryResponse
             .toEmptyHttpResponse(updatePwdResponse.status())

@@ -13,3 +13,7 @@ export function getCookie(name) {
         .find(cookie => cookie.trimStart().startsWith(cName))
     return cookie?.substring(cName.length, cookie.length) ?? undefined;
 }
+
+export function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; sameSite=strict`;
+}

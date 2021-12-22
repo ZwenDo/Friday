@@ -24,28 +24,6 @@ import java.util.UUID;
 @Controller("/api/event")
 public class EventController {
 
-    @Get
-    public HttpResponse<String> foo() {
-        return HttpResponse.ok("""
-            BEGIN:VCALENDAR
-            VERSION:2.0
-            PRODID:-//Michael Angstadt//biweekly 0.6.6//EN
-            NAME:Kamelia calendar
-            DESCRIPTION:The new jetbrains
-            BEGIN:VEVENT
-            UID:72e75074-f455-485f-870c-d511e3d9d4cb
-            DTSTAMP:20211221T220818Z
-            SUMMARY:Réunion corporate
-            DESCRIPTION:On va regarder des vidéos et rien faire
-            LOCATION:BU de l'UGE
-            GEO:48.839915;2.590522
-            DTSTART:20201231T230000Z
-            DURATION:PT2H
-            RRULE:FREQ=MONTHLY;BYMINUTE=30;BYHOUR=11;BYDAY=-1WE
-            END:VEVENT
-            END:VCALENDAR""");
-    }
-
     @Inject
     private EventRepository eventRepository;
 
@@ -107,7 +85,7 @@ public class EventController {
      * own the event
      */
     @Delete("/delete/{id}")
-    public HttpResponse<?> delete(UUID id, @Body @Valid LoginSessionDTO loginSessionDTO) {
+    public HttpResponse<Void> delete(UUID id, @Body @Valid LoginSessionDTO loginSessionDTO) {
         var deleteResponse = eventRepository.authenticatedDeleteById(
             id,
             loginSessionDTO.userId(),
