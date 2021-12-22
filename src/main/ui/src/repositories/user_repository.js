@@ -1,8 +1,8 @@
 import {loginUser} from "./login_repository";
 import {booleanHTTPRequest} from "../utils/http_requests";
-import {getCookie} from "../utils/cookies";
+import {COOKIE_USER_ID, getCookie} from "../utils/cookies";
 
-const api = "/api/users/";
+const api = "/api/user/";
 
 export function registerUser(username, password) {
     return booleanHTTPRequest(
@@ -19,7 +19,7 @@ export function registerUser(username, password) {
 
 export function deleteUser(password) {
     return booleanHTTPRequest(
-        api + "delete/" + getCookie("friday-userId"),
+        api + "delete/" + getCookie(COOKIE_USER_ID),
         "DELETE",
         {
             password
@@ -30,7 +30,7 @@ export function deleteUser(password) {
 
 export function updateUserPassword(oldPassword, newPassword) {
     return booleanHTTPRequest(
-        api + "update/" + getCookie("friday-userId"),
+        api + "update/" + getCookie(COOKIE_USER_ID),
         "PUT",
         {
             oldPassword,
