@@ -267,6 +267,11 @@ public class Event implements Serializable {
         this.duration = duration;
     }
 
+    /**
+     * Gets the event as a {@link VEvent} instance.
+     *
+     * @return the event as vEvent
+     */
     public VEvent asVEvent() {
         var vevent = new VEvent();
 
@@ -276,7 +281,7 @@ public class Event implements Serializable {
         vevent.setLocation(place);
         vevent.setRecurrenceRule(EventRecurRuleParts.fromString(recurRuleParts));
         vevent.setDateStart(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
-        vevent.setDuration(Duration.fromMillis(duration));
+        vevent.setDuration(Duration.fromMillis(duration * 1000));
         if (latitude != null && longitude != null) {
             vevent.setGeo(new Geo(latitude, longitude));
         }

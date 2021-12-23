@@ -5,6 +5,9 @@ import biweekly.property.RecurrenceRule;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A class that contains recur rule parts util methods.
+ */
 public final class EventRecurRuleParts {
     private EventRecurRuleParts() {
         throw new AssertionError("Cannon instantiate.");
@@ -24,9 +27,14 @@ public final class EventRecurRuleParts {
         END:VEVENT
         END:VCALENDAR""";
 
+    /**
+     * Creates a {@link RecurrenceRule} from a {@link String}.
+     *
+     * @param recurRulePart the string to create the rule.
+     * @return the created recurrence rule
+     */
     public static RecurrenceRule fromString(String recurRulePart) {
         requireNonNull(recurRulePart);
-        System.out.println(START + recurRulePart + "\n" + END);
         var cal = Biweekly.parse(START + recurRulePart + END).first();
         return cal.getEvents().get(0).getRecurrenceRule();
     }
