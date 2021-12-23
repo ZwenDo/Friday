@@ -112,9 +112,16 @@ public class EventController {
         return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + updatedEvent.id())));
     }
 
-    @Post("/allbyuser")
-    public HttpResponse<String> allByUser(@Body @Valid LoginSessionDTO loginSessionDTO) {
-        var findResponse = eventRepository.authenticatedFindByUserId(loginSessionDTO.userId(), loginSessionDTO.token());
+    /**
+     * Gets the ICalendar of a user.
+     *
+     * @param userId the user id
+     * @param token the login session token
+     * @return a string representing the icalendar of the user
+     */
+    @Get("/allbyuser/{userId}/{token}")
+    public HttpResponse<String> allByUser(UUID userId, UUID token) {
+        var findResponse = eventRepository.authenticatedFindByUserId(userId, token);
         if (findResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
         }
