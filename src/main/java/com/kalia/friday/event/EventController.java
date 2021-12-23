@@ -1,5 +1,7 @@
 package com.kalia.friday.event;
 
+import biweekly.Biweekly;
+import biweekly.ICalendar;
 import com.kalia.friday.login.LoginSessionDTO;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
@@ -18,6 +20,7 @@ import java.util.UUID;
 @ExecuteOn(value = TaskExecutors.IO)
 @Controller("/api/event")
 public class EventController {
+    private static final String DEFAULT_ROUTE = "/api/event/";
 
     @Inject
     private EventRepository eventRepository;
@@ -49,7 +52,7 @@ public class EventController {
         }
         var createdEvent = saveResponse.get();
         var httpResponse = HttpResponse.created(EventResponseDTO.fromEvent(createdEvent));
-        return httpResponse.headers(h -> h.location(URI.create("/event/" + createdEvent.id())));
+        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + createdEvent.id())));
     }
 
     /**
@@ -74,7 +77,7 @@ public class EventController {
 
         return RepositoryResponse
             .toEmptyHttpResponse(deleteResponse.status())
-            .headers(h -> h.location(URI.create("/event/delete/" + id)));
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "delete/" + id)));
     }
 
     /**
@@ -106,6 +109,29 @@ public class EventController {
         }
         var updatedEvent = updateResponse.get();
         var httpResponse = HttpResponse.ok(EventResponseDTO.fromEvent(updatedEvent));
-        return httpResponse.headers(h -> h.location(URI.create("/event/" + updatedEvent.id())));
+        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + updatedEvent.id())));
+    }
+
+    /**
+     * Gets the ICalendar of a user.
+     *
+     * @param userId the user id
+     * @param token the login session token
+     * @return a string representing the icalendar of the user
+     */
+    @Get("/allbyuser/{userId}/{token}")
+    public HttpResponse<String> allByUser(UUID userId, UUID token) {
+        var findResponse = eventRepository.authenticatedFindByUserId(userId, token);
+        if (findResponse.status() != RepositoryResponse.Status.OK) {
+            return HttpResponse.unauthorized();
+        }
+        var iCalendar = new ICalendar();
+        findResponse.get()
+            .stream()
+            .map(Event::asVEvent)
+            .toList()
+            .forEach(iCalendar::addEvent);
+        return HttpResponse.ok(Biweekly.write(iCalendar).go())
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "allbyuser")));
     }
 }

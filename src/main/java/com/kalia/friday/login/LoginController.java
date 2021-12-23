@@ -21,6 +21,7 @@ import static com.kalia.friday.util.RepositoryResponse.Status.OK;
 @ExecuteOn(value = TaskExecutors.IO)
 @Controller("/api/auth")
 public class LoginController {
+    private static final String DEFAULT_ROUTE = "/api/auth/";
 
     @Inject
     private LoginRepository repository;
@@ -55,7 +56,7 @@ public class LoginController {
             loginResponse.get().token()
         ))
             : HttpResponse.unauthorized();
-        return httpResponse.headers(h -> h.location(URI.create("/auth/login/" + userCredsDTO.username())));
+        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + "login/" + userCredsDTO.username())));
     }
 
     /**
@@ -73,7 +74,7 @@ public class LoginController {
             loginSessionDTO,
             () -> repository.logout(loginSessionDTO.token())
         );
-        return httpResponse.headers(h -> h.location(URI.create("/auth/logout/" + loginSessionDTO.userId())));
+        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + "logout/" + loginSessionDTO.userId())));
     }
 
     /**
@@ -91,7 +92,7 @@ public class LoginController {
             loginSessionDTO,
             () -> repository.logoutAll(loginSessionDTO.userId())
         );
-        return httpResponse.headers(h -> h.location(URI.create("/auth/logout/all/" + loginSessionDTO.userId())));
+        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + "logout/all/" + loginSessionDTO.userId())));
     }
 
     private MutableHttpResponse<Void> checkAndRun(LoginSessionDTO loginSessionDTO, Runnable request) {

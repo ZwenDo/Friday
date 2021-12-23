@@ -3,11 +3,7 @@ package com.kalia.friday.user;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
@@ -22,6 +18,7 @@ import java.util.UUID;
 @ExecuteOn(value = TaskExecutors.IO)
 @Controller("/api/user")
 public class UserController {
+    private static final String DEFAULT_ROUTE = "/api/user/";
 
     @Inject
     private UserRepository repository;
@@ -44,12 +41,12 @@ public class UserController {
         if (saveResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse
                 .<UserResponseDTO>status(HttpStatus.CONFLICT)
-                .headers(h -> h.location(URI.create("/user/save")));
+                .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "save")));
         }
         var user = saveResponse.get();
         return HttpResponse
             .created(new UserResponseDTO(user.id(), user.username()))
-            .headers(h -> h.location(URI.create("/user/save/" + user.id())));
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "save/" + user.id())));
     }
 
     /**
@@ -67,7 +64,7 @@ public class UserController {
         var deleteUserResponse = repository.deleteById(id, userDeleteDTO.password());
         return RepositoryResponse
             .toEmptyHttpResponse(deleteUserResponse.status())
-            .headers(h -> h.location(URI.create("/user/delete/" + id)));
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "delete/" + id)));
     }
 
     /**
@@ -86,6 +83,6 @@ public class UserController {
         var updatePwdResponse = repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword());
         return RepositoryResponse
             .toEmptyHttpResponse(updatePwdResponse.status())
-            .headers(h -> h.location(URI.create("/user/update/" + id)));
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "update/" + id)));
     }
 }
