@@ -1,5 +1,8 @@
 package com.kalia.friday.event;
 
+import biweekly.component.VEvent;
+import biweekly.property.Geo;
+import biweekly.util.Duration;
 import com.kalia.friday.user.User;
 
 import javax.persistence.*;
@@ -8,7 +11,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
@@ -262,5 +267,20 @@ public class Event implements Serializable {
         this.duration = duration;
     }
 
+    public VEvent asVEvent() {
+        var vevent = new VEvent();
 
+        vevent.setUid(id.toString());
+        vevent.setSummary(title);
+        vevent.setDescription(description);
+        vevent.setLocation(place);
+        vevent.setRecurrenceRule(EventRecurRuleParts.fromString(recurRuleParts));
+        vevent.setDateStart(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
+        vevent.setDuration(Duration.fromMillis(duration));
+        if (latitude != null && longitude != null) {
+            vevent.setGeo(new Geo(latitude, longitude));
+        }
+
+        return vevent;
+    }
 }
