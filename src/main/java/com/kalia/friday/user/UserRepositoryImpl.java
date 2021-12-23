@@ -55,6 +55,7 @@ public class UserRepositoryImpl implements UserRepository {
     public RepositoryResponse<User> save(String username, String password) {
         requireNonNull(username);
         requireNonNull(password);
+        if (!checkUsername(username)) return RepositoryResponse.conflict();
         var hashedPwd = hasher.hash(password);
         var user = new User(username, hashedPwd);
         manager.persist(user);
@@ -89,6 +90,16 @@ public class UserRepositoryImpl implements UserRepository {
         manager.flush();
         manager.detach(user);
         return response;
+    }
+
+    private boolean checkUsername(String username) {
+        var result = manager
+            .createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+            .setParameter("username", username)
+            .getResultList()
+            .stream()
+            .findFirst();
+        return result.isEmpty();
     }
 
     private RepositoryResponse<User> checkIdentity(UUID id, String password) {

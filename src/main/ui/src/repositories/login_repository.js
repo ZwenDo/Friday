@@ -1,55 +1,46 @@
-import {setCookie} from "../utils/cookies";
+import {COOKIE_USER_ID, COOKIE_USER_TOKEN, deleteCookie, getCookie, setCookie} from "../utils/cookies";
+import {booleanHTTPRequest} from "../utils/http_requests";
+
+const api = "/api/auth/";
 
 export function loginUser(username, password) {
-    let ok = false;
-    fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
+    return booleanHTTPRequest(
+        api + "login",
+        "POST",
+        {
+            username,
+            password
         },
-        body: JSON.stringify({
-            username: username,
-            password: password
+        201,
+        response => response.json().then(data => {
+            setCookie(COOKIE_USER_ID, data['userId']);
+            setCookie(COOKIE_USER_TOKEN, data['token']);
         })
-    }).then((response) => {
-        if (response.status === 201) {
-            return response.json();
-        } else {
-            throw new Error("Login failed");
-        }
-    }).then((response) => {
-        setCookie("friday-userId", response['userId']);
-        setCookie("friday-userToken", response['token']);
-        ok = true;
-    }).catch((_) => {
-        ok = false;
-    });
-    return ok;
+    );
 }
 
-export function registerUser(username, password) {
-    let ok = false;
-    fetch("/api/user", {
-        method: "POST",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
+function logout(all = false) {
+    const userId = getCookie(COOKIE_USER_ID);
+    const token = getCookie(COOKIE_USER_TOKEN);
+    return booleanHTTPRequest(
+        api + "logout" + (all ? "/all" : ""),
+        "POST",
+        {
+            userId,
+            token
         },
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
-    }).then((response) => {
-        if (response.status === 201) {
-            return response.json();
-        } else {
-            throw new Error("Registration failed");
+        202,
+        _ => {
+            deleteCookie(COOKIE_USER_ID);
+            deleteCookie(COOKIE_USER_TOKEN);
         }
-    }).then((_) => {
-        ok = loginUser(username, password);
-    }).catch((_) => {
-        ok = false;
-    });
-    return ok;
+    );
+}
+
+export function logoutUser() {
+    return logout();
+}
+
+export function logoutAll() {
+    return logout(true);
 }

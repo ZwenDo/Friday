@@ -1,3 +1,6 @@
+export const COOKIE_USER_ID = 'friday-userId';
+export const COOKIE_USER_TOKEN = 'friday-userToken';
+
 export function setCookie(name, value, expirationInDays = 7) {
     const d = new Date();
     const days = expirationInDays * 24 * 60 * 60 * 1000;
@@ -9,7 +12,11 @@ export function setCookie(name, value, expirationInDays = 7) {
 export function getCookie(name) {
     const cName = `${name}=`;
     const cookie = decodeURIComponent(document.cookie)
-        .split(';')
-        .find(cookie => cookie.trimStart().startsWith(cName))
-    return cookie?.substring(cName.length, cookie.length) ?? undefined;
+        .split('; ')
+        .find(cookie => cookie.trimStart().startsWith(cName));
+    return cookie?.substring(cName.length) ?? undefined;
+}
+
+export function deleteCookie(name) {
+    document.cookie = `${name}=;max-age=-1;path=/;sameSite=strict`;
 }

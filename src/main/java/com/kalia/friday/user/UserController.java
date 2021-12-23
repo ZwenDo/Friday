@@ -2,6 +2,7 @@ package com.kalia.friday.user;
 
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -37,13 +38,18 @@ public class UserController {
      * "username": ""
      * }
      */
-    @Post
+    @Post("/save")
     public HttpResponse<UserResponseDTO> save(@Body @Valid UserCredsDTO userCredsDTO) {
         var saveResponse = repository.save(userCredsDTO.username(), userCredsDTO.password());
+        if (saveResponse.status() != RepositoryResponse.Status.OK) {
+            return HttpResponse
+                .<UserResponseDTO>status(HttpStatus.CONFLICT)
+                .headers(h -> h.location(URI.create("/user/save")));
+        }
         var user = saveResponse.get();
         return HttpResponse
             .created(new UserResponseDTO(user.id(), user.username()))
-            .headers(h -> h.location(URI.create("/user/" + user.id())));
+            .headers(h -> h.location(URI.create("/user/save/" + user.id())));
     }
 
     /**
@@ -57,7 +63,7 @@ public class UserController {
      * @return OK if deleted | NOT_FOUND if the id is unknown | BAD_REQUEST if the password is incorrect
      */
     @Delete("/delete/{id}")
-    public HttpResponse<?> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
+    public HttpResponse<Void> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         var deleteUserResponse = repository.deleteById(id, userDeleteDTO.password());
         return RepositoryResponse
             .toEmptyHttpResponse(deleteUserResponse.status())
@@ -76,7 +82,7 @@ public class UserController {
      * @return OK if updated | NOT_FOUND if the id is unknown | BAD_REQUEST if the old password is incorrect
      */
     @Put("/update/{id}")
-    public HttpResponse<?> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
+    public HttpResponse<Void> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
         var updatePwdResponse = repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword());
         return RepositoryResponse
             .toEmptyHttpResponse(updatePwdResponse.status())

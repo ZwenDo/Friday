@@ -68,7 +68,7 @@ public class LoginController {
      * @return OK if successfully logged out | UNAUTHORIZED if the sessions credentials are invalid
      */
     @Post("/logout")
-    public HttpResponse<Object> logout(@Body @Valid LoginSessionDTO loginSessionDTO) {
+    public HttpResponse<Void> logout(@Body @Valid LoginSessionDTO loginSessionDTO) {
         var httpResponse = checkAndRun(
             loginSessionDTO,
             () -> repository.logout(loginSessionDTO.token())
@@ -86,7 +86,7 @@ public class LoginController {
      * @return OK if successfully logged out | UNAUTHORIZED if the sessions credentials are invalid
      */
     @Post("/logout/all")
-    public HttpResponse<Object> logoutAll(@Body @Valid LoginSessionDTO loginSessionDTO) {
+    public HttpResponse<Void> logoutAll(@Body @Valid LoginSessionDTO loginSessionDTO) {
         var httpResponse = checkAndRun(
             loginSessionDTO,
             () -> repository.logoutAll(loginSessionDTO.userId())
@@ -94,7 +94,7 @@ public class LoginController {
         return httpResponse.headers(h -> h.location(URI.create("/auth/logout/all/" + loginSessionDTO.userId())));
     }
 
-    private MutableHttpResponse<Object> checkAndRun(LoginSessionDTO loginSessionDTO, Runnable request) {
+    private MutableHttpResponse<Void> checkAndRun(LoginSessionDTO loginSessionDTO, Runnable request) {
         var checkResponse = repository.checkIdentity(loginSessionDTO.userId(), loginSessionDTO.token());
         if (checkResponse.status() == OK) {
             request.run();
