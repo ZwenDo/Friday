@@ -5,7 +5,12 @@ import biweekly.ICalendar;
 import com.kalia.friday.login.LoginSessionDTO;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
@@ -46,6 +51,11 @@ public class EventController {
      */
     @Post
     public HttpResponse<@Valid EventResponseDTO> save(@Body @Valid EventDTO eventDTO) {
+        try {
+            EventRecurRuleParts.fromString(eventDTO.recurRuleParts());
+        } catch (IllegalArgumentException e) {
+            return HttpResponse.<EventResponseDTO>badRequest().headers(h -> h.location(URI.create(DEFAULT_ROUTE)));
+        }
         var saveResponse = eventRepository.authenticatedSave(eventDTO);
         if (saveResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
