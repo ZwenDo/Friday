@@ -8,6 +8,9 @@ module.exports = {
             serif: ['Raleway', 'serif']
         },
         extend: {
+            width: {
+                fit: "fit-content"
+            },
             backgroundSize: {
                 '300': '200%'
             },
