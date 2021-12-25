@@ -1,7 +1,7 @@
 <script>
     import FormField from "../components/FormField.svelte";
     import Form from "../components/Form.svelte";
-    import {loginUser} from "../repositories/login_repository";
+    import {loginUser} from "../stores/login_store";
 
     export let extendClass = "";
 
