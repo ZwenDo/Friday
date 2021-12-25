@@ -22,7 +22,9 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @MicronautTest(transactionMode = TransactionMode.SINGLE_TRANSACTION)
@@ -63,7 +65,7 @@ public class EventControllerTest {
             "title",
             "description",
             "place",
-            "rec",
+            "FREQ=DAILY",
             LocalDateTime.now(),
             null,
             null,
@@ -85,7 +87,7 @@ public class EventControllerTest {
             "title",
             "description",
             "place",
-            "rec",
+            "FREQ=DAILY",
             LocalDateTime.now(),
             null,
             null,
@@ -107,7 +109,7 @@ public class EventControllerTest {
             "title",
             "description",
             "place",
-            "rec",
+            "FREQ=DAILY",
             LocalDateTime.now(),
             null,
             null,
@@ -129,7 +131,7 @@ public class EventControllerTest {
             "",
             null,
             "place",
-            "",
+            "FREQ=DAILY",
             LocalDateTime.now(),
             null,
             null,
