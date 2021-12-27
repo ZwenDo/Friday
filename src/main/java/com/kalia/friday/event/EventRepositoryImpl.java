@@ -77,7 +77,7 @@ public class EventRepositoryImpl implements EventRepository {
         requireNotEmpty(title);
         requireNotBlank(description);
         requireNotBlank(place);
-        requireNotEmpty(recurRuleParts);
+        requireNotBlank(recurRuleParts);
         requireValidRecurRule(recurRuleParts);
         requireNonNull(startDate);
         var login = loginRepository.checkIdentity(userId, userToken);
@@ -126,7 +126,7 @@ public class EventRepositoryImpl implements EventRepository {
         requireNotEmpty(title);
         requireNotBlank(description);
         requireNotBlank(place);
-        requireNotEmpty(recurRuleParts);
+        requireNotBlank(recurRuleParts);
         requireValidRecurRule(recurRuleParts);
         requireNonNull(localDateTime);
         var eventGetResponse = getIfAuthenticated(id, userId, userToken);

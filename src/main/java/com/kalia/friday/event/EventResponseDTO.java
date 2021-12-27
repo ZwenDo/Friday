@@ -18,7 +18,7 @@ public record EventResponseDTO(
     @NotEmpty String title,
     @NotBlank String description,
     @NotBlank String place,
-    @NotEmpty String recurRuleParts,
+    @NotBlank String recurRuleParts,
     @NotNull LocalDateTime startDate,
     Double latitude,
     Double longitude,
