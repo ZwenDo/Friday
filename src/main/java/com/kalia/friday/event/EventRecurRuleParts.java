@@ -3,6 +3,8 @@ package com.kalia.friday.event;
 import biweekly.Biweekly;
 import biweekly.property.RecurrenceRule;
 
+import java.util.Arrays;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -36,10 +38,27 @@ public final class EventRecurRuleParts {
     public static RecurrenceRule fromString(String recurRulePart) {
         requireNonNull(recurRulePart);
         var cal = Biweekly.parse(START + recurRulePart + END).first();
-        var rule = cal.getEvents().get(0).getRecurrenceRule();
-        if (rule.getValue().getFrequency() == null) {
-            throw new IllegalArgumentException("Invalid recurrence rule.");
-        }
         return cal.getEvents().get(0).getRecurrenceRule();
+    }
+
+    /**
+     * Asserts that a recurrence rule is valid.
+     *
+     * @param recurRulePart the rule to test
+     * @throws IllegalArgumentException if rule is invalid
+     */
+    public static void requireValidRecurRule(String recurRulePart) {
+        requireNonNull(recurRulePart);
+        var cal = Biweekly.parse(START + recurRulePart + END).first();
+        var opt = Arrays.stream(Biweekly.write(cal).go().split("\n"))
+            .filter(s -> s.startsWith("RRULE:"))
+            .findFirst(); // gets the parsed rule
+        if (opt.isPresent()) {
+            if (!("RRULE:" + recurRulePart.trim()).equals(opt.get().trim())) {
+                throw new IllegalArgumentException("Invalid recurrence rule: " + recurRulePart);
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid recurrence rule: " + recurRulePart);
+        }
     }
 }
