@@ -29,7 +29,7 @@
 </script>
 
 <div class="p-4">
-    <div class="flex justify-between">
+    <div class="sm:flex justify-between">
         <div>
             <Heading>Hello, {getCookie(COOKIE_USER_NAME)}!</Heading>
         </div>
