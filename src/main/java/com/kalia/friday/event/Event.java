@@ -45,6 +45,9 @@ public class Event implements Serializable {
      * @param place          the optional location of the event
      * @param recurRuleParts the ICal recursion rule parts
      * @param startDate      the date on which begins the event
+     * @param latitude       the latitude of the event
+     * @param longitude      the longitude of the event
+     * @param duration       the duration of the event (in seconds)
      */
     public Event(
         @NotNull User user,
@@ -61,13 +64,29 @@ public class Event implements Serializable {
         this.title = requireNotEmpty(title);
         this.description = requireNotBlank(description);
         this.place = requireNotBlank(place);
-        this.recurRuleParts = requireNotEmpty(recurRuleParts);
+        this.recurRuleParts = requireNotBlank(recurRuleParts);
         this.startDate = requireNonNull(startDate);
         this.latitude = latitude;
         this.longitude = longitude;
+        if (duration < 0) {
+            throw new IllegalArgumentException("duration < 0");
+        }
         this.duration = duration;
     }
 
+    /**
+     * Creates an {@code event} row (created with an end date instead of a duration).
+     *
+     * @param user           the user which this event is attached to
+     * @param title          the title of the event
+     * @param description    the optional description of the event
+     * @param place          the optional location of the event
+     * @param recurRuleParts the ICal recursion rule parts
+     * @param startDate      the date on which begins the event
+     * @param latitude       the latitude of the event
+     * @param longitude      the longitude of the event
+     * @param endDate        the date on which begins the event
+     */
     public Event(
         @NotNull User user,
         @NotEmpty String title,
@@ -111,8 +130,8 @@ public class Event implements Serializable {
     @Column(name = "place")
     private String place;
 
-    @NotEmpty
-    @Column(name = "recur_rule_parts", nullable = false)
+    @NotBlank
+    @Column(name = "recur_rule_parts")
     private String recurRuleParts;
 
     @NotNull
@@ -251,7 +270,7 @@ public class Event implements Serializable {
      *
      * @param recurRuleParts the recurRuleParts to set
      */
-    public void setRecurRuleParts(@NotEmpty String recurRuleParts) {
+    public void setRecurRuleParts(@NotBlank String recurRuleParts) {
         this.recurRuleParts = requireNotEmpty(recurRuleParts);
     }
 
@@ -303,13 +322,14 @@ public class Event implements Serializable {
         vevent.setSummary(title);
         vevent.setDescription(description);
         vevent.setLocation(place);
-        vevent.setRecurrenceRule(EventRecurRuleParts.fromString(recurRuleParts));
+        if (recurRuleParts != null) {
+            vevent.setRecurrenceRule(EventRecurRuleParts.fromString(recurRuleParts));
+        }
         vevent.setDateStart(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
         vevent.setDuration(Duration.fromMillis(duration * 1000));
         if (latitude != null && longitude != null) {
             vevent.setGeo(new Geo(latitude, longitude));
         }
-
         return vevent;
     }
 
