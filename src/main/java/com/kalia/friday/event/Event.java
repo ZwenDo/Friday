@@ -62,10 +62,34 @@ public class Event implements Serializable {
         this.description = requireNotBlank(description);
         this.place = requireNotBlank(place);
         this.recurRuleParts = requireNotEmpty(recurRuleParts);
-        this.startDate = startDate;
+        this.startDate = requireNonNull(startDate);
         this.latitude = latitude;
         this.longitude = longitude;
         this.duration = duration;
+    }
+
+    public Event(
+        @NotNull User user,
+        @NotEmpty String title,
+        @NotBlank String description,
+        @NotBlank String place,
+        @NotEmpty String recurRuleParts,
+        @NotNull LocalDateTime startDate,
+        Double latitude,
+        Double longitude,
+        @NotNull LocalDateTime endDate
+    ) {
+        this(
+            user,
+            title,
+            description,
+            place,
+            recurRuleParts,
+            startDate,
+            latitude,
+            longitude,
+            durationFromDates(requireNonNull(startDate), requireNonNull(endDate))
+        );
     }
 
     @Id
@@ -287,5 +311,9 @@ public class Event implements Serializable {
         }
 
         return vevent;
+    }
+
+    private static long durationFromDates(LocalDateTime start, LocalDateTime end) {
+        return end.atZone(ZoneId.systemDefault()).toEpochSecond() - start.atZone(ZoneId.systemDefault()).toEpochSecond();
     }
 }
