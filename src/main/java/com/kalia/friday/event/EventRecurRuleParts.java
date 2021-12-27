@@ -36,6 +36,10 @@ public final class EventRecurRuleParts {
     public static RecurrenceRule fromString(String recurRulePart) {
         requireNonNull(recurRulePart);
         var cal = Biweekly.parse(START + recurRulePart + END).first();
+        var rule = cal.getEvents().get(0).getRecurrenceRule();
+        if (rule.getValue().getFrequency() == null) {
+            throw new IllegalArgumentException("Invalid recurrence rule.");
+        }
         return cal.getEvents().get(0).getRecurrenceRule();
     }
 }

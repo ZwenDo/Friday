@@ -56,7 +56,7 @@ public class UserControllerTest {
         var responseSave = client
             .toBlocking()
             .exchange(HttpRequest.POST(
-                "/",
+                "/save",
                 new UserCredsDTO(username, "1234")
             ), UserResponseDTO.class);
         assertEquals(HttpStatus.CREATED, responseSave.getStatus());
