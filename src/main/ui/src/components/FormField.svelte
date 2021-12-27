@@ -11,19 +11,29 @@
 </script>
 
 <div class="form-field-container mt-9 mb-4 relative">
-    <input
-        class="peer
-        input-field rounded-lg p-2 placeholder-transparent
-        shadow-md border-1 border-gray-100 outline-none
-        focus:ring-purple-200 focus:ring-2
-        transition-all"
-        on:input="{handleInputType}"
-        id="{name}"
-        {name}
-        bind:value
-        placeholder="{label}"
-        {required}
-    />
+    {#if type.startsWith("textarea")}
+        <textarea
+            class="input-field peer"
+            id="{name}"
+            {name}
+            bind:value
+            cols="{type.split(' ')[1] ?? '40'}"
+            rows="{type.split(' ')[2] ?? '10'}"
+            placeholder="{label}"
+            {required}
+            style="resize: none;"
+        ></textarea>
+    {:else}
+        <input
+            class="input-field peer"
+            on:focus="{handleInputType}"
+            id="{name}"
+            {name}
+            bind:value
+            placeholder="{label}"
+            {required}
+        />
+    {/if}
     <label
         class="
         transition-all
@@ -36,3 +46,12 @@
         {label}
     </label>
 </div>
+
+<style>
+    .input-field {
+        @apply rounded-lg p-2 placeholder-transparent
+        shadow-md border-gray-100 outline-none
+        focus:ring-purple-200 focus:ring-2
+        transition-all;
+    }
+</style>

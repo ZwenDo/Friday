@@ -1,5 +1,6 @@
 export const COOKIE_USER_ID = 'friday-userId';
 export const COOKIE_USER_TOKEN = 'friday-userToken';
+export const COOKIE_USER_NAME = 'friday-userName';
 
 export function setCookie(name, value, expirationInDays = 7) {
     const d = new Date();

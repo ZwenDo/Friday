@@ -1,4 +1,4 @@
-import {loginUser} from "./login_repository";
+import {loginUser} from "./login_store";
 import {booleanHTTPRequest} from "../utils/http_requests";
 import {COOKIE_USER_ID, getCookie} from "../utils/cookies";
 

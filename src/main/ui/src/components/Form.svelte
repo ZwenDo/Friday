@@ -5,7 +5,7 @@
     export let extendClass = "";
 
     export let title = null;
-    export let submitText = null;
+    export let submitText;
 </script>
 
 <div class="
@@ -15,7 +15,9 @@
     {extendClass}"
 >
     <div>
-        <Heading>{title}</Heading>
+        {#if title}
+            <Heading>{title}</Heading>
+        {/if}
         <hr class="w-full mt-4"/>
         <form on:submit|preventDefault>
             <slot/>

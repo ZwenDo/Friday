@@ -1,4 +1,11 @@
-import {COOKIE_USER_ID, COOKIE_USER_TOKEN, deleteCookie, getCookie, setCookie} from "../utils/cookies";
+import {
+    COOKIE_USER_ID,
+    COOKIE_USER_NAME,
+    COOKIE_USER_TOKEN,
+    deleteCookie,
+    getCookie,
+    setCookie
+} from "../utils/cookies";
 import {booleanHTTPRequest} from "../utils/http_requests";
 
 const api = "/api/auth/";
@@ -15,6 +22,7 @@ export function loginUser(username, password) {
         response => response.json().then(data => {
             setCookie(COOKIE_USER_ID, data['userId']);
             setCookie(COOKIE_USER_TOKEN, data['token']);
+            setCookie(COOKIE_USER_NAME, username);
         })
     );
 }
@@ -33,6 +41,7 @@ function logout(all = false) {
         _ => {
             deleteCookie(COOKIE_USER_ID);
             deleteCookie(COOKIE_USER_TOKEN);
+            deleteCookie(COOKIE_USER_NAME);
         }
     );
 }
