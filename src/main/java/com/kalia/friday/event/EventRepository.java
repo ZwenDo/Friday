@@ -5,8 +5,8 @@ import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -62,10 +62,10 @@ public interface EventRepository {
     RepositoryResponse<Event> authenticatedSave(
         @NotNull UUID userId,
         @NotNull UUID userToken,
-        @NotEmpty String title,
-        @NotBlank String description,
-        @NotBlank String place,
-        @NotBlank String recurRuleParts,
+        @NotBlank String title,
+        @Size(min = 1) String description,
+        @Size(min = 1) String place,
+        @Size(min = 1) String recurRuleParts,
         @NotNull LocalDateTime startDate,
         Double latitude,
         Double longitude,
@@ -125,10 +125,10 @@ public interface EventRepository {
         @NotNull UUID id,
         @NotNull UUID userId,
         @NotNull UUID userToken,
-        @NotEmpty String title,
-        @NotBlank String description,
-        @NotBlank String place,
-        @NotBlank String recurRuleParts,
+        @NotBlank String title,
+        @Size(min = 1) String description,
+        @Size(min = 1) String place,
+        @Size(min = 1) String recurRuleParts,
         @NotNull LocalDateTime startDate,
         Double latitude,
         Double longitude,

@@ -67,7 +67,7 @@ public class EventRepositoryTest {
                 "title",
                 null,
                 null,
-                "rec",
+                null,
                 LocalDateTime.now(),
                 null,
                 null,
@@ -88,7 +88,7 @@ public class EventRepositoryTest {
             "title",
             null,
             null,
-            "rec",
+            null,
             LocalDateTime.now(),
             null,
             null,
@@ -167,7 +167,7 @@ public class EventRepositoryTest {
             "title",
             null,
             null,
-            "rec",
+            null,
             LocalDateTime.now(),
             null,
             null,
@@ -190,7 +190,7 @@ public class EventRepositoryTest {
             "title",
             null,
             null,
-            "rec",
+            null,
             LocalDateTime.now(),
             null,
             null,
@@ -207,7 +207,7 @@ public class EventRepositoryTest {
             "title",
             null,
             null,
-            "rec",
+            null,
             LocalDateTime.now(),
             null,
             null,
@@ -254,8 +254,8 @@ public class EventRepositoryTest {
             login.token(),
             "title",
             "description",
-            "somewhere",
-            "rec",
+            "bistrot",
+            null,
             LocalDateTime.now(),
             null,
             null,
@@ -265,8 +265,8 @@ public class EventRepositoryTest {
         manager.refresh(event);
         assertEquals("title", event.title());
         assertEquals("description", event.description());
-        assertEquals("somewhere", event.place());
-        assertEquals("rec", event.recurRuleParts());
+        assertEquals("bistrot", event.place());
+        assertNull(event.recurRuleParts());
     }
 
     @Test
@@ -278,7 +278,7 @@ public class EventRepositoryTest {
             "title",
             "description",
             "somewhere",
-            "rec",
+            null,
             LocalDateTime.now(),
             null,
             null,
@@ -297,7 +297,7 @@ public class EventRepositoryTest {
             "title",
             "description",
             "somewhere",
-            "rec",
+            null,
             LocalDateTime.now(),
             null,
             null,
@@ -316,7 +316,7 @@ public class EventRepositoryTest {
             "title",
             "description",
             "somewhere",
-            "rec",
+            null,
             LocalDateTime.now(),
             null,
             null,

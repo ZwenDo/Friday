@@ -17,7 +17,7 @@ public final class StringUtils {
      * @throws NullPointerException     if string is null
      * @throws IllegalArgumentException if string is blank
      */
-    public static String requireNotEmpty(String s) {
+    public static String requireNotNullOrBlank(String s) {
         requireNonNull(s);
         return requireNotBlank(s);
     }
@@ -30,7 +30,7 @@ public final class StringUtils {
      * @throws IllegalArgumentException if string is blank
      */
     public static String requireNotBlank(String s) {
-        if (s != null && s.isEmpty()) {
+        if (s != null && s.replaceAll("\\s", "").isEmpty()) {
             throw new IllegalArgumentException("string is empty");
         }
         return s;

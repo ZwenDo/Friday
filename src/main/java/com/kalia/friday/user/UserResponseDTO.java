@@ -2,7 +2,7 @@ package com.kalia.friday.user;
 
 import io.micronaut.core.annotation.Introspected;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -12,6 +12,6 @@ import java.util.UUID;
 @Introspected
 public record UserResponseDTO(
     @NotNull UUID id,
-    @NotEmpty String username
+    @NotBlank String username
 ) {
 }

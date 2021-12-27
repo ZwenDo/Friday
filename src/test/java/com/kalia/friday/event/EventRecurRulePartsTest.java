@@ -29,15 +29,15 @@ public class EventRecurRulePartsTest {
 
     @Test
     public void successfulParse() {
-        var recrule = EventRecurRuleParts
+        var recRule = EventRecurRuleParts
             .fromString("FREQ=WEEKLY;INTERVAL=2;BYDAY=TU,WE,TH")
             .getValue();
-        assertEquals(Frequency.WEEKLY, recrule.getFrequency());
-        assertEquals(2, recrule.getInterval());
+        assertEquals(Frequency.WEEKLY, recRule.getFrequency());
+        assertEquals(2, recRule.getInterval());
         assertEquals(List.of(
             new ByDay(DayOfWeek.TUESDAY),
             new ByDay(DayOfWeek.WEDNESDAY),
             new ByDay(DayOfWeek.THURSDAY)
-        ), recrule.getByDay());
+        ), recRule.getByDay());
     }
 }

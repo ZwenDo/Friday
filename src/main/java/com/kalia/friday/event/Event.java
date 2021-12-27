@@ -7,8 +7,8 @@ import com.kalia.friday.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Date;
@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import java.util.UUID;
 
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
-import static com.kalia.friday.util.StringUtils.requireNotEmpty;
+import static com.kalia.friday.util.StringUtils.requireNotNullOrBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -51,17 +51,17 @@ public class Event implements Serializable {
      */
     public Event(
         @NotNull User user,
-        @NotEmpty String title,
-        @NotBlank String description,
-        @NotBlank String place,
-        @NotEmpty String recurRuleParts,
+        @NotBlank String title,
+        @Size(min = 1) String description,
+        @Size(min = 1) String place,
+        @Size(min = 1) String recurRuleParts,
         @NotNull LocalDateTime startDate,
         Double latitude,
         Double longitude,
         long duration
     ) {
         this.user = requireNonNull(user);
-        this.title = requireNotEmpty(title);
+        this.title = requireNotNullOrBlank(title);
         this.description = requireNotBlank(description);
         this.place = requireNotBlank(place);
         this.recurRuleParts = requireNotBlank(recurRuleParts);
@@ -89,10 +89,10 @@ public class Event implements Serializable {
      */
     public Event(
         @NotNull User user,
-        @NotEmpty String title,
-        @NotBlank String description,
-        @NotBlank String place,
-        @NotEmpty String recurRuleParts,
+        @NotBlank String title,
+        @Size(min = 1) String description,
+        @Size(min = 1) String place,
+        @Size(min = 1) String recurRuleParts,
         @NotNull LocalDateTime startDate,
         Double latitude,
         Double longitude,
@@ -118,19 +118,19 @@ public class Event implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @NotEmpty
+    @NotBlank
     @Column(name = "title", nullable = false)
     private String title;
 
-    @NotBlank
+    @Size(min = 1)
     @Column(name = "description")
     private String description;
 
-    @NotBlank
+    @Size(min = 1)
     @Column(name = "place")
     private String place;
 
-    @NotBlank
+    @Size(min = 1)
     @Column(name = "recur_rule_parts")
     private String recurRuleParts;
 
@@ -242,8 +242,8 @@ public class Event implements Serializable {
      *
      * @param title the title to set
      */
-    public void setTitle(@NotEmpty String title) {
-        this.title = requireNotEmpty(title);
+    public void setTitle(@NotBlank String title) {
+        this.title = requireNotNullOrBlank(title);
     }
 
     /**
@@ -251,7 +251,7 @@ public class Event implements Serializable {
      *
      * @param description the description to set
      */
-    public void setDescription(@NotBlank String description) {
+    public void setDescription(@Size(min = 1) String description) {
         this.description = requireNotBlank(description);
     }
 
@@ -260,7 +260,7 @@ public class Event implements Serializable {
      *
      * @param place the place to set
      */
-    public void setPlace(@NotBlank String place) {
+    public void setPlace(@Size(min = 1) String place) {
         this.place = requireNotBlank(place);
     }
 
@@ -270,8 +270,8 @@ public class Event implements Serializable {
      *
      * @param recurRuleParts the recurRuleParts to set
      */
-    public void setRecurRuleParts(@NotBlank String recurRuleParts) {
-        this.recurRuleParts = requireNotEmpty(recurRuleParts);
+    public void setRecurRuleParts(@Size(min = 1) String recurRuleParts) {
+        this.recurRuleParts = requireNotBlank(recurRuleParts);
     }
 
     /**

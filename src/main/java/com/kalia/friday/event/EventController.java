@@ -109,16 +109,15 @@ public class EventController {
     @Put("/update/{id}")
     public HttpResponse<@Valid EventResponseDTO> update(UUID id, @Body @Valid EventDTO eventDTO) {
         try {
-
-        var updateResponse = eventRepository.authenticatedUpdate(id, eventDTO);
-        if (updateResponse.status() != RepositoryResponse.Status.OK) {
-            return HttpResponse.unauthorized();
-        }
-        var updatedEvent = updateResponse.get();
-        var httpResponse = HttpResponse.ok(EventResponseDTO.fromEvent(updatedEvent));
-        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + updatedEvent.id())));
+            var updateResponse = eventRepository.authenticatedUpdate(id, eventDTO);
+            if (updateResponse.status() != RepositoryResponse.Status.OK) {
+                return HttpResponse.unauthorized();
+            }
+            var updatedEvent = updateResponse.get();
+            var httpResponse = HttpResponse.ok(EventResponseDTO.fromEvent(updatedEvent));
+            return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + updatedEvent.id())));
         } catch (IllegalArgumentException e) { // if save parameters (recur rules) are invalid.
-            return HttpResponse.<EventResponseDTO>badRequest().headers(h -> h.location(URI.create(DEFAULT_ROUTE)));
+            return HttpResponse.<EventResponseDTO>notFound().headers(h -> h.location(URI.create(DEFAULT_ROUTE)));
         }
     }
 
@@ -126,7 +125,7 @@ public class EventController {
      * Gets the ICalendar of a user.
      *
      * @param userId the user id
-     * @param token the login session token
+     * @param token  the login session token
      * @return a string representing the icalendar of the user
      */
     @Get("/allbyuser/{userId}/{token}")

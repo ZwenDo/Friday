@@ -37,8 +37,7 @@ public final class EventRecurRuleParts {
      */
     public static RecurrenceRule fromString(String recurRulePart) {
         requireNonNull(recurRulePart);
-        var cal = Biweekly.parse(START + recurRulePart + END).first();
-        return cal.getEvents().get(0).getRecurrenceRule();
+        return getFromString(recurRulePart);
     }
 
     /**
@@ -48,17 +47,22 @@ public final class EventRecurRuleParts {
      * @throws IllegalArgumentException if rule is invalid
      */
     public static void requireValidRecurRule(String recurRulePart) {
-        requireNonNull(recurRulePart);
+        if (recurRulePart == null) return;
+        getFromString(recurRulePart);
+    }
+
+    private static RecurrenceRule getFromString(String recurRulePart) {
         var cal = Biweekly.parse(START + recurRulePart + END).first();
         var opt = Arrays.stream(Biweekly.write(cal).go().split("\n"))
             .filter(s -> s.startsWith("RRULE:"))
             .findFirst(); // gets the parsed rule
-        if (opt.isPresent()) {
+        if (opt.isPresent() && opt.get().contains("FREQ=")) {
             if (!("RRULE:" + recurRulePart.trim()).equals(opt.get().trim())) {
                 throw new IllegalArgumentException("Invalid recurrence rule: " + recurRulePart);
             }
         } else {
             throw new IllegalArgumentException("Invalid recurrence rule: " + recurRulePart);
         }
+        return cal.getEvents().get(0).getRecurrenceRule();
     }
 }

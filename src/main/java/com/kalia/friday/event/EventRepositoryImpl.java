@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static com.kalia.friday.event.EventRecurRuleParts.requireValidRecurRule;
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
-import static com.kalia.friday.util.StringUtils.requireNotEmpty;
+import static com.kalia.friday.util.StringUtils.requireNotNullOrBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -74,10 +74,9 @@ public class EventRepositoryImpl implements EventRepository {
         long duration
     ) {
         requireNonNull(userId);
-        requireNotEmpty(title);
+        requireNotNullOrBlank(title);
         requireNotBlank(description);
         requireNotBlank(place);
-        requireNotBlank(recurRuleParts);
         requireValidRecurRule(recurRuleParts);
         requireNonNull(startDate);
         var login = loginRepository.checkIdentity(userId, userToken);
@@ -123,10 +122,9 @@ public class EventRepositoryImpl implements EventRepository {
     ) {
         requireNonNull(id);
         requireNonNull(userId);
-        requireNotEmpty(title);
+        requireNotNullOrBlank(title);
         requireNotBlank(description);
         requireNotBlank(place);
-        requireNotBlank(recurRuleParts);
         requireValidRecurRule(recurRuleParts);
         requireNonNull(localDateTime);
         var eventGetResponse = getIfAuthenticated(id, userId, userToken);
