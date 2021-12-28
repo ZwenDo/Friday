@@ -6,6 +6,7 @@
     import EventForm from "../subparts/EventForm.svelte";
     import Heading from "../components/Heading.svelte";
     import Section from "../components/Section.svelte";
+    import {push} from "svelte-spa-router";
 
     const {open} = getContext('simple-modal');
 
@@ -24,7 +25,7 @@
 
     function logout() {
         logoutUser();
-        // TODO goto login page
+        push("/login")
     }
 </script>
 
@@ -41,7 +42,7 @@
             </Button>
             <Button
                 extendClass="bg-pink-500 hover:bg-pink-700 ml-4"
-                on:click={logoutUser}
+                on:click={logout}
             >
                 Logout
             </Button>
