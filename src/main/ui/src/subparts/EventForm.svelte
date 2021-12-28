@@ -7,6 +7,8 @@
 
     const {close} = getContext('simple-modal');
 
+    export let calendarRef;
+
     let title;
     let description = null;
     let place = null;
@@ -25,7 +27,11 @@
             endDate,
             latitude,
             longitude,
-            recurRuleParts
+            recurRuleParts,
+            _ => {
+                calendarRef.getAPI().refetchEvents();
+            },
+            _ => { }
         );
         close();
     }

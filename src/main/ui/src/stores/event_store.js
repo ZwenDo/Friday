@@ -11,7 +11,9 @@ export function createEvent(
     endDate,
     latitude,
     longitude,
-    recurRuleParts
+    recurRuleParts,
+    onSuccess,
+    onFail
 ) {
     const userId = getCookie(COOKIE_USER_ID);
     const userToken = getCookie(COOKIE_USER_TOKEN);
@@ -30,6 +32,8 @@ export function createEvent(
             longitude,
             endDate
         },
-        201
+        201,
+        onSuccess,
+        onFail
     );
 }

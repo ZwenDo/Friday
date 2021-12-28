@@ -2,7 +2,7 @@ import {
     COOKIE_USER_ID,
     COOKIE_USER_NAME,
     COOKIE_USER_TOKEN,
-    deleteCookie,
+    deleteCookies,
     getCookie,
     setCookie
 } from "../utils/cookies";
@@ -41,9 +41,7 @@ function logout(all = false) {
         },
         202,
         _ => {
-            deleteCookie(COOKIE_USER_ID);
-            deleteCookie(COOKIE_USER_TOKEN);
-            deleteCookie(COOKIE_USER_NAME);
+            deleteCookies();
         }
     );
 }
@@ -54,4 +52,20 @@ export function logoutUser() {
 
 export function logoutAll() {
     return logout(true);
+}
+
+export function isLoginValid(onFail) {
+    const userId = getCookie(COOKIE_USER_ID);
+    const token = getCookie(COOKIE_USER_TOKEN);
+    sendHTTPRequest(
+        api + "check",
+        "POST",
+        {
+            userId,
+            token
+        },
+        202,
+        () => {},
+        onFail
+    );
 }

@@ -1,17 +1,27 @@
 <script>
-    import {getContext} from "svelte";
-    import {logoutUser} from "../stores/login_store";
-    import {COOKIE_USER_NAME, getCookie} from "../utils/cookies";
+    import {getContext, onMount} from "svelte";
+    import {isLoginValid, logoutUser} from "../stores/login_store";
+    import {COOKIE_USER_NAME, deleteCookies, getCookie} from "../utils/cookies";
     import Button from "../components/Button.svelte";
     import EventForm from "../subparts/EventForm.svelte";
     import Heading from "../components/Heading.svelte";
     import Section from "../components/Section.svelte";
-    import {push} from "svelte-spa-router";
+    import {push, replace} from "svelte-spa-router";
+    import Calendar from "../subparts/Calendar.svelte";
+
+    let calendarRef;
 
     const {open} = getContext('simple-modal');
 
+    onMount(() => {
+        isLoginValid(() => {
+            deleteCookies();
+            replace("/login");
+        });
+    });
+
     function showEventForm() {
-        open(EventForm, {}, {
+        open(EventForm, { calendarRef }, {
             styleWindow: {
                 width: '90vw',
                 height: '90vh',
@@ -49,30 +59,12 @@
         </div>
     </div>
     <Section title="Next">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. At consectetur consequatur consequuntur, error fuga
-        labore maxime nobis numquam, quasi quis quo veniam voluptatibus. Excepturi, pariatur tempore? Architecto
-        blanditiis consequatur deserunt distinctio earum error et illo, iste iusto libero modi nesciunt non officia,
-        quaerat quam quis rerum sequi similique tenetur vel. Aut dolor dolores esse et fugiat, in laborum nesciunt nihil
-        quis voluptatum. Aliquam dolorum facere incidunt odio quae? Aspernatur consequatur consequuntur dolor dolore
-        dolores esse excepturi laborum libero minus necessitatibus, neque provident quaerat quasi quibusdam quidem
-        sequi, tenetur ullam, veniam voluptas voluptates. A beatae iusto minima omnis quia tempora ut!
+        BBBBBBBBH
     </Section>
     <Section title="Today">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. At consectetur consequatur consequuntur, error fuga
-        labore maxime nobis numquam, quasi quis quo veniam voluptatibus. Excepturi, pariatur tempore? Architecto
-        blanditiis consequatur deserunt distinctio earum error et illo, iste iusto libero modi nesciunt non officia,
-        quaerat quam quis rerum sequi similique tenetur vel. Aut dolor dolores esse et fugiat, in laborum nesciunt nihil
-        quis voluptatum. Aliquam dolorum facere incidunt odio quae? Aspernatur consequatur consequuntur dolor dolore
-        dolores esse excepturi laborum libero minus necessitatibus, neque provident quaerat quasi quibusdam quidem
-        sequi, tenetur ullam, veniam voluptas voluptates. A beatae iusto minima omnis quia tempora ut!
+        AAAAAAAAH
     </Section>
     <Section title="This month">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. At consectetur consequatur consequuntur, error fuga
-        labore maxime nobis numquam, quasi quis quo veniam voluptatibus. Excepturi, pariatur tempore? Architecto
-        blanditiis consequatur deserunt distinctio earum error et illo, iste iusto libero modi nesciunt non officia,
-        quaerat quam quis rerum sequi similique tenetur vel. Aut dolor dolores esse et fugiat, in laborum nesciunt nihil
-        quis voluptatum. Aliquam dolorum facere incidunt odio quae? Aspernatur consequatur consequuntur dolor dolore
-        dolores esse excepturi laborum libero minus necessitatibus, neque provident quaerat quasi quibusdam quidem
-        sequi, tenetur ullam, veniam voluptas voluptates. A beatae iusto minima omnis quia tempora ut!
+        <Calendar bind:calendarRef/>
     </Section>
 </div>
