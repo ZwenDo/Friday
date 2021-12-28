@@ -2,7 +2,6 @@ package com.kalia.friday.event;
 
 import biweekly.component.VEvent;
 import biweekly.property.Geo;
-import biweekly.util.Duration;
 import com.kalia.friday.user.User;
 
 import javax.persistence.*;
@@ -11,9 +10,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.UUID;
 
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
@@ -36,6 +35,28 @@ public class Event implements Serializable {
     public Event() {
     }
 
+    private Event(
+        User user,
+        String title,
+        String description,
+        String place,
+        String recurRuleParts,
+        LocalDateTime startDate,
+        Double latitude,
+        Double longitude,
+        LocalDateTime endDate
+    ) {
+        this.user = user;
+        this.title = title;
+        this.description = description;
+        this.place = place;
+        this.recurRuleParts = recurRuleParts;
+        this.startDate = startDate;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.endDate = endDate;
+    }
+
     /**
      * Creates an {@code event} row.
      *
@@ -47,47 +68,9 @@ public class Event implements Serializable {
      * @param startDate      the date on which begins the event
      * @param latitude       the latitude of the event
      * @param longitude      the longitude of the event
-     * @param duration       the duration of the event (in seconds)
+     * @param endDate        the date on which ends the event
      */
-    public Event(
-        @NotNull User user,
-        @NotBlank String title,
-        @Size(min = 1) String description,
-        @Size(min = 1) String place,
-        @Size(min = 1) String recurRuleParts,
-        @NotNull LocalDateTime startDate,
-        Double latitude,
-        Double longitude,
-        long duration
-    ) {
-        this.user = requireNonNull(user);
-        this.title = requireNotNullOrBlank(title);
-        this.description = requireNotBlank(description);
-        this.place = requireNotBlank(place);
-        this.recurRuleParts = requireNotBlank(recurRuleParts);
-        this.startDate = requireNonNull(startDate);
-        this.latitude = latitude;
-        this.longitude = longitude;
-        if (duration < 0) {
-            throw new IllegalArgumentException("duration < 0");
-        }
-        this.duration = duration;
-    }
-
-    /**
-     * Creates an {@code event} row (created with an end date instead of a duration).
-     *
-     * @param user           the user which this event is attached to
-     * @param title          the title of the event
-     * @param description    the optional description of the event
-     * @param place          the optional location of the event
-     * @param recurRuleParts the ICal recursion rule parts
-     * @param startDate      the date on which begins the event
-     * @param latitude       the latitude of the event
-     * @param longitude      the longitude of the event
-     * @param endDate        the date on which begins the event
-     */
-    public Event(
+    public static Event createEvent(
         @NotNull User user,
         @NotBlank String title,
         @Size(min = 1) String description,
@@ -98,17 +81,15 @@ public class Event implements Serializable {
         Double longitude,
         @NotNull LocalDateTime endDate
     ) {
-        this(
-            user,
-            title,
-            description,
-            place,
-            recurRuleParts,
-            startDate,
-            latitude,
-            longitude,
-            durationFromDates(requireNonNull(startDate), requireNonNull(endDate))
-        );
+        requireNonNull(user);
+        requireNonNull(title);
+        requireNotBlank(description);
+        requireNotBlank(place);
+        requireNotBlank(recurRuleParts);
+        requireNonNull(startDate);
+        requireNonNull(endDate);
+        requireEndAfterStart(startDate, endDate);
+        return new Event(user, title, description, place, recurRuleParts, startDate, latitude, longitude, endDate);
     }
 
     @Id
@@ -144,8 +125,8 @@ public class Event implements Serializable {
     @Column(name = "longitude")
     private Double longitude;
 
-    @Column(name = "duration", nullable = false)
-    private long duration;
+    @Column(name = "end_date", nullable = false)
+    private LocalDateTime endDate;
 
     /**
      * Gets the id of the event.
@@ -229,12 +210,12 @@ public class Event implements Serializable {
     }
 
     /**
-     * Gets the duration (in seconds) of the event.
+     * Gets the end date of the event.
      *
-     * @return the duration of the event
+     * @return the endDate of the event
      */
-    public long duration() {
-        return duration;
+    public LocalDateTime endDate() {
+        return endDate;
     }
 
     /**
@@ -280,7 +261,9 @@ public class Event implements Serializable {
      * @param startDate the start date to set
      */
     public void setStartDate(@NotNull LocalDateTime startDate) {
-        this.startDate = requireNonNull(startDate);
+        requireNonNull(startDate);
+        requireEndAfterStart(startDate, endDate);
+        this.startDate = startDate;
     }
 
     /**
@@ -302,12 +285,14 @@ public class Event implements Serializable {
     }
 
     /**
-     * Sets the duration (in seconds) of the event.
+     * Sets the end date of the event.
      *
-     * @param duration the duration to set
+     * @param endDate the end date to set
      */
-    public void setDuration(long duration) {
-        this.duration = duration;
+    public void setEndDate(LocalDateTime endDate) {
+        requireNonNull(endDate);
+        requireEndAfterStart(startDate, endDate);
+        this.endDate = requireNonNull(endDate);
     }
 
     /**
@@ -325,8 +310,8 @@ public class Event implements Serializable {
         if (recurRuleParts != null) {
             vevent.setRecurrenceRule(EventRecurRuleParts.fromString(recurRuleParts));
         }
-        vevent.setDateStart(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
-        vevent.setDuration(Duration.fromMillis(duration * 1000));
+        vevent.setDateStart(localToDate(startDate));
+        vevent.setDateEnd(localToDate(endDate));
         if (latitude != null && longitude != null) {
             vevent.setGeo(new Geo(latitude, longitude));
         }
@@ -335,5 +320,15 @@ public class Event implements Serializable {
 
     private static long durationFromDates(LocalDateTime start, LocalDateTime end) {
         return end.atZone(ZoneId.systemDefault()).toEpochSecond() - start.atZone(ZoneId.systemDefault()).toEpochSecond();
+    }
+
+    private static Date localToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static void requireEndAfterStart(LocalDateTime startDate, LocalDateTime endDate) {
+        if (requireNonNull(endDate).isBefore(requireNonNull(startDate))) {
+            throw new IllegalArgumentException("endDate is before startDate.");
+        }
     }
 }

@@ -62,7 +62,7 @@ public class EventRepositoryTest {
     private List<Event> insert10Events() {
         var events = new ArrayList<Event>();
         for (int i = 0; i < 10; i++) {
-            var event = new Event(
+            var event = Event.createEvent(
                 user,
                 "title",
                 null,
@@ -71,7 +71,7 @@ public class EventRepositoryTest {
                 LocalDateTime.now(),
                 null,
                 null,
-                1
+                LocalDateTime.now()
             );
             events.add(event);
             manager.persist(event);
@@ -83,7 +83,7 @@ public class EventRepositoryTest {
     }
 
     private Event insertEvent() {
-        var event = new Event(
+        var event = Event.createEvent(
             user,
             "title",
             null,
@@ -92,7 +92,7 @@ public class EventRepositoryTest {
             LocalDateTime.now(),
             null,
             null,
-            1
+            LocalDateTime.now()
         );
         manager.persist(event);
         manager.flush();
@@ -171,7 +171,7 @@ public class EventRepositoryTest {
             LocalDateTime.now(),
             null,
             null,
-            0
+            LocalDateTime.now()
         );
         assertEquals(RepositoryResponse.Status.OK, response.status());
         var event = response.get();
@@ -194,7 +194,7 @@ public class EventRepositoryTest {
             LocalDateTime.now(),
             null,
             null,
-            0
+            LocalDateTime.now()
         );
         assertEquals(RepositoryResponse.Status.UNAUTHORIZED, response.status());
     }
@@ -211,7 +211,7 @@ public class EventRepositoryTest {
             LocalDateTime.now(),
             null,
             null,
-            0
+            LocalDateTime.now()
         );
         assertEquals(RepositoryResponse.Status.UNAUTHORIZED, response.status());
     }
@@ -259,7 +259,7 @@ public class EventRepositoryTest {
             LocalDateTime.now(),
             null,
             null,
-            0
+            LocalDateTime.now()
         );
         assertEquals(RepositoryResponse.Status.OK, response.status());
         manager.refresh(event);
@@ -282,7 +282,7 @@ public class EventRepositoryTest {
             LocalDateTime.now(),
             null,
             null,
-            0
+            LocalDateTime.now()
         );
         assertEquals(RepositoryResponse.Status.NOT_FOUND, response.status());
     }
@@ -301,7 +301,7 @@ public class EventRepositoryTest {
             LocalDateTime.now(),
             null,
             null,
-            0
+            LocalDateTime.now()
         );
         assertEquals(RepositoryResponse.Status.UNAUTHORIZED, response.status());
     }
@@ -320,7 +320,7 @@ public class EventRepositoryTest {
             LocalDateTime.now(),
             null,
             null,
-            0
+            LocalDateTime.now()
         );
         assertEquals(RepositoryResponse.Status.UNAUTHORIZED, response.status());
     }
