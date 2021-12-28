@@ -1,6 +1,6 @@
 <script>
     import Router from "svelte-spa-router";
-    import {routes} from "../utils/router";
+    import {routes} from "../utils/routes";
 </script>
 
 <main

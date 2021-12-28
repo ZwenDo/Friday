@@ -4,7 +4,7 @@ import {COOKIE_USER_ID, getCookie} from "../utils/cookies";
 
 const api = "/api/user/";
 
-export function registerUser(username, password, onFail) {
+export function registerUser(username, password, onFail, onSuccess) {
     return sendHTTPRequest(
         api + "save",
         "POST",
@@ -13,7 +13,7 @@ export function registerUser(username, password, onFail) {
             password
         },
         201,
-        _ => loginUser(username, password),
+        _ => loginUser(username, password, _ => { }, onSuccess),
         onFail
     );
 }

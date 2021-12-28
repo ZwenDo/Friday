@@ -10,7 +10,7 @@ import {sendHTTPRequest} from "../utils/http_requests";
 
 const api = "/api/auth/";
 
-export function loginUser(username, password, onFail) {
+export function loginUser(username, password, onFail, onSuccess) {
     sendHTTPRequest(
         api + "login",
         "POST",
@@ -20,10 +20,11 @@ export function loginUser(username, password, onFail) {
         },
         201,
         response => response.json().then(data => {
-                setCookie(COOKIE_USER_ID, data['userId']);
-                setCookie(COOKIE_USER_TOKEN, data['token']);
-                setCookie(COOKIE_USER_NAME, username);
-            }),
+            setCookie(COOKIE_USER_ID, data['userId']);
+            setCookie(COOKIE_USER_TOKEN, data['token']);
+            setCookie(COOKIE_USER_NAME, username);
+            onSuccess(data);
+        }),
         onFail
     );
 }
@@ -31,7 +32,7 @@ export function loginUser(username, password, onFail) {
 function logout(all = false) {
     const userId = getCookie(COOKIE_USER_ID);
     const token = getCookie(COOKIE_USER_TOKEN);
-    return booleanHTTPRequest(
+    return sendHTTPRequest(
         api + "logout" + (all ? "/all" : ""),
         "POST",
         {
