@@ -1,5 +1,4 @@
-export function booleanHTTPRequest(url, method, body, okCode, callback) {
-    let ok = false;
+export function sendHTTPRequest(url, method, body, okCode, onSuccess, onFail) {
     fetch(url, {
         method: method,
         headers: {
@@ -7,14 +6,13 @@ export function booleanHTTPRequest(url, method, body, okCode, callback) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
-    }).then((response) => {
+    }).then(response => {
         if (response.status === okCode) {
-            ok = callback(response);
+            onSuccess(response);
         } else {
             throw new Error("Failed");
         }
-    }).catch((_) => {
-        ok = false;
+    }).catch(_ => {
+        onFail()
     });
-    return ok;
 }

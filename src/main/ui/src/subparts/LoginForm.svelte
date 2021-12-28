@@ -2,6 +2,7 @@
     import FormField from "../components/FormField.svelte";
     import Form from "../components/Form.svelte";
     import {loginUser} from "../stores/login_store";
+    import {push} from "svelte-spa-router";
 
     export let extendClass = "";
 
@@ -9,11 +10,12 @@
     let logPassword = "";
 
     function onSubmit() {
-        if (!loginUser(logUsername, logPassword)) {
+        loginUser(logUsername, logPassword, _ => {
             alert("Invalid username or password");
             logUsername = "";
             logPassword = "";
-        }
+        },
+        _ => push("/"));
     }
 </script>
 

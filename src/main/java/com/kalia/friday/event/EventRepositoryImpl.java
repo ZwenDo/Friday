@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.kalia.friday.event.Event.requireEndAfterStart;
 import static com.kalia.friday.event.EventRecurRuleParts.requireValidRecurRule;
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
 import static com.kalia.friday.util.StringUtils.requireNotNullOrBlank;
@@ -71,7 +72,7 @@ public class EventRepositoryImpl implements EventRepository {
         LocalDateTime startDate,
         Double latitude,
         Double longitude,
-        long duration
+        LocalDateTime endDate
     ) {
         requireNonNull(userId);
         requireNotNullOrBlank(title);
@@ -79,12 +80,14 @@ public class EventRepositoryImpl implements EventRepository {
         requireNotBlank(place);
         requireValidRecurRule(recurRuleParts);
         requireNonNull(startDate);
+        requireNonNull(endDate);
+        requireEndAfterStart(startDate, endDate);
         var login = loginRepository.checkIdentity(userId, userToken);
         if (login.status() != RepositoryResponse.Status.OK) {
             return RepositoryResponse.unauthorized();
         }
         var user = login.get().user();
-        var event = new Event(user, title, description, place, recurRuleParts, startDate, latitude, longitude, duration);
+        var event = Event.createEvent(user, title, description, place, recurRuleParts, startDate, latitude, longitude, endDate);
         manager.merge(user).events().add(event);
         manager.flush();
         manager.detach(event);
@@ -115,10 +118,10 @@ public class EventRepositoryImpl implements EventRepository {
         String description,
         String place,
         String recurRuleParts,
-        LocalDateTime localDateTime,
+        LocalDateTime startDate,
         Double latitude,
         Double longitude,
-        long duration
+        LocalDateTime endDate
     ) {
         requireNonNull(id);
         requireNonNull(userId);
@@ -126,7 +129,9 @@ public class EventRepositoryImpl implements EventRepository {
         requireNotBlank(description);
         requireNotBlank(place);
         requireValidRecurRule(recurRuleParts);
-        requireNonNull(localDateTime);
+        requireNonNull(startDate);
+        requireNonNull(endDate);
+        requireEndAfterStart(startDate, endDate);
         var eventGetResponse = getIfAuthenticated(id, userId, userToken);
         if (eventGetResponse.status() != RepositoryResponse.Status.OK) {
             return eventGetResponse;
@@ -136,10 +141,10 @@ public class EventRepositoryImpl implements EventRepository {
         event.setDescription(description);
         event.setPlace(place);
         event.setRecurRuleParts(recurRuleParts);
-        event.setStartDate(localDateTime);
+        event.setStartDate(startDate);
         event.setLatitude(latitude);
         event.setLongitude(longitude);
-        event.setDuration(duration);
+        event.setEndDate(endDate);
         manager.flush(); // flush changes before detach
         manager.detach(event);
         return eventGetResponse;

@@ -22,7 +22,7 @@ public record EventResponseDTO(
     @NotNull LocalDateTime startDate,
     Double latitude,
     Double longitude,
-    long duration
+    @NotNull LocalDateTime endDate
 ) {
 
     public static EventResponseDTO fromEvent(Event event) {
@@ -36,7 +36,7 @@ public record EventResponseDTO(
             event.startDate(),
             event.latitude(),
             event.longitude(),
-            event.duration()
+            event.endDate()
         );
     }
 }

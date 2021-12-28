@@ -55,7 +55,7 @@ public interface EventRepository {
      * @param startDate      the date on which begins the event
      * @param latitude       the latitude of the event
      * @param longitude      the longitude of the event
-     * @param duration       the duration of the event
+     * @param endDate       the date on which ends the event
      * @return Ok if saved | NotFound if the id is unknown
      */
     @Transactional
@@ -69,7 +69,7 @@ public interface EventRepository {
         @NotNull LocalDateTime startDate,
         Double latitude,
         Double longitude,
-        long duration
+        @NotNull LocalDateTime endDate
     );
 
     /**
@@ -91,7 +91,7 @@ public interface EventRepository {
             eventDTO.startDate(),
             eventDTO.latitude(),
             eventDTO.longitude(),
-            eventDTO.duration()
+            eventDTO.endDate()
         );
     }
 
@@ -117,7 +117,7 @@ public interface EventRepository {
      * @param startDate      the date on which begins the event
      * @param latitude       the latitude of the event
      * @param longitude      the longitude of the event
-     * @param duration       the duration of the event
+     * @param endDate        the date on which ends the event
      * @return the edited event
      */
     @Transactional
@@ -132,13 +132,13 @@ public interface EventRepository {
         @NotNull LocalDateTime startDate,
         Double latitude,
         Double longitude,
-        long duration
+        @NotNull LocalDateTime endDate
     );
 
     /**
      * Edits an event.
      *
-     * @param id the id of the event to edit
+     * @param id       the id of the event to edit
      * @param eventDTO the eventDTO of the event to edit
      * @return the edited event
      */
@@ -157,7 +157,7 @@ public interface EventRepository {
             eventDTO.startDate(),
             eventDTO.latitude(),
             eventDTO.longitude(),
-            eventDTO.duration()
+            eventDTO.endDate()
         );
     }
 }
