@@ -1,5 +1,6 @@
 <script>
-    import OverviewPage from "../pages/OverviewPage.svelte";
+    import Router from "svelte-spa-router";
+    import {routes} from "../utils/router";
 </script>
 
 <main
@@ -11,5 +12,5 @@
     rounded-lg shadow-2xl
     overflow-y-auto"
 >
-    <OverviewPage/>
+    <Router {routes}/>
 </main>
