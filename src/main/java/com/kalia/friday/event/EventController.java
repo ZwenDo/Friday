@@ -47,7 +47,6 @@ public class EventController {
     @Post
     public HttpResponse<@Valid EventResponseDTO> save(@Body @Valid EventDTO eventDTO) {
         try {
-            EventRecurRuleParts.fromString(eventDTO.recurRuleParts());
             var saveResponse = eventRepository.authenticatedSave(eventDTO);
             if (saveResponse.status() != RepositoryResponse.Status.OK) {
                 return HttpResponse.unauthorized();
