@@ -6,12 +6,12 @@ import {
     getCookie,
     setCookie
 } from "../utils/cookies";
-import {booleanHTTPRequest} from "../utils/http_requests";
+import {sendHTTPRequest} from "../utils/http_requests";
 
 const api = "/api/auth/";
 
-export function loginUser(username, password) {
-    return booleanHTTPRequest(
+export function loginUser(username, password, onFail) {
+    sendHTTPRequest(
         api + "login",
         "POST",
         {
@@ -20,10 +20,11 @@ export function loginUser(username, password) {
         },
         201,
         response => response.json().then(data => {
-            setCookie(COOKIE_USER_ID, data['userId']);
-            setCookie(COOKIE_USER_TOKEN, data['token']);
-            setCookie(COOKIE_USER_NAME, username);
-        })
+                setCookie(COOKIE_USER_ID, data['userId']);
+                setCookie(COOKIE_USER_TOKEN, data['token']);
+                setCookie(COOKIE_USER_NAME, username);
+            }),
+        onFail
     );
 }
 

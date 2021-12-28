@@ -9,11 +9,11 @@
     let logPassword = "";
 
     function onSubmit() {
-        if (!loginUser(logUsername, logPassword)) {
+        loginUser(logUsername, logPassword, _ => {
             alert("Invalid username or password");
             logUsername = "";
             logPassword = "";
-        }
+        });
     }
 </script>
 

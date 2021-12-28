@@ -1,11 +1,11 @@
 import {loginUser} from "./login_store";
-import {booleanHTTPRequest} from "../utils/http_requests";
+import {sendHTTPRequest} from "../utils/http_requests";
 import {COOKIE_USER_ID, getCookie} from "../utils/cookies";
 
 const api = "/api/user/";
 
-export function registerUser(username, password) {
-    return booleanHTTPRequest(
+export function registerUser(username, password, onFail) {
+    return sendHTTPRequest(
         api + "save",
         "POST",
         {
@@ -13,12 +13,13 @@ export function registerUser(username, password) {
             password
         },
         201,
-        _ => loginUser(username, password)
+        _ => loginUser(username, password),
+        onFail
     );
 }
 
 export function deleteUser(password) {
-    return booleanHTTPRequest(
+    return sendHTTPRequest(
         api + "delete/" + getCookie(COOKIE_USER_ID),
         "DELETE",
         {
@@ -29,7 +30,7 @@ export function deleteUser(password) {
 }
 
 export function updateUserPassword(oldPassword, newPassword) {
-    return booleanHTTPRequest(
+    return sendHTTPRequest(
         api + "update/" + getCookie(COOKIE_USER_ID),
         "PUT",
         {

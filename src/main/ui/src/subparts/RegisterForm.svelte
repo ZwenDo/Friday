@@ -14,12 +14,12 @@
             alert("Passwords do not match");
             return;
         }
-        if (!registerUser(regUsername, regPassword)) {
+        registerUser(regUsername, regPassword, _ =>{
             alert("Username already exists");
             regUsername = "";
             regPassword = "";
             regPasswordR = "";
-        }
+        });
     }
 </script>
 
