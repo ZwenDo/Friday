@@ -1,19 +1,28 @@
 <script>
+    import {onMount} from "svelte";
+
     export let label = null;
     export let name = label?.toLowerCase() ?? "";
     export let type = "text";
     export let required = false;
+    export let disabled = false;
     export let value = "";
+    export let min = null;
+    export let max = null;
+    export let extendClass = "";
 
-    function handleInputType(event) {
-        event.target.type = type;
-    }
+    let field;
+
+    onMount(() => {
+        if (!field) return;
+        field.type = type;
+    });
 </script>
 
 <div class="form-field-container mt-9 mb-4 relative">
     {#if type.startsWith("textarea")}
         <textarea
-            class="input-field peer"
+            class="input-field peer {extendClass}"
             id="{name}"
             {name}
             bind:value
@@ -21,37 +30,34 @@
             rows="{type.split(' ')[2] ?? '10'}"
             placeholder="{label}"
             {required}
+            {disabled}
             style="resize: none;"
         ></textarea>
     {:else}
         <input
-            class="input-field peer"
-            on:focus="{handleInputType}"
+            class="input-field peer {extendClass}"
+            bind:this={field}
             id="{name}"
             {name}
             bind:value
             placeholder="{label}"
             {required}
+            {disabled}
+            {min}
+            {max}
         />
     {/if}
-    <label
-        class="
+    {#if label}
+        <label
+            class="
         transition-all
         absolute left-2 -top-6
         peer-placeholder-shown:font-normal peer-placeholder-shown:text-gray-400  peer-placeholder-shown:text-base peer-placeholder-shown:top-2
         peer-focus:font-semibold peer-focus:text-gray-600 peer-focus:text-sm peer-focus:-top-6
         font-semibold text-gray-600 text-sm"
-        for="{name}"
-    >
-        {label}
-    </label>
+            for="{name}"
+        >
+            {label}
+        </label>
+    {/if}
 </div>
-
-<style>
-    .input-field {
-        @apply rounded-lg p-2 placeholder-transparent
-        shadow-md border-gray-100 outline-none
-        focus:ring-purple-200 focus:ring-2
-        transition-all;
-    }
-</style>

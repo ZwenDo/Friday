@@ -15,4 +15,13 @@
             @apply bg-gradient-to-r from-purple-900 via-purple-700 to-pink-400;
         }
     }
+
+    @layer components {
+        .input-field {
+            @apply rounded-lg p-2 placeholder-transparent
+            shadow-md border-gray-100 outline-none
+            focus:ring-purple-200 focus:ring-2
+            transition-all;
+        }
+    }
 </style>
