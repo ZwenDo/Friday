@@ -14,8 +14,8 @@
     let place = null;
     let startDate;
     let endDate;
-    let latitude = null;
-    let longitude = null;
+    let latitude = 50;
+    let longitude = 27.3;
     let recurRuleParts = null;
 
     function createNewEvent() {
