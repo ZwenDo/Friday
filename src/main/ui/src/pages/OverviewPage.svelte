@@ -1,7 +1,7 @@
 <script>
     import {getContext, onMount} from "svelte";
     import {isLoginValid, logoutUser} from "../stores/login_store";
-    import {COOKIE_USER_NAME, deleteCookies, getCookie} from "../utils/cookies";
+    import {COOKIE_USER_NAME, COOKIE_USER_TOKEN, deleteCookies, getCookie} from "../utils/cookies";
     import Button from "../components/Button.svelte";
     import EventForm from "../subparts/EventForm.svelte";
     import Heading from "../components/Heading.svelte";
@@ -14,6 +14,10 @@
     const {open} = getContext('simple-modal');
 
     onMount(() => {
+        if (!getCookie(COOKIE_USER_NAME) || !getCookie(COOKIE_USER_TOKEN)) {
+            replace("/login");
+            return;
+        }
         isLoginValid(() => {
             deleteCookies();
             replace("/login");
@@ -34,8 +38,7 @@
     }
 
     function logout() {
-        logoutUser();
-        push("/login")
+        logoutUser(_ => push("/login"));
     }
 </script>
 
