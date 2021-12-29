@@ -29,6 +29,7 @@
             styleWindow: {
                 width: '90vw',
                 height: '90vh',
+                backgroundColor: '#ffffff',
             },
             styleContent: {
                 width: '100%',
