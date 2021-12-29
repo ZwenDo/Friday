@@ -1,14 +1,13 @@
 <script>
     import Fullcalendar from "svelte-fullcalendar";
     import dayGridPlugin from "@fullcalendar/daygrid";
-    import iCalendarPlugin from "@fullcalendar/icalendar";
     import rRulePlugin from "@fullcalendar/rrule";
     import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
 
     let calendarRef = null;
 
     const options = {
-        plugins: [dayGridPlugin, iCalendarPlugin, rRulePlugin],
+        plugins: [dayGridPlugin, rRulePlugin],
         events: {
             url: "/api/event/allbyuser",
             method: "POST",

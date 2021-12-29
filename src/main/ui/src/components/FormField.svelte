@@ -9,6 +9,7 @@
     export let value = "";
     export let min = null;
     export let max = null;
+    export let pattern = null;
     export let extendClass = "";
 
     let field;
@@ -19,10 +20,10 @@
     });
 </script>
 
-<div class="form-field-container mt-9 mb-4 relative">
+<div class="form-field-container mt-9 mb-4 relative {extendClass}">
     {#if type.startsWith("textarea")}
         <textarea
-            class="input-field peer {extendClass}"
+            class="input-field peer"
             id="{name}"
             {name}
             bind:value
@@ -35,7 +36,7 @@
         ></textarea>
     {:else}
         <input
-            class="input-field peer {extendClass}"
+            class="input-field peer"
             bind:this={field}
             id="{name}"
             {name}
@@ -45,6 +46,7 @@
             {disabled}
             {min}
             {max}
+            {pattern}
         />
     {/if}
     {#if label}
