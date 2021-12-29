@@ -116,7 +116,6 @@ public class LoginController {
      */
     @Post("/check")
     public HttpResponse<Void> check(@Body @Valid LoginSessionDTO loginSessionDTO) {
-        var checkResponse = repository.checkIdentity(loginSessionDTO.userId(), loginSessionDTO.token());
-        return checkResponse.status() == OK ? HttpResponse.accepted() : HttpResponse.unauthorized();
+        return checkAndRun(loginSessionDTO, () -> {});
     }
 }
