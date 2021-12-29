@@ -14,10 +14,16 @@
             format: 'ics'
         },
         eventClick(infos) {
-            console.log(infos);
+            // TODO show detailed infos popup
+        },
+        eventDataTransform(data) { // extracts id from title
+            const title = data.title;
+            data.extendedProps.id = title.substring(title.length - 36, title.length);
+            data.title = title.substring(0, title.length - 36);
+            console.log(data);
+            return data;
         }
     }
-
 </script>
 
 

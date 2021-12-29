@@ -301,25 +301,20 @@ public class Event implements Serializable {
      * @return the event as vEvent
      */
     public VEvent asVEvent() {
-        var vevent = new VEvent();
+        var vEvent = new VEvent();
 
-        vevent.setUid(id.toString());
-        vevent.setSummary(title);
-        vevent.setDescription(description);
-        vevent.setLocation(place);
+        vEvent.setSummary(title + id);
+        vEvent.setDescription(description);
+        vEvent.setLocation(place);
         if (recurRuleParts != null) {
-            vevent.setRecurrenceRule(EventRecurRuleParts.fromString(recurRuleParts));
+            vEvent.setRecurrenceRule(EventRecurRuleParts.fromString(recurRuleParts));
         }
-        vevent.setDateStart(localToDate(startDate));
-        vevent.setDateEnd(localToDate(endDate));
+        vEvent.setDateStart(localToDate(startDate));
+        vEvent.setDateEnd(localToDate(endDate));
         if (latitude != null && longitude != null) {
-            vevent.setGeo(new Geo(latitude, longitude));
+            vEvent.setGeo(new Geo(latitude, longitude));
         }
-        return vevent;
-    }
-
-    private static long durationFromDates(LocalDateTime start, LocalDateTime end) {
-        return end.atZone(ZoneId.systemDefault()).toEpochSecond() - start.atZone(ZoneId.systemDefault()).toEpochSecond();
+        return vEvent;
     }
 
     private static Date localToDate(LocalDateTime localDateTime) {
