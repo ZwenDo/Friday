@@ -3,14 +3,12 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "postinstall": "node postinstall",
         "build": "rollup -c",
         "dev": "rollup -c -w",
         "start": "sirv public --no-clear"
     },
     "devDependencies": {
         "@fullcalendar/daygrid": "^5.10.1",
-        "@fullcalendar/icalendar": "^5.10.1",
         "@fullcalendar/rrule": "^5.10.1",
         "@fullhuman/postcss-purgecss": "^4.0.3",
         "@rollup/plugin-commonjs": "^17.0.0",
