@@ -15,7 +15,7 @@ export function createEvent(
         event,
         201,
         onSuccess,
-        () => {}
+        e => console.log("create event failed because of:\n" + e)
     );
 }
 
@@ -30,10 +30,7 @@ export function allByUser(onSuccess) {
             token
         },
         200,
-        res => {
-            res.json().then(data => onSuccess(data));
-        },
-        () => {
-        },
+        res => res.json().then(data => onSuccess(data)),
+        (e) => console.log("all by user failed because of:\n" + e)
     );
 }

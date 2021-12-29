@@ -1,4 +1,4 @@
-export function sendHTTPRequest(url, method, body, okCode, onSuccess, onFail) {
+export function sendHTTPRequest(url, method, body, okCode, onSuccess, onFail=(e) => console.log(e)) {
     fetch(url, {
         method: method,
         headers: {
@@ -10,9 +10,9 @@ export function sendHTTPRequest(url, method, body, okCode, onSuccess, onFail) {
         if (response.status === okCode) {
             onSuccess(response);
         } else {
-            throw new Error("Failed");
+            throw new Error();
         }
-    }).catch(_ => {
-        onFail()
+    }).catch(e => {
+        onFail(e)
     });
 }
