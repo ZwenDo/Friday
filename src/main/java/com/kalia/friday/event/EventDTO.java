@@ -22,6 +22,6 @@ public record EventDTO(
     @NotNull LocalDateTime startDate,
     Double latitude,
     Double longitude,
-    @NotNull LocalDateTime endDate
+    LocalDateTime endDate
 ) {
 }
