@@ -2,24 +2,27 @@
     import Fullcalendar from "svelte-fullcalendar";
     import dayGridPlugin from "@fullcalendar/daygrid";
     import iCalendarPlugin from "@fullcalendar/icalendar";
+    import rRulePlugin from "@fullcalendar/rrule";
     import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
 
-    export let calendarRef;
+    let calendarRef = null;
 
     const options = {
-        plugins: [dayGridPlugin, iCalendarPlugin],
+        plugins: [dayGridPlugin, iCalendarPlugin, rRulePlugin],
         events: {
-            url: "/api/event/" + "allbyuser/" + getCookie(COOKIE_USER_ID) + "/" + getCookie(COOKIE_USER_TOKEN),
-            method: 'GET',
-            format: 'ics'
+            url: "/api/event/allbyuser",
+            method: "POST",
+            extraParams: {
+                userId: getCookie(COOKIE_USER_ID),
+                token: getCookie(COOKIE_USER_TOKEN)
+            }
         },
         eventClick(infos) {
             // TODO show detailed infos popup
         },
-        eventDataTransform(data) { // extracts id from title
-            const title = data.title;
-            data.extendedProps.id = title.substring(title.length - 36, title.length);
-            data.title = title.substring(0, title.length - 36);
+        eventDataTransform(data) {
+            data.start[1]--;
+            data.end[1]--;
             console.log(data);
             return data;
         }

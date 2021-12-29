@@ -51,7 +51,7 @@ public interface EventRepository {
      * @param title          the title of the event
      * @param description    the description of the event
      * @param place          the place of the event
-     * @param recurRuleParts the new {@code recurRuleParts} of the event
+     * @param recurRuleParts the new {@code rrule} of the event
      * @param startDate      the date on which begins the event
      * @param latitude       the latitude of the event
      * @param longitude      the longitude of the event
@@ -113,7 +113,7 @@ public interface EventRepository {
      * @param title          the new title of the event
      * @param description    the new description of the event
      * @param place          the new place of the event
-     * @param recurRuleParts the new {@code recurRuleParts} of the event
+     * @param recurRuleParts the new {@code rrule} of the event
      * @param startDate      the date on which begins the event
      * @param latitude       the latitude of the event
      * @param longitude      the longitude of the event

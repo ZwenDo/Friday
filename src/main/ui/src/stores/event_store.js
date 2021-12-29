@@ -37,3 +37,22 @@ export function createEvent(
         onFail
     );
 }
+
+export function allByUser(onSuccess) {
+    const userId = getCookie(COOKIE_USER_ID);
+    const token = getCookie(COOKIE_USER_TOKEN);
+    sendHTTPRequest(
+        api + "allbyuser",
+        "POST",
+        {
+            userId,
+            token
+        },
+        200,
+        res => {
+            res.json().then(data => onSuccess(data));
+        },
+        () => {
+        },
+    );
+}

@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -18,25 +17,10 @@ public record EventResponseDTO(
     @NotBlank String title,
     @Size(min = 1) String description,
     @Size(min = 1) String place,
-    @Size(min = 1) String recurRuleParts,
-    @NotNull LocalDateTime startDate,
+    @Size(min = 1) String rrule,
+    @NotNull LocalDateTime start,
     Double latitude,
     Double longitude,
-    @NotNull LocalDateTime endDate
+    @NotNull LocalDateTime end
 ) {
-
-    public static EventResponseDTO fromEvent(Event event) {
-        Objects.requireNonNull(event);
-        return new EventResponseDTO(
-            event.id(),
-            event.title(),
-            event.description(),
-            event.place(),
-            event.recurRuleParts(),
-            event.startDate(),
-            event.latitude(),
-            event.longitude(),
-            event.endDate()
-        );
-    }
 }

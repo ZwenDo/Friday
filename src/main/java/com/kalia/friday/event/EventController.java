@@ -1,10 +1,9 @@
 package com.kalia.friday.event;
 
-import biweekly.Biweekly;
-import biweekly.ICalendar;
 import com.kalia.friday.login.LoginSessionDTO;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -12,6 +11,7 @@ import jakarta.inject.Inject;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -52,7 +52,7 @@ public class EventController {
                 return HttpResponse.unauthorized();
             }
             var createdEvent = saveResponse.get();
-            var httpResponse = HttpResponse.created(EventResponseDTO.fromEvent(createdEvent));
+            var httpResponse = HttpResponse.created(createdEvent.toEventResponseDTO());
             return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + createdEvent.id())));
         } catch (IllegalArgumentException e) { // if save parameters (recur rules) are invalid.
             return HttpResponse.<EventResponseDTO>badRequest().headers(h -> h.location(URI.create(DEFAULT_ROUTE)));
@@ -113,33 +113,24 @@ public class EventController {
                 return HttpResponse.unauthorized();
             }
             var updatedEvent = updateResponse.get();
-            var httpResponse = HttpResponse.ok(EventResponseDTO.fromEvent(updatedEvent));
+            var httpResponse = HttpResponse.ok(updatedEvent.toEventResponseDTO());
             return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + updatedEvent.id())));
         } catch (IllegalArgumentException e) { // if save parameters (recur rules) are invalid.
             return HttpResponse.<EventResponseDTO>notFound().headers(h -> h.location(URI.create(DEFAULT_ROUTE)));
         }
     }
 
-    /**
-     * Gets the ICalendar of a user.
-     *
-     * @param userId the user id
-     * @param token  the login session token
-     * @return a string representing the icalendar of the user
-     */
-    @Get("/allbyuser/{userId}/{token}")
-    public HttpResponse<String> allByUser(UUID userId, UUID token) {
-        var findResponse = eventRepository.authenticatedFindByUserId(userId, token);
+    @Post(value = "/allbyuser", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public HttpResponse<List<EventResponseDTO>> allByUser(@Body @Valid LoginSessionDTO loginSessionDTO) {
+        var findResponse = eventRepository.authenticatedFindByUserId(loginSessionDTO.userId(), loginSessionDTO.token());
         if (findResponse.status() != RepositoryResponse.Status.OK) {
             return HttpResponse.unauthorized();
         }
-        var iCalendar = new ICalendar();
-        findResponse.get()
+        var events = findResponse.get()
             .stream()
-            .map(Event::asVEvent)
-            .toList()
-            .forEach(iCalendar::addEvent);
-        return HttpResponse.ok(Biweekly.write(iCalendar).go())
+            .map(Event::toEventResponseDTO)
+            .toList();
+        return HttpResponse.ok(events)
             .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "allbyuser")));
     }
 }
