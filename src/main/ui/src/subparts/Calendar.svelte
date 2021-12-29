@@ -4,7 +4,7 @@
     import rRulePlugin from "@fullcalendar/rrule";
     import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
 
-    let calendarRef = null;
+    export let calendarRef = null;
 
     const options = {
         plugins: [dayGridPlugin, rRulePlugin],
@@ -21,8 +21,11 @@
         },
         eventDataTransform(data) {
             data.start[1]--;
-            data.end[1]--;
-            console.log(data);
+            if (data.end === undefined) { // if no end set all day
+                data.allDay = true;
+            } else {
+                data.end[1]--;
+            }
             return data;
         }
     }

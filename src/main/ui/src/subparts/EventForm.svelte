@@ -46,11 +46,13 @@
             console.log(rrule);
             event.recurRuleParts = rrule;
         }
+        if (event.allDay) {
+            event.endDate = null;
+        }
         createEvent(event, _ => {
-                calendarRef.getAPI().refetchEvents();
-                close();
-            });
-
+            calendarRef.getAPI().refetchEvents();
+            close();
+        });
     }
 </script>
 
