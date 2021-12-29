@@ -4,37 +4,18 @@ import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
 const api = "/api/event/";
 
 export function createEvent(
-    title,
-    description,
-    place,
-    startDate,
-    endDate,
-    latitude,
-    longitude,
-    recurRuleParts,
+    event,
     onSuccess,
-    onFail
 ) {
-    const userId = getCookie(COOKIE_USER_ID);
-    const userToken = getCookie(COOKIE_USER_TOKEN);
+    event.userId = getCookie(COOKIE_USER_ID);
+    event.userToken = getCookie(COOKIE_USER_TOKEN);
     sendHTTPRequest(
         api,
         "POST",
-        {
-            userId,
-            userToken,
-            title,
-            description,
-            place,
-            startDate,
-            recurRuleParts,
-            latitude,
-            longitude,
-            endDate
-        },
+        event,
         201,
         onSuccess,
-        onFail
+        () => {}
     );
 }
 

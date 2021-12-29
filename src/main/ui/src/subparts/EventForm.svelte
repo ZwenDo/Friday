@@ -4,6 +4,7 @@
     import {getContext} from "svelte";
     import Button from "../components/Button.svelte";
     import {createRrule} from "../utils/rrule";
+    import {createEvent} from "../stores/event_store";
 
     const {close} = getContext('simple-modal');
 
@@ -45,9 +46,11 @@
             console.log(rrule);
             event.recurRuleParts = rrule;
         }
-        /* createEvent(...event, _ => calendarRef.getAPI().refetchEvents(), _ => {
-         });
-         close();*/
+        createEvent(event, _ => {
+                calendarRef.getAPI().refetchEvents();
+                close();
+            });
+
     }
 </script>
 
