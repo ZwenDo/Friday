@@ -2,10 +2,19 @@
     import LoginForm from "../subparts/LoginForm.svelte";
     import RegisterForm from "../subparts/RegisterForm.svelte";
     import Button from "../components/Button.svelte";
+    import {onMount} from "svelte";
+    import {replace} from "svelte-spa-router";
+    import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
 
     let buttonText;
-
     let toggle = false;
+
+    onMount(_ => {
+        if (getCookie(COOKIE_USER_ID) && getCookie(COOKIE_USER_TOKEN)) {
+            replace("/");
+        }
+    });
+
     $: if (!toggle) {
         buttonText = "Go to connection";
     } else {

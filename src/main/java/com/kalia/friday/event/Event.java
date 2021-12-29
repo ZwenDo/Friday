@@ -1,7 +1,5 @@
 package com.kalia.friday.event;
 
-import biweekly.component.VEvent;
-import biweekly.property.Geo;
 import com.kalia.friday.user.User;
 
 import javax.persistence.*;
@@ -11,8 +9,7 @@ import javax.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
@@ -174,9 +171,9 @@ public class Event implements Serializable {
     }
 
     /**
-     * Gets the recurRuleParts of the event.
+     * Gets the rrule of the event.
      *
-     * @return the recurRuleParts of the event
+     * @return the rrule of the event
      */
     public String recurRuleParts() {
         return recurRuleParts;
@@ -246,10 +243,10 @@ public class Event implements Serializable {
     }
 
     /**
-     * Sets the {@code recurRuleParts} of the event, a string representing the event recurrence data in {@code iCalendar}
+     * Sets the {@code rrule} of the event, a string representing the event recurrence data in {@code iCalendar}
      * format.
      *
-     * @param recurRuleParts the recurRuleParts to set
+     * @param recurRuleParts the rrule to set
      */
     public void setRecurRuleParts(@Size(min = 1) String recurRuleParts) {
         this.recurRuleParts = requireNotBlank(recurRuleParts);
@@ -295,35 +292,13 @@ public class Event implements Serializable {
         this.endDate = requireNonNull(endDate);
     }
 
-    /**
-     * Gets the event as a {@link VEvent} instance.
-     *
-     * @return the event as vEvent
-     */
-    public VEvent asVEvent() {
-        var vevent = new VEvent();
 
-        vevent.setUid(id.toString());
-        vevent.setSummary(title);
-        vevent.setDescription(description);
-        vevent.setLocation(place);
-        if (recurRuleParts != null) {
-            vevent.setRecurrenceRule(EventRecurRuleParts.fromString(recurRuleParts));
-        }
-        vevent.setDateStart(localToDate(startDate));
-        vevent.setDateEnd(localToDate(endDate));
-        if (latitude != null && longitude != null) {
-            vevent.setGeo(new Geo(latitude, longitude));
-        }
-        return vevent;
-    }
-
-    private static long durationFromDates(LocalDateTime start, LocalDateTime end) {
-        return end.atZone(ZoneId.systemDefault()).toEpochSecond() - start.atZone(ZoneId.systemDefault()).toEpochSecond();
-    }
-
-    private static Date localToDate(LocalDateTime localDateTime) {
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    public EventResponseDTO toEventResponseDTO() {
+        var formattedDate = startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd:HHmmss;"))
+            .replace(":", "T")
+            .replace(";", "Z");
+        var rrule = recurRuleParts == null ? null : "DTSTART:" + formattedDate + "\nRRULE:" + recurRuleParts;
+        return new EventResponseDTO(id, title, description, place, rrule, startDate, latitude, longitude, endDate);
     }
 
     public static void requireEndAfterStart(LocalDateTime startDate, LocalDateTime endDate) {

@@ -21,3 +21,9 @@ export function getCookie(name) {
 export function deleteCookie(name) {
     document.cookie = `${name}=;max-age=-1;path=/;sameSite=strict`;
 }
+
+export function deleteCookies() {
+    deleteCookie(COOKIE_USER_ID);
+    deleteCookie(COOKIE_USER_NAME);
+    deleteCookie(COOKIE_USER_TOKEN);
+}

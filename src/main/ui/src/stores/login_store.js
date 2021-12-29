@@ -2,7 +2,7 @@ import {
     COOKIE_USER_ID,
     COOKIE_USER_NAME,
     COOKIE_USER_TOKEN,
-    deleteCookie,
+    deleteCookies,
     getCookie,
     setCookie
 } from "../utils/cookies";
@@ -29,7 +29,7 @@ export function loginUser(username, password, onFail, onSuccess) {
     );
 }
 
-function logout(all = false) {
+function logout(all, onSuccess) {
     const userId = getCookie(COOKIE_USER_ID);
     const token = getCookie(COOKIE_USER_TOKEN);
     return sendHTTPRequest(
@@ -40,18 +40,35 @@ function logout(all = false) {
             token
         },
         202,
-        _ => {
-            deleteCookie(COOKIE_USER_ID);
-            deleteCookie(COOKIE_USER_TOKEN);
-            deleteCookie(COOKIE_USER_NAME);
-        }
+        body => {
+            deleteCookies();
+            onSuccess(body);
+        },
+        () => { }
     );
 }
 
-export function logoutUser() {
-    return logout();
+export function logoutUser(onSuccess) {
+    logout(false, onSuccess);
 }
 
-export function logoutAll() {
-    return logout(true);
+export function logoutAll(onSuccess) {
+    logout(true, onSuccess);
+}
+
+
+export function isLoginValid(onFail) {
+    const userId = getCookie(COOKIE_USER_ID);
+    const token = getCookie(COOKIE_USER_TOKEN);
+    sendHTTPRequest(
+        api + "check",
+        "POST",
+        {
+            userId,
+            token
+        },
+        202,
+        () => {},
+        onFail
+    );
 }

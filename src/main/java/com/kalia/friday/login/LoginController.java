@@ -104,4 +104,18 @@ public class LoginController {
             return HttpResponse.unauthorized();
         }
     }
+
+    /**
+     * Checks that user credentials are valid and refreshes the token.
+     *
+     * @param loginSessionDTO {
+     *                        "userId": "",
+     *                        "token": ""
+     *                        }
+     * @return ACCEPTED if credentials are valid | UNAUTHORIZED if the sessions credentials are invalid
+     */
+    @Post("/check")
+    public HttpResponse<Void> check(@Body @Valid LoginSessionDTO loginSessionDTO) {
+        return checkAndRun(loginSessionDTO, () -> {});
+    }
 }
