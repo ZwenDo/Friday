@@ -164,8 +164,8 @@ public interface EventRepository {
     /**
      * Inserts a list of events.
      *
-     * @param events the list of events to save.
+     * @param events the list of eventDTO to save.
      */
     @Transactional
-    void savesEventList(List<Event> events);
+    RepositoryResponse<Void> authenticatedEventListSave(List<EventDTO> events);
 }

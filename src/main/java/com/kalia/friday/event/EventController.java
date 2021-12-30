@@ -1,6 +1,7 @@
 package com.kalia.friday.event;
 
 import com.kalia.friday.login.LoginSessionDTO;
+import com.kalia.friday.util.BiweeklyUtils;
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,7 +11,10 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -132,5 +136,46 @@ public class EventController {
             .toList();
         return HttpResponse.ok(events)
             .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "allbyuser")));
+    }
+
+    @Post("/import/url")
+    public HttpResponse<Void> importFromURL(String url, @Body @Valid LoginSessionDTO loginSessionDTO) {
+        var request = HttpRequest.newBuilder().GET().uri(URI.create(url)).build();
+        var client = HttpClient.newHttpClient();
+        try {
+            var response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+            var events = BiweeklyUtils.eventDTOListFromString(response.body(), loginSessionDTO.userId(), loginSessionDTO.token());
+            if (events.isEmpty()) {
+                return HttpResponse.badRequest();
+            }
+
+            var saveResponse = eventRepository.authenticatedEventListSave(events);
+            if (saveResponse.status() != RepositoryResponse.Status.OK) {
+                return HttpResponse.unauthorized();
+            }
+
+            return HttpResponse.ok(null);
+        } catch (IOException | InterruptedException e) {
+            return HttpResponse.serverError();
+        }
+    }
+
+    @Post("/import/file")
+    public HttpResponse<Void> importFromFile(String fileContent, @Body @Valid LoginSessionDTO loginSessionDTO) {
+        var events = BiweeklyUtils.eventDTOListFromString(fileContent, loginSessionDTO.userId(), loginSessionDTO.token());
+        if (events.isEmpty()) {
+            return HttpResponse.badRequest();
+        }
+
+        try {
+            var saveResponse = eventRepository.authenticatedEventListSave(events);
+            if (saveResponse.status() != RepositoryResponse.Status.OK) {
+                return HttpResponse.unauthorized();
+            }
+            return HttpResponse.ok(null);
+        } catch (NullPointerException | IllegalArgumentException e) { // if invalid format
+            e.printStackTrace();
+            return HttpResponse.badRequest();
+        }
     }
 }
