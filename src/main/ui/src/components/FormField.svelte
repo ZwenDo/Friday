@@ -1,5 +1,6 @@
 <script>
     import {onMount} from "svelte";
+    import {tooltip} from "../utils/tooltip";
 
     export let label = null;
     export let name = label?.toLowerCase() ?? "";
@@ -10,6 +11,7 @@
     export let min = null;
     export let max = null;
     export let pattern = null;
+    export let hint = null;
     export let extendClass = "";
 
     let field;
@@ -33,6 +35,7 @@
             {required}
             {disabled}
             style="resize: none;"
+            use:tooltip title="{hint}"
         ></textarea>
     {:else}
         <input
@@ -47,6 +50,7 @@
             {min}
             {max}
             {pattern}
+            use:tooltip title="{hint}"
         />
     {/if}
     {#if label}

@@ -6,8 +6,15 @@ export function tooltip(node, params = {
     duration: 100,
     interactive: true,
     animation: "friday",
-    moveTransition: 'transform 0.2s ease-out',
 }) {
+    if (!node.title) {
+        return {
+            update: () => {
+            },
+            destroy: () => {
+            },
+        };
+    }
     const content = node.title;
     node.title = "";
     const tip = tippy(node, {content, ...params});
