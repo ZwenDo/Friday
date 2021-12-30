@@ -62,9 +62,9 @@ public class Event implements Serializable {
      * @param place          the optional location of the event
      * @param recurRuleParts the ICal recursion rule parts
      * @param startDate      the date on which begins the event
+     * @param endDate        the date on which ends the event
      * @param latitude       the latitude of the event
      * @param longitude      the longitude of the event
-     * @param endDate        the date on which ends the event
      */
     public static Event createEvent(
         @NotNull User user,
@@ -73,9 +73,9 @@ public class Event implements Serializable {
         @Size(min = 1) String place,
         @Size(min = 1) String recurRuleParts,
         @NotNull LocalDateTime startDate,
+        LocalDateTime endDate,
         Double latitude,
-        Double longitude,
-        LocalDateTime endDate
+        Double longitude
     ) {
         requireNonNull(user);
         requireNonNull(title);
@@ -302,7 +302,7 @@ public class Event implements Serializable {
      * Asserts that a dae starts after another.
      *
      * @param startDate the date that must start before
-     * @param endDate the date that must start afer
+     * @param endDate   the date that must start after
      */
     public static void requireEndAfterStart(LocalDateTime startDate, LocalDateTime endDate) {
         if (endDate == null) return;

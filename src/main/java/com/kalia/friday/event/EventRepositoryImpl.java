@@ -86,7 +86,7 @@ public class EventRepositoryImpl implements EventRepository {
             return RepositoryResponse.unauthorized();
         }
         var user = login.get().user();
-        var event = Event.createEvent(user, title, description, place, recurRuleParts, startDate, latitude, longitude, endDate);
+        var event = Event.createEvent(user, title, description, place, recurRuleParts, startDate, endDate, latitude, longitude);
         manager.merge(user).events().add(event);
         manager.flush();
         manager.detach(event);
