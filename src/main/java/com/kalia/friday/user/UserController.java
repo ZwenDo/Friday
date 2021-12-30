@@ -2,11 +2,8 @@ package com.kalia.friday.user;
 
 import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
@@ -19,8 +16,9 @@ import java.util.UUID;
  * API endpoint for communicating with the user side of the database.
  */
 @ExecuteOn(value = TaskExecutors.IO)
-@Controller("/user")
+@Controller("/api/user")
 public class UserController {
+    private static final String DEFAULT_ROUTE = "/api/user/";
 
     @Inject
     private UserRepository repository;
@@ -37,13 +35,18 @@ public class UserController {
      * "username": ""
      * }
      */
-    @Post
+    @Post("/save")
     public HttpResponse<UserResponseDTO> save(@Body @Valid UserCredsDTO userCredsDTO) {
         var saveResponse = repository.save(userCredsDTO.username(), userCredsDTO.password());
+        if (saveResponse.status() != RepositoryResponse.Status.OK) {
+            return HttpResponse
+                .<UserResponseDTO>status(HttpStatus.CONFLICT)
+                .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "save")));
+        }
         var user = saveResponse.get();
         return HttpResponse
             .created(new UserResponseDTO(user.id(), user.username()))
-            .headers(h -> h.location(URI.create("/user/" + user.id())));
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "save/" + user.id())));
     }
 
     /**
@@ -57,11 +60,11 @@ public class UserController {
      * @return OK if deleted | NOT_FOUND if the id is unknown | BAD_REQUEST if the password is incorrect
      */
     @Delete("/delete/{id}")
-    public HttpResponse<?> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
+    public HttpResponse<Void> delete(UUID id, @Body @Valid UserDeleteDTO userDeleteDTO) {
         var deleteUserResponse = repository.deleteById(id, userDeleteDTO.password());
         return RepositoryResponse
             .toEmptyHttpResponse(deleteUserResponse.status())
-            .headers(h -> h.location(URI.create("/user/delete/" + id)));
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "delete/" + id)));
     }
 
     /**
@@ -76,10 +79,10 @@ public class UserController {
      * @return OK if updated | NOT_FOUND if the id is unknown | BAD_REQUEST if the old password is incorrect
      */
     @Put("/update/{id}")
-    public HttpResponse<?> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
+    public HttpResponse<Void> updatePassword(UUID id, @Body @Valid UserPasswordUpdateDTO upuDTO) {
         var updatePwdResponse = repository.updatePassword(id, upuDTO.oldPassword(), upuDTO.newPassword());
         return RepositoryResponse
             .toEmptyHttpResponse(updatePwdResponse.status())
-            .headers(h -> h.location(URI.create("/user/update/" + id)));
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "update/" + id)));
     }
 }

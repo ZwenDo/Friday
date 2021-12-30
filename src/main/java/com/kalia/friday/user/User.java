@@ -4,22 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kalia.friday.event.Event;
 import com.kalia.friday.login.Login;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.kalia.friday.util.StringUtils.requireNotEmpty;
+import static com.kalia.friday.util.StringUtils.requireNotNullOrBlank;
 
 /**
  * Represents the {@code User} table in the database.
@@ -44,22 +37,22 @@ public class User implements Serializable {
      * @param password the password of the user
      */
     public User(
-        @NotEmpty String username,
-        @NotEmpty @NotBlank String password
+        @NotBlank String username,
+        @NotBlank String password
     ) {
-        this.username = requireNotEmpty(username);
-        this.password = requireNotEmpty(password);
+        this.username = requireNotNullOrBlank(username);
+        this.password = requireNotNullOrBlank(password);
     }
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @NotEmpty
+    @NotBlank
     @Column(name = "username", unique = true, nullable = false, length = 64)
     private String username;
 
-    @NotEmpty
+    @NotBlank
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -121,7 +114,7 @@ public class User implements Serializable {
      *
      * @param password the new password to be set
      */
-    public void setPassword(@NotEmpty String password) {
-        this.password = requireNotEmpty(password);
+    public void setPassword(@NotBlank String password) {
+        this.password = requireNotNullOrBlank(password);
     }
 }

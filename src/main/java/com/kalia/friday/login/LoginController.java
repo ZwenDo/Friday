@@ -19,8 +19,9 @@ import static com.kalia.friday.util.RepositoryResponse.Status.OK;
  * API endpoint for communicating with the login side of the database.
  */
 @ExecuteOn(value = TaskExecutors.IO)
-@Controller("/auth")
+@Controller("/api/auth")
 public class LoginController {
+    private static final String DEFAULT_ROUTE = "/api/auth/";
 
     @Inject
     private LoginRepository repository;
@@ -55,7 +56,7 @@ public class LoginController {
             loginResponse.get().token()
         ))
             : HttpResponse.unauthorized();
-        return httpResponse.headers(h -> h.location(URI.create("/auth/login/" + userCredsDTO.username())));
+        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + "login/" + userCredsDTO.username())));
     }
 
     /**
@@ -68,12 +69,12 @@ public class LoginController {
      * @return OK if successfully logged out | UNAUTHORIZED if the sessions credentials are invalid
      */
     @Post("/logout")
-    public HttpResponse<Object> logout(@Body @Valid LoginSessionDTO loginSessionDTO) {
+    public HttpResponse<Void> logout(@Body @Valid LoginSessionDTO loginSessionDTO) {
         var httpResponse = checkAndRun(
             loginSessionDTO,
             () -> repository.logout(loginSessionDTO.token())
         );
-        return httpResponse.headers(h -> h.location(URI.create("/auth/logout/" + loginSessionDTO.userId())));
+        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + "logout/" + loginSessionDTO.userId())));
     }
 
     /**
@@ -86,15 +87,15 @@ public class LoginController {
      * @return OK if successfully logged out | UNAUTHORIZED if the sessions credentials are invalid
      */
     @Post("/logout/all")
-    public HttpResponse<Object> logoutAll(@Body @Valid LoginSessionDTO loginSessionDTO) {
+    public HttpResponse<Void> logoutAll(@Body @Valid LoginSessionDTO loginSessionDTO) {
         var httpResponse = checkAndRun(
             loginSessionDTO,
             () -> repository.logoutAll(loginSessionDTO.userId())
         );
-        return httpResponse.headers(h -> h.location(URI.create("/auth/logout/all/" + loginSessionDTO.userId())));
+        return httpResponse.headers(h -> h.location(URI.create(DEFAULT_ROUTE + "logout/all/" + loginSessionDTO.userId())));
     }
 
-    private MutableHttpResponse<Object> checkAndRun(LoginSessionDTO loginSessionDTO, Runnable request) {
+    private MutableHttpResponse<Void> checkAndRun(LoginSessionDTO loginSessionDTO, Runnable request) {
         var checkResponse = repository.checkIdentity(loginSessionDTO.userId(), loginSessionDTO.token());
         if (checkResponse.status() == OK) {
             request.run();
@@ -102,5 +103,19 @@ public class LoginController {
         } else {
             return HttpResponse.unauthorized();
         }
+    }
+
+    /**
+     * Checks that user credentials are valid and refreshes the token.
+     *
+     * @param loginSessionDTO {
+     *                        "userId": "",
+     *                        "token": ""
+     *                        }
+     * @return ACCEPTED if credentials are valid | UNAUTHORIZED if the sessions credentials are invalid
+     */
+    @Post("/check")
+    public HttpResponse<Void> check(@Body @Valid LoginSessionDTO loginSessionDTO) {
+        return checkAndRun(loginSessionDTO, () -> {});
     }
 }

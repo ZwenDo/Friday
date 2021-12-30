@@ -2,14 +2,14 @@ package com.kalia.friday.user;
 
 import io.micronaut.core.annotation.Introspected;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Represents the body of a user credentials.
  */
 @Introspected
 public record UserCredsDTO(
-    @NotEmpty String username,
-    @NotEmpty String password
+    @NotBlank String username,
+    @NotBlank String password
 ) {
 }

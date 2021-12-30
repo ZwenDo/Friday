@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UserControllerTest {
 
     @Inject
-    @Client("/user")
+    @Client("/api/user")
     private HttpClient client;
 
     @Inject
@@ -56,7 +56,7 @@ public class UserControllerTest {
         var responseSave = client
             .toBlocking()
             .exchange(HttpRequest.POST(
-                "/",
+                "/save",
                 new UserCredsDTO(username, "1234")
             ), UserResponseDTO.class);
         assertEquals(HttpStatus.CREATED, responseSave.getStatus());

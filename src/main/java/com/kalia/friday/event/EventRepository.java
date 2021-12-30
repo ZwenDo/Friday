@@ -5,10 +5,11 @@ import io.micronaut.transaction.annotation.ReadOnly;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -50,20 +51,49 @@ public interface EventRepository {
      * @param title          the title of the event
      * @param description    the description of the event
      * @param place          the place of the event
-     * @param recurRuleParts the new {@code recurRuleParts} of the event
+     * @param recurRuleParts the new {@code rrule} of the event
      * @param startDate      the date on which begins the event
+     * @param latitude       the latitude of the event
+     * @param longitude      the longitude of the event
+     * @param endDate        the date on which ends the event
      * @return Ok if saved | NotFound if the id is unknown
      */
     @Transactional
     RepositoryResponse<Event> authenticatedSave(
         @NotNull UUID userId,
         @NotNull UUID userToken,
-        @NotEmpty String title,
-        @NotBlank String description,
-        @NotBlank String place,
-        @NotEmpty String recurRuleParts,
-        @NotNull LocalDateTime startDate
+        @NotBlank String title,
+        @Size(min = 1) String description,
+        @Size(min = 1) String place,
+        @Size(min = 1) String recurRuleParts,
+        @NotNull LocalDateTime startDate,
+        Double latitude,
+        Double longitude,
+        @NotNull LocalDateTime endDate
     );
+
+    /**
+     * Saves a new event.
+     *
+     * @param eventDTO the eventDTO of the event to edit
+     * @return Ok if saved | NotFound if the id is unknown
+     */
+    @Transactional
+    default RepositoryResponse<Event> authenticatedSave(EventDTO eventDTO) {
+        Objects.requireNonNull(eventDTO);
+        return authenticatedSave(
+            eventDTO.userId(),
+            eventDTO.userToken(),
+            eventDTO.title(),
+            eventDTO.description(),
+            eventDTO.place(),
+            eventDTO.rrule(),
+            eventDTO.start(),
+            eventDTO.latitude(),
+            eventDTO.longitude(),
+            eventDTO.end()
+        );
+    }
 
     /**
      * Deletes an event by its id.
@@ -83,8 +113,11 @@ public interface EventRepository {
      * @param title          the new title of the event
      * @param description    the new description of the event
      * @param place          the new place of the event
-     * @param recurRuleParts the new {@code recurRuleParts} of the event
+     * @param recurRuleParts the new {@code rrule} of the event
      * @param startDate      the date on which begins the event
+     * @param latitude       the latitude of the event
+     * @param longitude      the longitude of the event
+     * @param endDate        the date on which ends the event
      * @return the edited event
      */
     @Transactional
@@ -92,10 +125,47 @@ public interface EventRepository {
         @NotNull UUID id,
         @NotNull UUID userId,
         @NotNull UUID userToken,
-        @NotEmpty String title,
-        @NotBlank String description,
-        @NotBlank String place,
-        @NotEmpty String recurRuleParts,
-        @NotNull LocalDateTime startDate
+        @NotBlank String title,
+        @Size(min = 1) String description,
+        @Size(min = 1) String place,
+        @Size(min = 1) String recurRuleParts,
+        @NotNull LocalDateTime startDate,
+        Double latitude,
+        Double longitude,
+        LocalDateTime endDate
     );
+
+    /**
+     * Edits an event.
+     *
+     * @param id       the id of the event to edit
+     * @param eventDTO the eventDTO of the event to edit
+     * @return the edited event
+     */
+    @Transactional
+    default RepositoryResponse<Event> authenticatedUpdate(UUID id, EventDTO eventDTO) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(eventDTO);
+        return authenticatedUpdate(
+            id,
+            eventDTO.userId(),
+            eventDTO.userToken(),
+            eventDTO.title(),
+            eventDTO.description(),
+            eventDTO.place(),
+            eventDTO.rrule(),
+            eventDTO.start(),
+            eventDTO.latitude(),
+            eventDTO.longitude(),
+            eventDTO.end()
+        );
+    }
+
+    /**
+     * Inserts a list of events.
+     *
+     * @param events the list of eventDTO to save.
+     */
+    @Transactional
+    RepositoryResponse<Void> authenticatedEventListSave(List<EventDTO> events);
 }

@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.notkamui</groupId>
+    <groupId>com.kalia</groupId>
     <artifactId>friday</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <packaging>${packaging}</packaging>
 
     <parent>
@@ -114,6 +114,21 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.11.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-calendar</artifactId>
+            <version>v3-rev20211026-1.32.1</version>
+        </dependency>
+        <dependency> <!-- google calendar dependency -->
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-jetty</artifactId>
+            <version>1.32.1</version>
+        </dependency>
+        <dependency> <!-- google calendar dependency -->
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>1.32.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -155,7 +170,7 @@
                         <arg>--enable-preview</arg>
                         <arg>-Xlint:all</arg>
                         <arg>-Xlint:-processing</arg> <!-- Ignoring warnings about annotation processors because maven gives false flags even though everything works fine -->
-                        <arg>-Amicronaut.processing.group=com.notkamui</arg>
+                        <arg>-Amicronaut.processing.group=com.kalia</arg>
                         <arg>-Amicronaut.processing.module=friday</arg>
                     </compilerArgs>
                     <showWarnings>true</showWarnings>

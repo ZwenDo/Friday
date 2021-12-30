@@ -3,8 +3,8 @@ package com.kalia.friday.event;
 import io.micronaut.core.annotation.Introspected;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,10 +15,13 @@ import java.util.UUID;
 public record EventDTO(
     @NotNull UUID userId,
     @NotNull UUID userToken,
-    @NotEmpty String title,
-    @NotBlank String description,
-    @NotBlank String place,
-    @NotEmpty String recurRuleParts,
-    @NotNull LocalDateTime startDate
+    @NotBlank String title,
+    @Size(min = 1) String description,
+    @Size(min = 1) String place,
+    @Size(min = 1) String rrule,
+    @NotNull LocalDateTime start,
+    LocalDateTime end,
+    Double latitude,
+    Double longitude
 ) {
 }

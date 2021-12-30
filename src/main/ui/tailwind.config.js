@@ -4,12 +4,15 @@ module.exports = {
     darkMode: false, // or 'media' or 'class'
     theme: {
         fontFamily: {
-            cursive: ['Great Vibes', 'cursive'],
+            cursive: ['Playball', 'cursive'],
             serif: ['Raleway', 'serif']
         },
         extend: {
+            width: {
+                fit: "fit-content"
+            },
             backgroundSize: {
-                '300': '300%'
+                '300': '200%'
             },
             zIndex: {
                 '-20': '-20',
@@ -20,12 +23,15 @@ module.exports = {
             },
             keyframes: {
                 fader: {
-                    '0%': {'background-position': 0},
+                    '0%': {'background-position': '0%'},
                     '100%': {'background-position': '100%'}
                 }
             },
             spacing: {
                 '100': '33rem'
+            },
+            boxShadow: {
+                inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.5)'
             }
         },
     },

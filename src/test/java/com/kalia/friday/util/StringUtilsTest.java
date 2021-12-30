@@ -2,9 +2,7 @@ package com.kalia.friday.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StringUtilsTest {
     @Test
@@ -15,7 +13,7 @@ public class StringUtilsTest {
 
     @Test
     public void testRequireNotEmptySuccessful() {
-        assertEquals("abc", StringUtils.requireNotEmpty("abc"));
+        assertEquals("abc", StringUtils.requireNotNullOrBlank("abc"));
     }
 
     @Test
@@ -25,7 +23,36 @@ public class StringUtilsTest {
 
     @Test
     public void testRequireNotEmptyThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> StringUtils.requireNotEmpty(""));
-        assertThrows(NullPointerException.class, () -> StringUtils.requireNotEmpty(null));
+        assertThrows(IllegalArgumentException.class, () -> StringUtils.requireNotNullOrBlank(""));
+        assertThrows(NullPointerException.class, () -> StringUtils.requireNotNullOrBlank(null));
+    }
+
+    @Test
+    public void testNotBlankElseWithBlank() {
+        assertEquals("foo", StringUtils.notBlankElse("", "foo"));
+    }
+    @Test
+    public void testNotBlankElseWithNull() {
+        assertNull(StringUtils.notBlankElse(null, "foo"));
+    }
+
+    @Test
+    public void testNotBlankElseWithNotBlank() {
+        assertEquals("bar", StringUtils.notBlankElse("bar", "foo"));
+    }
+
+    @Test
+    public void testNotNullOrBlankElseWithBlank() {
+        assertEquals("foo", StringUtils.notNullOrBlankElse("", "foo"));
+    }
+
+    @Test
+    public void testNotNullOrBlankElseWithNull() {
+        assertEquals("foo", StringUtils.notNullOrBlankElse(null, "foo"));
+    }
+
+    @Test
+    public void testNotNullOrBlankElseWithNotBlank() {
+        assertEquals("bar", StringUtils.notNullOrBlankElse("bar", "foo"));
     }
 }

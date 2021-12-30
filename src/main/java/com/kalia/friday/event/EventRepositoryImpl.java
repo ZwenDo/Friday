@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.kalia.friday.event.Event.requireEndAfterStart;
+import static com.kalia.friday.util.BiweeklyUtils.requireValidRecurRule;
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
-import static com.kalia.friday.util.StringUtils.requireNotEmpty;
+import static com.kalia.friday.util.StringUtils.requireNotNullOrBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -67,20 +69,24 @@ public class EventRepositoryImpl implements EventRepository {
         String description,
         String place,
         String recurRuleParts,
-        LocalDateTime startDate
+        LocalDateTime startDate,
+        Double latitude,
+        Double longitude,
+        LocalDateTime endDate
     ) {
         requireNonNull(userId);
-        requireNotEmpty(title);
+        requireNotNullOrBlank(title);
         requireNotBlank(description);
         requireNotBlank(place);
-        requireNotEmpty(recurRuleParts);
+        requireValidRecurRule(recurRuleParts);
         requireNonNull(startDate);
+        requireEndAfterStart(startDate, endDate);
         var login = loginRepository.checkIdentity(userId, userToken);
         if (login.status() != RepositoryResponse.Status.OK) {
             return RepositoryResponse.unauthorized();
         }
         var user = login.get().user();
-        var event = new Event(user, title, description, place, recurRuleParts, startDate);
+        var event = Event.createEvent(user, title, description, place, recurRuleParts, startDate, endDate, latitude, longitude);
         manager.merge(user).events().add(event);
         manager.flush();
         manager.detach(event);
@@ -111,15 +117,19 @@ public class EventRepositoryImpl implements EventRepository {
         String description,
         String place,
         String recurRuleParts,
-        LocalDateTime localDateTime
+        LocalDateTime startDate,
+        Double latitude,
+        Double longitude,
+        LocalDateTime endDate
     ) {
         requireNonNull(id);
         requireNonNull(userId);
-        requireNotEmpty(title);
+        requireNotNullOrBlank(title);
         requireNotBlank(description);
         requireNotBlank(place);
-        requireNotEmpty(recurRuleParts);
-        requireNonNull(localDateTime);
+        requireValidRecurRule(recurRuleParts);
+        requireNonNull(startDate);
+        requireEndAfterStart(startDate, endDate);
         var eventGetResponse = getIfAuthenticated(id, userId, userToken);
         if (eventGetResponse.status() != RepositoryResponse.Status.OK) {
             return eventGetResponse;
@@ -129,9 +139,40 @@ public class EventRepositoryImpl implements EventRepository {
         event.setDescription(description);
         event.setPlace(place);
         event.setRecurRuleParts(recurRuleParts);
+        event.setEndDate(endDate);
+        event.setStartDate(startDate);
+        event.setLatitude(latitude);
+        event.setLongitude(longitude);
         manager.flush(); // flush changes before detach
         manager.detach(event);
         return eventGetResponse;
+    }
+
+    @Override
+    @Transactional
+    public RepositoryResponse<Void> authenticatedEventListSave(List<EventDTO> events) {
+        requireNonNull(events);
+        for (var e : events) {
+            requireNonNull(e);
+            var login = loginRepository.checkIdentity(e.userId(), e.userToken());
+            if (login.status() != RepositoryResponse.Status.OK) {
+                return RepositoryResponse.unauthorized();
+            }
+            var user = login.get().user();
+            var event = Event.createEvent(
+                user,
+                e.title(),
+                e.description(),
+                e.place(),
+                e.rrule(),
+                e.start(),
+                e.end(),
+                e.latitude(),
+                e.longitude()
+            );
+            manager.merge(user).events().add(event);
+        }
+        return RepositoryResponse.ok(null);
     }
 
     /**

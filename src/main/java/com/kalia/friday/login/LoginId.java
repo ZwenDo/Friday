@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 public class LoginId implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 23467321345L;
 
     private UUID token;
     private User user;
