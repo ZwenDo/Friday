@@ -148,6 +148,19 @@ public class EventRepositoryImpl implements EventRepository {
         return eventGetResponse;
     }
 
+    @Override
+    @Transactional
+    public void savesEventList(List<Event> events) {
+        requireNonNull(events);
+        events.forEach(e -> {
+            requireNonNull(e);
+            manager.merge(e.user()).events().add(e);
+            manager.flush();
+            manager.detach(e);
+        });
+        manager.flush();
+    }
+
     /**
      * @return unauthorized if wrong credentials or if user is not the owner of the event | not found if event is not found
      */

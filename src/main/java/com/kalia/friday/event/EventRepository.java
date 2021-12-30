@@ -161,4 +161,12 @@ public interface EventRepository {
             eventDTO.end()
         );
     }
+
+    /**
+     * Inserts a list of events.
+     *
+     * @param events the list of events to save.
+     */
+    @Transactional
+    void savesEventList(List<Event> events);
 }
