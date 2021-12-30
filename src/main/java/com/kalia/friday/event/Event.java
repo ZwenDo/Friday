@@ -285,9 +285,8 @@ public class Event implements Serializable {
      * @param endDate the end date to set
      */
     public void setEndDate(LocalDateTime endDate) {
-        requireNonNull(endDate);
         requireEndAfterStart(startDate, endDate);
-        this.endDate = requireNonNull(endDate);
+        this.endDate = endDate;
     }
 
     /**

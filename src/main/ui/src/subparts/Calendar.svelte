@@ -3,16 +3,20 @@
     import dayGridPlugin from "@fullcalendar/daygrid";
     import rRulePlugin from "@fullcalendar/rrule";
     import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
-    import {getContext} from "svelte";
-    import EventForm from "./EventForm.svelte";
+    import {getContext, onMount} from "svelte";
     import {jsDateToFormDate} from "../utils/date";
+    import listPlugin from "@fullcalendar/list";
+    import EventDetails from "./EventDetails.svelte";
 
+    export let calendarRefs = [];
     export let calendarRef = null;
+    export let type = "dayGridMonth";
 
     const {open} = getContext('simple-modal');
 
     const options = {
-        plugins: [dayGridPlugin, rRulePlugin],
+        plugins: [dayGridPlugin, rRulePlugin, listPlugin],
+        initialView: type,
         events: {
             url: "/api/event/allbyuser",
             method: "POST",
@@ -22,7 +26,7 @@
             }
         },
         eventClick(infos) {
-            open(EventForm, {calendarRef, eventToEdit: infos.event._def.extendedProps}, {
+           open(EventDetails, {calendarRefs, event: infos.event._def.extendedProps}, {
                 styleWindow: {
                     width: '90vw',
                     height: '90vh',
@@ -61,6 +65,8 @@
             data.extendedProps.end = jsDateToFormDate(new Date(...data.extendedProps.end));
         }
     }
+
+    onMount(() => calendarRefs.push(calendarRef));
 </script>
 
 

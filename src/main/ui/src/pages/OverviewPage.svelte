@@ -9,7 +9,7 @@
     import {push, replace} from "svelte-spa-router";
     import Calendar from "../subparts/Calendar.svelte";
 
-    let calendarRef;
+    let calendarRefs = [];
 
     const {open} = getContext('simple-modal');
 
@@ -25,7 +25,7 @@
     });
 
     function showEventForm() {
-        open(EventForm, { calendarRef }, {
+        open(EventForm, { calendarRefs }, {
             styleWindow: {
                 width: '90vw',
                 height: '90vh',
@@ -63,12 +63,12 @@
         </div>
     </div>
     <Section title="Next">
-        BBBBBBBBH
+        AAAAAAA
     </Section>
     <Section title="Today">
-        AAAAAAAAH
+        <Calendar bind:calendarRefs={calendarRefs} type="listDay"/>
     </Section>
     <Section title="This month">
-        <Calendar bind:calendarRef/>
+        <Calendar bind:calendarRefs={calendarRefs}/>
     </Section>
 </div>

@@ -4,12 +4,12 @@
     import {getContext, onMount} from "svelte";
     import Button from "../components/Button.svelte";
     import {converter, createRrule} from "../utils/rrule";
-    import {createEvent} from "../stores/event_store";
+    import {createEvent, updateEvent} from "../stores/event_store";
     import {jsDateToFormDate} from "../utils/date";
 
     const {close} = getContext('simple-modal');
 
-    export let calendarRef;
+    export let calendarRefs;
     export let eventToEdit = undefined;
 
 
@@ -44,20 +44,17 @@
         }
         event.end = event.allDay ? null : event.end;
         event.allDay = null;
-        createEvent(event, _ => {
-            calendarRef.getAPI().refetchEvents();
-            close();
-        });
+        if (!eventToEdit) {
+            createEvent(event, refreshCalendars);
+        } else {
+            updateEvent(event, refreshCalendars);
+        }
     }
 
-    onMount(() => {
-        if (eventToEdit) {
-           event = eventToEdit;
-           parseRrule(eventToEdit.rrule);
-           hasRecurrenceChecked = event.rrule !== undefined;
-       }
-
-    });
+    function refreshCalendars() {
+        calendarRefs.forEach(c => c.getAPI().refetchEvents());
+        close();
+    }
 
     function parseRrule(rrule) {
         if (!rrule) return;
@@ -69,6 +66,15 @@
             rec[key] = pair[1];
         });
     }
+
+    onMount(() => {
+        if (eventToEdit) {
+            event = {...eventToEdit};
+            parseRrule(eventToEdit.rrule);
+            hasRecurrenceChecked = event.rrule !== undefined;
+        }
+
+    });
 </script>
 
 <div class="w-full h-full flex justify-center items-center">
