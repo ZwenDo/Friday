@@ -65,6 +65,7 @@ public final class RepositoryResponse<T> {
      * @return a {@code RepositoryResponse} with an {@code OK} status and containing value
      */
     public static <T> RepositoryResponse<T> ok(T value) {
+        requireNonNull(value);
         return new RepositoryResponse<>(Status.OK, value);
     }
 

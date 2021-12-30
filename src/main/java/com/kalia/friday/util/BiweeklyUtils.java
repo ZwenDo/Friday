@@ -20,6 +20,9 @@ import java.util.UUID;
 import static com.kalia.friday.util.StringUtils.notBlankElse;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Class containing Biweekly utility methods.
+ */
 public final class BiweeklyUtils {
     private static final String START = """
         BEGIN:VCALENDAR
@@ -36,6 +39,18 @@ public final class BiweeklyUtils {
         END:VCALENDAR""";
 
 
+    private BiweeklyUtils() {
+        throw new AssertionError("Cannot instantiate.");
+    }
+
+    /**
+     * Creates a list of eventDTO from an ics formatted string.
+     *
+     * @param data   ics string
+     * @param userId user id
+     * @param token  user login token
+     * @return the created event list
+     */
     public static List<EventDTO> eventDTOListFromString(String data, UUID userId, UUID token) {
         requireNonNull(data);
         requireNonNull(userId);

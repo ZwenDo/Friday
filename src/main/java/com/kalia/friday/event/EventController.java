@@ -124,6 +124,15 @@ public class EventController {
         }
     }
 
+    /**
+     * Retrieves all events of a given user.
+     *
+     * @param loginSessionDTO {
+     *                        "userId": "",
+     *                        "token": "",
+     *                        }
+     * @return OK with body containing events if success | UNAUTHORIZED if invalid credentials
+     */
     @Post(value = "/allbyuser", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public HttpResponse<List<EventResponseDTO>> allByUser(@Body @Valid LoginSessionDTO loginSessionDTO) {
         var findResponse = eventRepository.authenticatedFindByUserId(loginSessionDTO.userId(), loginSessionDTO.token());
@@ -138,6 +147,16 @@ public class EventController {
             .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "allbyuser")));
     }
 
+    /**
+     * Imports an ics calendar from a URL (request will use GET method).
+     *
+     * @param url             url to get the calendar
+     * @param loginSessionDTO {
+     *                        "userId": "",
+     *                        "token": "",
+     *                        }
+     * @return OK if imported | BAD REQUEST if invalid file content | UNAUTHORIZED if invalid credentials
+     */
     @Post("/import/url")
     public HttpResponse<Void> importFromURL(String url, @Body @Valid LoginSessionDTO loginSessionDTO) {
         var request = HttpRequest.newBuilder().GET().uri(URI.create(url)).build();
@@ -157,9 +176,21 @@ public class EventController {
             return HttpResponse.ok(null);
         } catch (IOException | InterruptedException e) {
             return HttpResponse.serverError();
+        } catch (NullPointerException | IllegalArgumentException e) { // if invalid format
+            return HttpResponse.badRequest();
         }
     }
 
+    /**
+     * Imports an ics calendar from a file.
+     *
+     * @param fileContent     file content
+     * @param loginSessionDTO {
+     *                        "userId": "",
+     *                        "token": "",
+     *                        }
+     * @return OK if imported | BAD REQUEST if invalid file content | UNAUTHORIZED if invalid credentials
+     */
     @Post("/import/file")
     public HttpResponse<Void> importFromFile(String fileContent, @Body @Valid LoginSessionDTO loginSessionDTO) {
         var events = BiweeklyUtils.eventDTOListFromString(fileContent, loginSessionDTO.userId(), loginSessionDTO.token());
@@ -174,7 +205,6 @@ public class EventController {
             }
             return HttpResponse.ok(null);
         } catch (NullPointerException | IllegalArgumentException e) { // if invalid format
-            e.printStackTrace();
             return HttpResponse.badRequest();
         }
     }
