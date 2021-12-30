@@ -17,6 +17,11 @@
     const options = {
         plugins: [dayGridPlugin, rRulePlugin, listPlugin],
         initialView: type,
+        views: {
+            dayGrid: {
+                dayMaxEventRows: 5
+            }
+        },
         events: {
             url: "/api/event/allbyuser",
             method: "POST",
