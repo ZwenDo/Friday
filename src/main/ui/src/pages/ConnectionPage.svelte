@@ -30,7 +30,7 @@
     <div class="sm:hidden float-right w-full mt-3">
         <Button extendClass="sm:hidden w-30" on:click={toggleSignUp}>{buttonText}</Button>
     </div>
-    <LoginForm extendClass="{toggle ? 'flex' : 'hidden'} sm:flex"/>
+    <LoginForm extendClass="{toggle ? 'flex' : 'hidden'} sm:flex justify-center items-center"/>
     <div class="hidden h-2/3 border rounded-full sm:block"></div>
-    <RegisterForm extendClass="{!toggle ? 'flex' : 'hidden'} sm:flex"/>
+    <RegisterForm extendClass="{!toggle ? 'flex' : 'hidden'} sm:flex justify-center items-center"/>
 </div>

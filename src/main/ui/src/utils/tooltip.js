@@ -4,8 +4,10 @@ export function tooltip(node, params = {
     theme: "friday",
     arrow: roundArrow,
     duration: 100,
-    interactive: true,
+    hideOnClick: true,
+    trigger: "click",
     animation: "friday",
+    zIndex: 9999,
 }) {
     if (!node.title) {
         return {

@@ -13,6 +13,7 @@
     export let pattern = null;
     export let hint = null;
     export let extendClass = "";
+    export let fieldClass = "";
 
     let field;
 
@@ -22,10 +23,10 @@
     });
 </script>
 
-<div class="form-field-container mt-9 mb-4 relative {extendClass}">
+<div class="mt-9 mb-4 relative {extendClass}">
     {#if type.startsWith("textarea")}
         <textarea
-            class="input-field peer"
+            class="input-field peer {disabled ? 'opacity-75' : ''} {fieldClass}"
             id="{name}"
             {name}
             bind:value
@@ -39,7 +40,7 @@
         ></textarea>
     {:else}
         <input
-            class="input-field peer"
+            class="input-field peer {disabled ? 'opacity-75' : ''} {fieldClass}"
             bind:this={field}
             id="{name}"
             {name}
@@ -56,11 +57,12 @@
     {#if label}
         <label
             class="
-        transition-all
-        absolute left-2 -top-6
-        peer-placeholder-shown:font-normal peer-placeholder-shown:text-gray-400  peer-placeholder-shown:text-base peer-placeholder-shown:top-2
-        peer-focus:font-semibold peer-focus:text-gray-600 peer-focus:text-sm peer-focus:-top-6
-        font-semibold text-gray-600 text-sm"
+            transition-all
+            absolute left-2 -top-6
+            peer-placeholder-shown:font-normal peer-placeholder-shown:text-gray-400  peer-placeholder-shown:text-base peer-placeholder-shown:top-2
+            peer-focus:font-semibold peer-focus:text-gray-600 peer-focus:text-sm peer-focus:-top-6
+            font-semibold text-gray-600 text-sm
+            {disabled ? 'opacity-25 peer-focus:opacity-25 peer-placeholder-shown:opacity-25' : ''}"
             for="{name}"
         >
             {label}

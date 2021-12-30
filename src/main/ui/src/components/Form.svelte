@@ -11,17 +11,16 @@
 <div class="
     main-container font-serif
     w-full h-full
-    flex flex-auto items-center justify-center
+    flex flex-auto flex-col
+    transition-all
     {extendClass}"
 >
-    <div>
-        {#if title}
-            <Heading>{title}</Heading>
-        {/if}
-        <hr class="w-full mt-4"/>
-        <form on:submit|preventDefault>
-            <slot/>
-            <Button type="submit">{submitText}</Button>
-        </form>
-    </div>
+    {#if title}
+        <Heading>{title}</Heading>
+    {/if}
+    <hr class="mt-4"/>
+    <form class="transition-all" on:submit|preventDefault>
+        <slot/>
+        <Button type="submit">{submitText}</Button>
+    </form>
 </div>

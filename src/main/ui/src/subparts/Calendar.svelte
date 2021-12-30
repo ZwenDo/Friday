@@ -6,7 +6,7 @@
     import {getContext, onMount} from "svelte";
     import {jsDateToFormDate} from "../utils/date";
     import listPlugin from "@fullcalendar/list";
-    import EventDetails from "./EventDetails.svelte";
+    import EventForm from "./EventForm.svelte";
 
     export let calendarRefs = [];
     export let calendarRef = null;
@@ -31,15 +31,14 @@
             }
         },
         eventClick(infos) {
-           open(EventDetails, {calendarRefs, event: infos.event._def.extendedProps}, {
+            open(EventForm, {calendarRefs, event: infos.event._def.extendedProps}, {
+                closeButton: false,
                 styleWindow: {
-                    width: '90vw',
-                    height: '90vh',
                     backgroundColor: '#ffffff',
                 },
                 styleContent: {
-                    width: '100%',
-                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
                 }
             });
         },
