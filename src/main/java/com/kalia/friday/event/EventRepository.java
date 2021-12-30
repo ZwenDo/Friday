@@ -118,7 +118,6 @@ public interface EventRepository {
      * @param latitude       the latitude of the event
      * @param longitude      the longitude of the event
      * @param endDate        the date on which ends the event
-     * @param isAllDay       true if the events spans throughout the day ; false otherwise
      * @return the edited event
      */
     @Transactional

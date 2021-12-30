@@ -26,4 +26,33 @@ public class StringUtilsTest {
         assertThrows(IllegalArgumentException.class, () -> StringUtils.requireNotNullOrBlank(""));
         assertThrows(NullPointerException.class, () -> StringUtils.requireNotNullOrBlank(null));
     }
+
+    @Test
+    public void testNotBlankElseWithBlank() {
+        assertEquals("foo", StringUtils.notBlankElse("", "foo"));
+    }
+    @Test
+    public void testNotBlankElseWithNull() {
+        assertNull(StringUtils.notBlankElse(null, "foo"));
+    }
+
+    @Test
+    public void testNotBlankElseWithNotBlank() {
+        assertEquals("bar", StringUtils.notBlankElse("bar", "foo"));
+    }
+
+    @Test
+    public void testNotNullOrBlankElseWithBlank() {
+        assertEquals("foo", StringUtils.notNullOrBlankElse("", "foo"));
+    }
+
+    @Test
+    public void testNotNullOrBlankElseWithNull() {
+        assertEquals("foo", StringUtils.notNullOrBlankElse(null, "foo"));
+    }
+
+    @Test
+    public void testNotNullOrBlankElseWithNotBlank() {
+        assertEquals("bar", StringUtils.notNullOrBlankElse("bar", "foo"));
+    }
 }

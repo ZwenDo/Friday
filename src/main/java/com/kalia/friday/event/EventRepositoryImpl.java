@@ -139,10 +139,10 @@ public class EventRepositoryImpl implements EventRepository {
         event.setDescription(description);
         event.setPlace(place);
         event.setRecurRuleParts(recurRuleParts);
+        event.setEndDate(endDate);
         event.setStartDate(startDate);
         event.setLatitude(latitude);
         event.setLongitude(longitude);
-        event.setEndDate(endDate);
         manager.flush(); // flush changes before detach
         manager.detach(event);
         return eventGetResponse;
