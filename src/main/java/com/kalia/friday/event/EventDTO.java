@@ -20,8 +20,8 @@ public record EventDTO(
     @Size(min = 1) String place,
     @Size(min = 1) String rrule,
     @NotNull LocalDateTime start,
+    LocalDateTime end,
     Double latitude,
-    Double longitude,
-    LocalDateTime end
+    Double longitude
 ) {
 }

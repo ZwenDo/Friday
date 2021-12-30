@@ -1,4 +1,4 @@
-package com.kalia.friday.event;
+package com.kalia.friday.util;
 
 import biweekly.util.ByDay;
 import biweekly.util.DayOfWeek;
@@ -10,27 +10,27 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EventRecurRulePartsTest {
+public class BiWeeklyUtilsTest {
 
     @Test
     public void shouldThrowWithNullParam() {
-        assertThrows(NullPointerException.class, () -> EventRecurRuleParts.fromString(null));
+        assertThrows(NullPointerException.class, () -> BiweeklyUtils.recurrenceRuleFromString(null));
     }
 
     @Test
     public void shouldThrowWithoutFrequency() {
-        assertThrows(IllegalArgumentException.class, () -> EventRecurRuleParts.fromString(""));
+        assertThrows(IllegalArgumentException.class, () -> BiweeklyUtils.recurrenceRuleFromString(""));
     }
 
     @Test
     public void shouldThrowWithInvalidFrequency() {
-        assertThrows(IllegalArgumentException.class, () -> EventRecurRuleParts.fromString("FREQ=abc"));
+        assertThrows(IllegalArgumentException.class, () -> BiweeklyUtils.recurrenceRuleFromString("FREQ=abc"));
     }
 
     @Test
     public void successfulParse() {
-        var recRule = EventRecurRuleParts
-            .fromString("FREQ=WEEKLY;INTERVAL=2;BYDAY=TU,WE,TH")
+        var recRule = BiweeklyUtils
+            .recurrenceRuleFromString("FREQ=WEEKLY;INTERVAL=2;BYDAY=TU,WE,TH")
             .getValue();
         assertEquals(Frequency.WEEKLY, recRule.getFrequency());
         assertEquals(2, recRule.getInterval());
