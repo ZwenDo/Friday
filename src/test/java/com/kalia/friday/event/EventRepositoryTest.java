@@ -69,9 +69,8 @@ public class EventRepositoryTest {
                 null,
                 null,
                 LocalDateTime.now(),
-                null,
-                null,
-                LocalDateTime.now()
+                LocalDateTime.now(), null,
+                null
             );
             events.add(event);
             manager.persist(event);
@@ -90,9 +89,8 @@ public class EventRepositoryTest {
             null,
             null,
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         manager.persist(event);
         manager.flush();

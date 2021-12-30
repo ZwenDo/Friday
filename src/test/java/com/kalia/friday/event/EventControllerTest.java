@@ -143,7 +143,7 @@ public class EventControllerTest {
 
     @Test
     public void testDelete() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), login.token());
@@ -155,7 +155,7 @@ public class EventControllerTest {
 
     @Test
     public void testDeleteWithWrongEventIdFails() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), login.token());
@@ -168,7 +168,7 @@ public class EventControllerTest {
 
     @Test
     public void testDeleteWithWrongUserIdFails() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(UUID.randomUUID(), login.token());
@@ -180,7 +180,7 @@ public class EventControllerTest {
 
     @Test
     public void testDeleteWithWrongLoginTokenFails() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var loginDTO = new LoginSessionDTO(user.id(), UUID.randomUUID());
@@ -193,7 +193,7 @@ public class EventControllerTest {
     @Test
     public void testDeleteOtherUserEventFails() {
         // creates event for user
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
 
         // creates new user and login
@@ -213,7 +213,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdate() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -238,7 +238,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWrongEventIdFails() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -261,7 +261,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWrongUserIdFails() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -284,7 +284,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWrongLoginTokenFails() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(
@@ -307,7 +307,7 @@ public class EventControllerTest {
 
     @Test
     public void testUpdateWithInvalidValuesFails() {
-        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), null, null, LocalDateTime.now());
+        var event = Event.createEvent(user, "title", null, null, null, LocalDateTime.now(), LocalDateTime.now(), null, null);
         manager.persist(event);
         manager.getTransaction().commit();
         var updateDTO = new EventDTO(

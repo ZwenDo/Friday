@@ -35,4 +35,32 @@ public final class StringUtils {
         }
         return s;
     }
+
+    /**
+     * If a string is blank, replaces it by a default value.
+     *
+     * @param s      the string to test
+     * @param orElse the default value
+     * @return s if s is not blank ; default otherwise
+     */
+    public static String notBlankElse(String s, String orElse) {
+        if (s != null && s.replaceAll("\\s", "").isEmpty()) {
+            return orElse;
+        }
+        return s;
+    }
+
+    /**
+     * If a string is blank or null, replaces it by a default value.
+     *
+     * @param s      the string to test
+     * @param orElse the default value
+     * @return s if s is blank or null ; default otherwise
+     */
+    public static String notNullOrBlankElse(String s, String orElse) {
+        if (s == null || s.replaceAll("\\s", "").isEmpty()) {
+            return orElse;
+        }
+        return s;
+    }
 }

@@ -86,7 +86,7 @@ public class EventRepositoryImpl implements EventRepository {
             return RepositoryResponse.unauthorized();
         }
         var user = login.get().user();
-        var event = Event.createEvent(user, title, description, place, recurRuleParts, startDate, latitude, longitude, endDate);
+        var event = Event.createEvent(user, title, description, place, recurRuleParts, startDate, endDate, latitude, longitude);
         manager.merge(user).events().add(event);
         manager.flush();
         manager.detach(event);
@@ -139,13 +139,26 @@ public class EventRepositoryImpl implements EventRepository {
         event.setDescription(description);
         event.setPlace(place);
         event.setRecurRuleParts(recurRuleParts);
+        event.setEndDate(endDate);
         event.setStartDate(startDate);
         event.setLatitude(latitude);
         event.setLongitude(longitude);
-        event.setEndDate(endDate);
         manager.flush(); // flush changes before detach
         manager.detach(event);
         return eventGetResponse;
+    }
+
+    @Override
+    @Transactional
+    public void savesEventList(List<Event> events) {
+        requireNonNull(events);
+        events.forEach(e -> {
+            requireNonNull(e);
+            manager.merge(e.user()).events().add(e);
+            manager.flush();
+            manager.detach(e);
+        });
+        manager.flush();
     }
 
     /**
