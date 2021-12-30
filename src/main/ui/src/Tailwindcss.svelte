@@ -34,6 +34,14 @@
             shadow-md border-gray-100 outline-none
             focus:ring-purple-200 focus:ring-2
             transition-all;
+
+        }
+
+        .full-field {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            @apply w-full;
         }
     }
 
