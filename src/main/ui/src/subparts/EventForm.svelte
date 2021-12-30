@@ -117,24 +117,35 @@
                 <option value="YEARLY">Yearly</option>
             </select>
             <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byMonth}
-                       label="Months (from 1 to 12, comma separated)" name="bymonth"
-                       type="text"/>
+                       hint="From 1 to 12, comma separated" label="Months"
+                       name="bymonth" type="text"/>
             <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byYearDay}
-                       label="Year days (from -366 to 366 except 0, comma separated)" name="byyearday"
-                       type="text" extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"/>
+                       extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"
+                       hint="From -366 to 366 except 0, comma separated"
+                       label="Year days" name="byyearday"
+                       type="text"/>
             <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byWeekNo}
-                       label="Week numbers (from -53 to 53 except 0, comma separated)" name="byweekno"
-                       type="text" extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"/>
-            <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
-                       label="{rec.freq === 'YEARLY' || rec.freq === 'MONTHLY' ? 'Week days (week number from -53 to 53 except 0, followed by the day\'s first two letters all of which comma separated; e.g. +2MO,-51TH)' : 'Week days (e.g. MO or TH,WE,SA)'}"
-                       name="byday"
+                       extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"
+                       hint="From -53 to 53 except 0, comma separated"
+                       label="Week numbers" name="byweekno"
                        type="text"/>
+            {#if rec.freq === 'YEARLY' || rec.freq === 'MONTHLY'}
+                <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
+                           label="Week days" name="byday" type="text"
+                           hint="Week number from -53 to 53 except 0, followed by the day's first two letters all of which comma separated; e.g. +2MO,-51TH"/>
+            {:else}
+                <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
+                           label="Week days" name="byday" type="text"
+                           hint="MO or TH,WE,SA"/>
+            {/if}
             <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byMonthDay}
-                       label="Month days" name="bymonthday" extendClass="{rec.freq === 'WEEKLY' ? 'hidden' : ''}"
-                       type="text"/>
+                       extendClass="{rec.freq === 'WEEKLY' ? 'hidden' : ''}"
+                       hint="From -31 to 31 except 0, comma separated" label="Month days"
+                       name="bymonthday" type="text"/>
             <FormField disabled={!hasRecurrenceChecked} bind:value={rec.bySetPos}
-                       label="Select specific occurrences (from -366 to 366 except 0, comma separated)" name="bysetpos"
-                       type="text"/>
+                       hint="From -366 to 366 except 0, comma separated ; to select specific occurrences of the actual rule"
+                       label="Specific occurrences"
+                       name="bysetpos" type="text"/>
         </details>
         <Button extendClass="bg-pink-500 hover:bg-pink-600 mr-1" on:click={close}>Cancel</Button>
     </Form>
