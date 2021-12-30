@@ -1,9 +1,20 @@
+export const converter = {
+    "FREQ": "freq",
+    "BYYEAR": "byYear",
+    "BYMONTH": "byMonth",
+    "BYYEARDAY": "byYearDay",
+    "BYWEEKNO": "byWeekNo",
+    "BYDAY": "byDay",
+    "BYMONTHDAY": "byMonthDay",
+    "BYSETPOS": "bySetPos"
+}
+
 export function createRrule(rec) {
     let rrule = "FREQ=" + rec.freq;
     switch (rec.freq) {
         case "YEARLY":
             if (!checkWeekNo(rec) || !checkYearDays(rec) || !checkDays(rec)) {
-                return undefined;
+                return null;
             } else {
                 rrule += addIfNotEmpty(rec.byWeekNo, ";BYWEEKNO=") +
                     addIfNotEmpty(rec.byYearDay, ";BYYEARDAY=");
@@ -11,16 +22,16 @@ export function createRrule(rec) {
         case "MONTHLY":
         case "DAILY":
             if (!checkMonthDays(rec)) {
-                return undefined;
+                return null;
             } else {
                 rrule += addIfNotEmpty(rec.byMonthDay, ";BYMONTHDAY=");
             }
         case "WEEKLY":
             if (!checkDaysWithWeekNo(rec) || !checkMonths(rec) || !checkSetPos(rec)) {
-                return undefined;
+                return null;
             } else {
                 rrule += addIfNotEmpty(rec.byMonth, ";BYMONTH=") +
-                    addIfNotEmpty(rec.byDay, ";BYDAY=") +
+                    (rec.freq !== "YEARLY" ? addIfNotEmpty(rec.byDay, ";BYDAY=") : "") +
                     addIfNotEmpty(rec.bySetPos, ";BYSETPOS=");
             }
             break;
@@ -34,8 +45,8 @@ function addIfNotEmpty(str, prefix) {
 
 function checkDaysWithWeekNo(rec) {
     if (rec.byDay.length === 0) return true;
-    const regex = /[+-]?([1-4]?[0-9]|5[0-3])?(MO|TU|WE|TH|FR|SA|SU)/g;
-    if (rec.byDay.split(",").some(e => regex.exec(e) === null)) {
+    const regex = /[+-]?([1-4]?[0-9]|5[0-3])?(MO|TU|WE|TH|FR|SA|SU)/;
+    if (rec.byDay.split(",").some(e => !regex.exec(e))) {
         alert("Invalid days");
         return false;
     }

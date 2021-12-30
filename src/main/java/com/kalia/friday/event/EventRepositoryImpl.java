@@ -80,7 +80,6 @@ public class EventRepositoryImpl implements EventRepository {
         requireNotBlank(place);
         requireValidRecurRule(recurRuleParts);
         requireNonNull(startDate);
-        requireNonNull(endDate);
         requireEndAfterStart(startDate, endDate);
         var login = loginRepository.checkIdentity(userId, userToken);
         if (login.status() != RepositoryResponse.Status.OK) {
@@ -130,7 +129,6 @@ public class EventRepositoryImpl implements EventRepository {
         requireNotBlank(place);
         requireValidRecurRule(recurRuleParts);
         requireNonNull(startDate);
-        requireNonNull(endDate);
         requireEndAfterStart(startDate, endDate);
         var eventGetResponse = getIfAuthenticated(id, userId, userToken);
         if (eventGetResponse.status() != RepositoryResponse.Status.OK) {

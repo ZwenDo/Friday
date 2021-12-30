@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
@@ -76,7 +75,7 @@ public class Event implements Serializable {
         @NotNull LocalDateTime startDate,
         Double latitude,
         Double longitude,
-        @NotNull LocalDateTime endDate
+        LocalDateTime endDate
     ) {
         requireNonNull(user);
         requireNonNull(title);
@@ -84,7 +83,6 @@ public class Event implements Serializable {
         requireNotBlank(place);
         requireNotBlank(recurRuleParts);
         requireNonNull(startDate);
-        requireNonNull(endDate);
         requireEndAfterStart(startDate, endDate);
         return new Event(user, title, description, place, recurRuleParts, startDate, latitude, longitude, endDate);
     }
@@ -122,7 +120,7 @@ public class Event implements Serializable {
     @Column(name = "longitude")
     private Double longitude;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDateTime endDate;
 
     /**
@@ -287,22 +285,28 @@ public class Event implements Serializable {
      * @param endDate the end date to set
      */
     public void setEndDate(LocalDateTime endDate) {
-        requireNonNull(endDate);
         requireEndAfterStart(startDate, endDate);
-        this.endDate = requireNonNull(endDate);
+        this.endDate = endDate;
     }
 
-
+    /**
+     * Converts an event to an eventResponseDTO.
+     *
+     * @return the created eventResponseDTO
+     */
     public EventResponseDTO toEventResponseDTO() {
-        var formattedDate = startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd:HHmmss;"))
-            .replace(":", "T")
-            .replace(";", "Z");
-        var rrule = recurRuleParts == null ? null : "DTSTART:" + formattedDate + "\nRRULE:" + recurRuleParts;
-        return new EventResponseDTO(id, title, description, place, rrule, startDate, latitude, longitude, endDate);
+        return new EventResponseDTO(id, title, description, place, recurRuleParts, startDate, latitude, longitude, endDate);
     }
 
+    /**
+     * Asserts that a dae starts after another.
+     *
+     * @param startDate the date that must start before
+     * @param endDate the date that must start afer
+     */
     public static void requireEndAfterStart(LocalDateTime startDate, LocalDateTime endDate) {
-        if (requireNonNull(endDate).isBefore(requireNonNull(startDate))) {
+        if (endDate == null) return;
+        if (endDate.isBefore(requireNonNull(startDate))) {
             throw new IllegalArgumentException("endDate is before startDate.");
         }
     }

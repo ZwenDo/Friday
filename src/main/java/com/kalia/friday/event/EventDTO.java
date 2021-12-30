@@ -18,10 +18,10 @@ public record EventDTO(
     @NotBlank String title,
     @Size(min = 1) String description,
     @Size(min = 1) String place,
-    @Size(min = 1) String recurRuleParts,
-    @NotNull LocalDateTime startDate,
+    @Size(min = 1) String rrule,
+    @NotNull LocalDateTime start,
     Double latitude,
     Double longitude,
-    @NotNull LocalDateTime endDate
+    LocalDateTime end
 ) {
 }
