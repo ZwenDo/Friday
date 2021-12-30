@@ -9,6 +9,10 @@ import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
 
+const onwarn = (warning, onwarn) =>
+    (warning.code === 'CIRCULAR_DEPENDENCY' && /[/\\]rrule[/\\]/.test(warning.message)) ||
+    onwarn(warning);
+
 function serve() {
     let server;
 
@@ -55,6 +59,7 @@ export default {
 
         replace({
             'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
+            preventAssignment: true,
         }),
 
         // we'll extract any component CSS out into
@@ -87,4 +92,5 @@ export default {
     watch: {
         clearScreen: false,
     },
+    onwarn,
 };
