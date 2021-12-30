@@ -65,9 +65,8 @@ public class EventControllerTest {
             "place",
             "FREQ=DAILY",
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         var responseSave = client
             .toBlocking()
@@ -87,9 +86,8 @@ public class EventControllerTest {
             "place",
             "FREQ=DAILY",
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         var response = assertThrows(
             HttpClientResponseException.class,
@@ -109,9 +107,8 @@ public class EventControllerTest {
             "place",
             "FREQ=DAILY",
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         var response = assertThrows(
             HttpClientResponseException.class,
@@ -131,9 +128,8 @@ public class EventControllerTest {
             "place",
             "FREQ=DAILY",
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         assertThrows(HttpClientResponseException.class, () -> client
             .toBlocking()
@@ -224,9 +220,8 @@ public class EventControllerTest {
             "place",
             null,
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         var updateResponse = client
             .toBlocking()
@@ -249,9 +244,8 @@ public class EventControllerTest {
             "place",
             "rules",
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         assertThrows(HttpClientResponseException.class, () -> client
             .toBlocking()
@@ -272,9 +266,8 @@ public class EventControllerTest {
             "place",
             "rules",
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         assertThrows(HttpClientResponseException.class, () -> client
             .toBlocking()
@@ -295,9 +288,8 @@ public class EventControllerTest {
             "place",
             "rules",
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         assertThrows(HttpClientResponseException.class, () -> client
             .toBlocking()
@@ -318,9 +310,8 @@ public class EventControllerTest {
             "place",
             "rules",
             LocalDateTime.now(),
-            null,
-            null,
-            LocalDateTime.now()
+            LocalDateTime.now(), null,
+            null
         );
         assertThrows(HttpClientResponseException.class, () -> client
             .toBlocking()

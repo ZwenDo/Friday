@@ -1,9 +1,6 @@
 package com.kalia.friday.googlecalendar;
 
 import com.kalia.friday.event.EventRepository;
-import com.kalia.friday.login.LoginRepository;
-import com.kalia.friday.user.UserRepository;
-import com.kalia.friday.util.RepositoryResponse;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -29,12 +26,6 @@ public class GoogleCalendarController {
     @Inject
     private GoogleCalendar googleCalendar;
 
-    @Inject
-    private UserRepository userRepository;
-
-    @Inject
-    private LoginRepository loginRepository;
-
     /**
      * Imports a Google calendar into a user calendar.
      *
@@ -49,22 +40,14 @@ public class GoogleCalendarController {
     @Post
     public HttpResponse<Void> importCalendar(@Body @Valid GCalImportDTO gCalImportDTO) {
         try {
-            // check identity
-            var identity = loginRepository.checkIdentity(gCalImportDTO.userId(), gCalImportDTO.token());
-            if (identity.status() != RepositoryResponse.Status.OK) {
-                return HttpResponse.unauthorized();
-            }
-
             // get events
             var response = googleCalendar.getCalendar(gCalImportDTO.googleId());
             if (response.status() == GoogleCalendar.GoogleCalendarRequestResponse.Status.AUTH_REQUIRED) { // redirect to auth if not authorized
                 return HttpResponse.redirect(URI.create(response.url()));
             }
 
-            var userResponse = userRepository.findById(gCalImportDTO.userId());
-            var fridayEvents = GoogleCalendars.toFridayEventList(response.events(), userResponse.get());
-
-            eventRepository.savesEventList(fridayEvents);
+            var fridayEvents = GoogleCalendars.toFridayEventList(response.events(), gCalImportDTO.userId(), gCalImportDTO.token());
+            eventRepository.authenticatedEventListSave(fridayEvents);
             return HttpResponse.ok(null);
         } catch (IOException | GeneralSecurityException e) {
             return HttpResponse.serverError();

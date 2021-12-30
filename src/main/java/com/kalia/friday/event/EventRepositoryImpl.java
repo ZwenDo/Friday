@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.kalia.friday.event.Event.requireEndAfterStart;
-import static com.kalia.friday.event.EventRecurRuleParts.requireValidRecurRule;
+import static com.kalia.friday.util.BiweeklyUtils.requireValidRecurRule;
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
 import static com.kalia.friday.util.StringUtils.requireNotNullOrBlank;
 import static java.util.Objects.requireNonNull;
@@ -150,15 +150,29 @@ public class EventRepositoryImpl implements EventRepository {
 
     @Override
     @Transactional
-    public void savesEventList(List<Event> events) {
+    public RepositoryResponse<Void> authenticatedEventListSave(List<EventDTO> events) {
         requireNonNull(events);
-        events.forEach(e -> {
+        for (var e : events) {
             requireNonNull(e);
-            manager.merge(e.user()).events().add(e);
-            manager.flush();
-            manager.detach(e);
-        });
-        manager.flush();
+            var login = loginRepository.checkIdentity(e.userId(), e.userToken());
+            if (login.status() != RepositoryResponse.Status.OK) {
+                return RepositoryResponse.unauthorized();
+            }
+            var user = login.get().user();
+            var event = Event.createEvent(
+                user,
+                e.title(),
+                e.description(),
+                e.place(),
+                e.rrule(),
+                e.start(),
+                e.end(),
+                e.latitude(),
+                e.longitude()
+            );
+            manager.merge(user).events().add(event);
+        }
+        return RepositoryResponse.ok(null);
     }
 
     /**

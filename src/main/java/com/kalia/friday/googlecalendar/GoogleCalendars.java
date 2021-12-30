@@ -1,13 +1,13 @@
 package com.kalia.friday.googlecalendar;
 
 import com.google.api.services.calendar.model.EventDateTime;
-import com.kalia.friday.event.Event;
-import com.kalia.friday.user.User;
+import com.kalia.friday.event.EventDTO;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.UUID;
 
 import static com.kalia.friday.util.StringUtils.notBlankElse;
 import static com.kalia.friday.util.StringUtils.notNullOrBlankElse;
@@ -28,17 +28,19 @@ public final class GoogleCalendars {
      * @param owner  the owner of the events
      * @return the list of converted Friday events
      */
-    public static List<Event> toFridayEventList(List<com.google.api.services.calendar.model.Event> events, User owner) {
+    public static List<EventDTO> toFridayEventList(List<com.google.api.services.calendar.model.Event> events, UUID userId, UUID token) {
         requireNonNull(events);
-        requireNonNull(owner);
+        requireNonNull(userId);
+        requireNonNull(token);
         return events.stream()
-            .map(e -> toFridayEvent(requireNonNull(e), owner))
+            .map(e -> toEventDTO(requireNonNull(e), userId, token))
             .toList();
     }
 
-    private static Event toFridayEvent(com.google.api.services.calendar.model.Event event, User owner) {
-        return Event.createEvent(
-            owner,
+    private static EventDTO toEventDTO(com.google.api.services.calendar.model.Event event, UUID userId, UUID token) {
+        return new EventDTO(
+            userId,
+            token,
             notNullOrBlankElse(event.getSummary(), "Untitled"),
             notBlankElse(event.getDescription(), null),
             event.getLocation(),
