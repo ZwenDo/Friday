@@ -1,8 +1,8 @@
 <script>
-    import {getContext, onMount} from "svelte";
-    import {push, replace} from "svelte-spa-router";
-    import {COOKIE_USER_NAME, COOKIE_USER_TOKEN, deleteCookies, getCookie} from "../utils/cookies";
-    import {isLoginValid, logoutUser} from "../stores/login_store";
+    import {getContext} from "svelte";
+    import {push} from "svelte-spa-router";
+    import {COOKIE_USER_NAME, getCookie} from "../utils/cookies";
+    import {logoutUser} from "../stores/login_store";
     import Button from "../components/Button.svelte";
     import EventForm from "../subparts/EventForm.svelte";
     import Heading from "../components/Heading.svelte";
@@ -13,27 +13,28 @@
 
     const {open} = getContext('simple-modal');
 
-    onMount(() => {
-        if (!getCookie(COOKIE_USER_NAME) || !getCookie(COOKIE_USER_TOKEN)) {
-            replace("/login");
-            return;
-        }
-        isLoginValid(() => {
-            deleteCookies();
-            replace("/login");
-        });
-    });
+    // onMount(() => {
+    //     if (!getCookie(COOKIE_USER_NAME) || !getCookie(COOKIE_USER_TOKEN)) {
+    //         replace("/login");
+    //         return;
+    //     }
+    //     isLoginValid(() => {
+    //         deleteCookies();
+    //         replace("/login");
+    //     });
+    // });
 
     function showEventForm() {
-        open(EventForm, { calendarRefs }, {
+        open(EventForm, {calendarRefs}, {
             closeButton: false,
             styleWindow: {
                 backgroundColor: '#ffffff',
+                overflow: 'hidden',
             },
             styleContent: {
                 display: 'flex',
                 justifyContent: 'center',
-                overflowY: 'overlay',
+                overflowY: 'scroll',
             }
         });
     }
