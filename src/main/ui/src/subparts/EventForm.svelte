@@ -1,11 +1,13 @@
 <script>
+    import {getContext, onMount} from "svelte";
+    import {converter, createRrule} from "../utils/rrule";
+    import {jsDateToFormDate} from "../utils/date";
+    import {createEvent, updateEvent} from "../stores/event_store";
+    import Button from "../components/Button.svelte";
+    import Checkbox from "../components/Checkbox.svelte";
+    import Details from "../components/Details.svelte";
     import Form from "../components/Form.svelte";
     import FormField from "../components/FormField.svelte";
-    import {getContext, onMount} from "svelte";
-    import Button from "../components/Button.svelte";
-    import {converter, createRrule} from "../utils/rrule";
-    import {createEvent, updateEvent} from "../stores/event_store";
-    import {jsDateToFormDate} from "../utils/date";
 
     const {close} = getContext('simple-modal');
 
@@ -73,97 +75,82 @@
             parseRrule(eventToEdit.rrule);
             hasRecurrenceChecked = event.rrule !== undefined;
         }
-
     });
 </script>
 
-<div class="w-full h-full flex justify-center items-center">
+<div>
     <Form on:submit={createNewEvent} submitText="Create" title="Create an event">
         <div class="sm:flex">
             <div class="sm:pr-4">
-                <FormField bind:value={event.title} label="Title*" name="title" required="true" type="text"/>
-                <FormField bind:value={event.description} label="Description" name="description" type="textarea 18 5"/>
+                <FormField bind:value={event.title} fieldClass="full-field" label="Title*"
+                           name="title" required="true" type="text"/>
+                <FormField bind:value={event.description} fieldClass="full-field" label="Description"
+                           name="description" type="textarea 19 6"/>
             </div>
             <div>
-                <FormField bind:value={event.place} label="Place" name="place" type="text"/>
-                <FormField bind:value={event.start} label="Start Date*" name="startDate" required="true"
-                           type="datetime-local"/>
-                <FormField disabled="{event.allDay}" bind:value={event.end} label="End Date*" name="endDate"
-                           required="true" type="datetime-local"/>
-                <div class="form-field-container relative left-2">
-                    <label class="font-semibold text-gray-600 text-sm" for="allDay">All Day</label>
-                    <input bind:checked={event.allDay} class="input-field" id="allDay" name="allDay" type="checkbox"/>
-                </div>
+                <FormField bind:value={event.place} fieldClass="full-field" label="Place"
+                           name="place" type="text"/>
+                <FormField bind:value={event.start} fieldClass="full-field" label="Start Date*"
+                           name="startDate" required="true" type="datetime-local"/>
+                <FormField bind:value={event.end} disabled="{event.allDay}" fieldClass="full-field" label="End Date*"
+                           name="endDate" required="true" type="datetime-local"/>
+                <Checkbox bind:checked={event.allDay} label="All Day" name="allDay"/>
             </div>
         </div>
-        <details class="my-4 transition-all">
-            <summary class="font-semibold text-gray-600 text-sm transition-all">Localisation</summary>
-            <div class="sm:flex flex-row items-center transition-all">
-                <FormField bind:value={event.latitude} extendClass="mr-4" label="Latitude" min="0" name="latitude"
-                           type="number"/>
-                <FormField bind:value={event.longitude} label="Longitude" min="0" name="longitude" type="number"/>
+        <Details extendClass="my-4" name="Localisation">
+            <div class="grid gap-x-4 grid-cols-1 sm:grid-cols-2">
+                <FormField bind:value={event.latitude} fieldClass="full-field" label="Latitude" min="0"
+                           name="latitude" type="number"/>
+                <FormField bind:value={event.longitude} fieldClass="full-field" label="Longitude" min="0"
+                           name="longitude" type="number"/>
             </div>
-        </details>
-        <details class="my-4 transition-all">
-            <summary class="font-semibold text-gray-600 text-sm transition-all">Recurrence</summary>
-            <label class="font-semibold text-gray-600 text-sm" for="recurrenceDisabled">Has recurrence</label>
-            <input bind:checked={hasRecurrenceChecked} class="input-field" id="recurrenceDisabled" name="hasRecurrence"
-                   type="checkbox"/>
-            <label class="font-semibold text-gray-600 text-sm" for="frequency">Frequency*</label>
-            <select disabled={!hasRecurrenceChecked} bind:value={rec.freq} id="frequency">
-                <option value="DAILY">Daily</option>
-                <option value="WEEKLY">Weekly</option>
-                <option value="MONTHLY">Monthly</option>
-                <option value="YEARLY">Yearly</option>
-            </select>
-            <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byMonth}
-                       hint="From 1 to 12, comma separated" label="Months"
-                       name="bymonth" type="text"/>
-            <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byYearDay}
-                       extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"
-                       hint="From -366 to 366 except 0, comma separated"
-                       label="Year days" name="byyearday"
-                       type="text"/>
-            <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byWeekNo}
-                       extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"
-                       hint="From -53 to 53 except 0, comma separated"
-                       label="Week numbers" name="byweekno"
-                       type="text"/>
-            {#if rec.freq === 'YEARLY' || rec.freq === 'MONTHLY'}
-                <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
-                           label="Week days" name="byday" type="text"
-                           hint="Week number from -53 to 53 except 0, followed by the day's first two letters all of which comma separated; e.g. +2MO,-51TH"/>
-            {:else}
-                <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
-                           label="Week days" name="byday" type="text"
-                           hint="MO or TH,WE,SA"/>
-            {/if}
-            <FormField disabled={!hasRecurrenceChecked} bind:value={rec.byMonthDay}
-                       extendClass="{rec.freq === 'WEEKLY' ? 'hidden' : ''}"
-                       hint="From -31 to 31 except 0, comma separated" label="Month days"
-                       name="bymonthday" type="text"/>
-            <FormField disabled={!hasRecurrenceChecked} bind:value={rec.bySetPos}
-                       hint="From -366 to 366 except 0, comma separated ; to select specific occurrences of the actual rule"
-                       label="Specific occurrences"
-                       name="bysetpos" type="text"/>
-        </details>
+        </Details>
+        <Details extendClass="my-4" name="Recurrence">
+            <Checkbox bind:checked={hasRecurrenceChecked} label="Has recurrence" name="hasRecurrence"/>
+            <div class="grid gap-x-4 grid-cols-1 sm:grid-cols-2 mt-2">
+                <div class="mt-8 mb-4 relative {!hasRecurrenceChecked ? 'opacity-25' : ''}">
+                    <label class="absolute left-2 -top-6 font-semibold text-gray-600 text-sm"
+                           for="frequency">Frequency*</label>
+                    <select bind:value={rec.freq} class="mt-1 input-field" disabled={!hasRecurrenceChecked}
+                            id="frequency">
+                        <option value="DAILY">Daily</option>
+                        <option value="WEEKLY">Weekly</option>
+                        <option value="MONTHLY">Monthly</option>
+                        <option value="YEARLY">Yearly</option>
+                    </select>
+                </div>
+                <FormField bind:value={rec.byMonth} disabled={!hasRecurrenceChecked} fieldClass="full-field"
+                           hint="From 1 to 12, comma separated"
+                           label="Months" name="bymonth" type="text"/>
+                <FormField bind:value={rec.byYearDay} disabled={!hasRecurrenceChecked}
+                           extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"
+                           fieldClass="full-field"
+                           hint="From -366 to 366 except 0, comma separated"
+                           label="Year days" name="byyearday" type="text"/>
+                <FormField bind:value={rec.byWeekNo} disabled={!hasRecurrenceChecked}
+                           extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"
+                           fieldClass="full-field"
+                           hint="From -53 to 53 except 0, comma separated"
+                           label="Week numbers" name="byweekno" type="text"/>
+                {#if rec.freq === 'YEARLY' || rec.freq === 'MONTHLY'}
+                    <FormField fieldClass="full-field" disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
+                               hint="Week number from -53 to 53 except 0, followed by the day's first two letters all of which comma separated; e.g. +2MO,-51TH"
+                               label="Week days" name="byday" type="text"/>
+                {:else}
+                    <FormField fieldClass="full-field" disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
+                               hint="MO or TH,WE,SA"
+                               label="Week days" name="byday" type="text"/>
+                {/if}
+                <FormField bind:value={rec.byMonthDay} disabled={!hasRecurrenceChecked}
+                           extendClass="{rec.freq === 'WEEKLY' ? 'hidden' : ''}"
+                           fieldClass="full-field"
+                           hint="From -31 to 31 except 0, comma separated" label="Month days"
+                           name="bymonthday" type="text"/>
+                <FormField bind:value={rec.bySetPos} disabled={!hasRecurrenceChecked} fieldClass="full-field"
+                           hint="From -366 to 366 except 0, comma separated ; to select specific occurrences of the actual rule"
+                           label="Specific occurrences" name="bysetpos" type="text"/>
+            </div>
+        </Details>
         <Button extendClass="bg-pink-500 hover:bg-pink-600 mr-1" on:click={close}>Cancel</Button>
     </Form>
 </div>
-
-<style>
-    details[open] summary ~ * {
-        animation: sweep .5s ease-in-out;
-    }
-
-    @keyframes sweep {
-        0% {
-            opacity: 0;
-            margin-left: -10px
-        }
-        100% {
-            opacity: 1;
-            margin-left: 0
-        }
-    }
-</style>

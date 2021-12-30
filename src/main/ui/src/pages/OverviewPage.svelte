@@ -26,14 +26,14 @@
 
     function showEventForm() {
         open(EventForm, { calendarRefs }, {
+            closeButton: false,
             styleWindow: {
-                width: '90vw',
-                height: '90vh',
                 backgroundColor: '#ffffff',
             },
             styleContent: {
-                width: '100%',
-                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                overflowY: 'overlay',
             }
         });
     }
