@@ -87,11 +87,11 @@ public interface EventRepository {
             eventDTO.title(),
             eventDTO.description(),
             eventDTO.place(),
-            eventDTO.recurRuleParts(),
-            eventDTO.startDate(),
+            eventDTO.rrule(),
+            eventDTO.start(),
             eventDTO.latitude(),
             eventDTO.longitude(),
-            eventDTO.endDate()
+            eventDTO.end()
         );
     }
 
@@ -154,11 +154,11 @@ public interface EventRepository {
             eventDTO.title(),
             eventDTO.description(),
             eventDTO.place(),
-            eventDTO.recurRuleParts(),
-            eventDTO.startDate(),
+            eventDTO.rrule(),
+            eventDTO.start(),
             eventDTO.latitude(),
             eventDTO.longitude(),
-            eventDTO.endDate()
+            eventDTO.end()
         );
     }
 }

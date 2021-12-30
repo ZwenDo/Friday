@@ -10,7 +10,7 @@ export function sendHTTPRequest(url, method, body, okCode, onSuccess, onFail=(e)
         if (response.status === okCode) {
             onSuccess(response);
         } else {
-            throw new Error();
+            throw new Error("invalid response status (expected: " + okCode + " / actual:" + response.status + ")");
         }
     }).catch(e => {
         onFail(e)

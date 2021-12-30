@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
@@ -297,11 +296,7 @@ public class Event implements Serializable {
      * @return the created eventResponseDTO
      */
     public EventResponseDTO toEventResponseDTO() {
-        var formattedDate = startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd:HHmmss;"))
-            .replace(":", "T")
-            .replace(";", "Z");
-        var rrule = recurRuleParts == null ? null : "DTSTART:" + formattedDate + "\nRRULE:" + recurRuleParts;
-        return new EventResponseDTO(id, title, description, place, rrule, startDate, latitude, longitude, endDate);
+        return new EventResponseDTO(id, title, description, place, recurRuleParts, startDate, latitude, longitude, endDate);
     }
 
     /**

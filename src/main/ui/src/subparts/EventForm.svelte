@@ -1,31 +1,28 @@
 <script>
     import Form from "../components/Form.svelte";
     import FormField from "../components/FormField.svelte";
-    import {getContext} from "svelte";
+    import {getContext, onMount} from "svelte";
     import Button from "../components/Button.svelte";
-    import {createRrule} from "../utils/rrule";
+    import {converter, createRrule} from "../utils/rrule";
     import {createEvent} from "../stores/event_store";
+    import {jsDateToFormDate} from "../utils/date";
 
     const {close} = getContext('simple-modal');
 
     export let calendarRef;
+    export let eventToEdit = undefined;
 
-    function today() {
-        const now = new Date();
-        const minutes = now.getMinutes() < 10 ? "0" + now.getMinutes() : now.getMinutes();
-        return now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate() + "T" + now.getHours() + ":" + minutes;
-    }
 
     let event = {
-        title: undefined,
+        title: null,
         description: null,
         place: null,
-        startDate: today(),
-        endDate: today(),
+        start: jsDateToFormDate(new Date()),
+        end: jsDateToFormDate(new Date()),
         allDay: false,
         latitude: null,
         longitude: null,
-        recurRuleParts: null,
+        rrule: null,
     };
 
     let hasRecurrenceChecked = false;
@@ -42,16 +39,34 @@
 
     function createNewEvent() {
         if (hasRecurrenceChecked) {
-            const rrule = createRrule(rec);
-            console.log(rrule);
-            event.recurRuleParts = rrule;
+            event.rrule = createRrule(rec);
+            if (event.rrule == null) return; // stop creation
         }
-        if (event.allDay) {
-            event.endDate = null;
-        }
+        event.end = event.allDay ? null : event.end;
+        event.allDay = null;
         createEvent(event, _ => {
             calendarRef.getAPI().refetchEvents();
             close();
+        });
+    }
+
+    onMount(() => {
+        if (eventToEdit) {
+           event = eventToEdit;
+           parseRrule(eventToEdit.rrule);
+           hasRecurrenceChecked = event.rrule !== undefined;
+       }
+
+    });
+
+    function parseRrule(rrule) {
+        if (!rrule) return;
+        const rules = rrule.split(";");
+        rules.forEach(r => {
+            const pair = r.split("=");
+            const key = converter[pair[0]];
+            if (!key) return;
+            rec[key] = pair[1];
         });
     }
 </script>
@@ -65,9 +80,9 @@
             </div>
             <div>
                 <FormField bind:value={event.place} label="Place" name="place" type="text"/>
-                <FormField bind:value={event.startDate} label="Start Date*" name="startDate" required="true"
+                <FormField bind:value={event.start} label="Start Date*" name="startDate" required="true"
                            type="datetime-local"/>
-                <FormField disabled="{event.allDay}" bind:value={event.endDate} label="End Date*" name="endDate"
+                <FormField disabled="{event.allDay}" bind:value={event.end} label="End Date*" name="endDate"
                            required="true" type="datetime-local"/>
                 <div class="form-field-container relative left-2">
                     <label class="font-semibold text-gray-600 text-sm" for="allDay">All Day</label>
@@ -86,7 +101,7 @@
         <details class="my-4 transition-all">
             <summary class="font-semibold text-gray-600 text-sm transition-all">Recurrence</summary>
             <label class="font-semibold text-gray-600 text-sm" for="recurrenceDisabled">Has recurrence</label>
-            <input bind:checked={hasRecurrenceChecked} class="input-field" id="recurrenceDisabled" name="allDay"
+            <input bind:checked={hasRecurrenceChecked} class="input-field" id="recurrenceDisabled" name="hasRecurrence"
                    type="checkbox"/>
             <label class="font-semibold text-gray-600 text-sm" for="frequency">Frequency*</label>
             <select disabled={!hasRecurrenceChecked} bind:value={rec.freq} id="frequency">
