@@ -1,12 +1,12 @@
 <script>
     import {getContext, onMount} from "svelte";
-    import {isLoginValid, logoutUser} from "../stores/login_store";
+    import {push, replace} from "svelte-spa-router";
     import {COOKIE_USER_NAME, COOKIE_USER_TOKEN, deleteCookies, getCookie} from "../utils/cookies";
+    import {isLoginValid, logoutUser} from "../stores/login_store";
     import Button from "../components/Button.svelte";
     import EventForm from "../subparts/EventForm.svelte";
     import Heading from "../components/Heading.svelte";
     import Section from "../components/Section.svelte";
-    import {push, replace} from "svelte-spa-router";
     import Calendar from "../subparts/Calendar.svelte";
 
     let calendarRef;
