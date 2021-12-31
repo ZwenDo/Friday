@@ -1,7 +1,7 @@
 <script>
     import {getContext, onMount} from "svelte";
     import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
-    import {jsDateToFormDate} from "../utils/date";
+    import {dateToYearDay, formDateToICalDate, jsDateToFormDate} from "../utils/date";
     import Fullcalendar from "svelte-fullcalendar";
     import EventDetails from "./EventDetails.svelte";
     import dayGridPlugin from "@fullcalendar/daygrid";
@@ -67,8 +67,22 @@
         data.extendedProps = {...data};
         data.extendedProps.extendedProps = undefined;
         data.extendedProps.start = jsDateToFormDate(new Date(...data.extendedProps.start));
-        if (data.extendedProps.end !== undefined) {
+        if (data.extendedProps.end) {
             data.extendedProps.end = jsDateToFormDate(new Date(...data.extendedProps.end));
+        }
+
+        const rrule = data.rrule;
+        if (
+            rrule &&
+            rrule.includes('FREQ=YEARLY') &&
+            !rrule.includes('BYMONTH=') &&
+            !rrule.includes('BYMONTHDAY=') &&
+            !rrule.includes('BYYEARDAY=') &&
+            !rrule.includes('BYWEEKNO=') &&
+            !rrule.includes('BYDAY=')
+        ) {
+            const start = new Date(data.extendedProps.start);
+            data.rrule += ';BYYEARDAY=' + (dateToYearDay(start) - 1) + ';DTSTART=' + formDateToICalDate(start);
         }
     }
 

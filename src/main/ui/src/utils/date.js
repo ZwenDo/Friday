@@ -13,7 +13,11 @@ export function jsDateToFormDate(date) {
 export function formDateToICalDate(date) {
     if (!date || date === "") return "";
     return date.replace(/[:-]/g, "") + "00Z";
+}
 
+export function dateToYearDay(it) {
+    const date = new Date(it);
+    return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;
 }
 
 function insertPadding(value) {
