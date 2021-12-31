@@ -3,6 +3,8 @@
     import Heading from "../components/Heading.svelte";
     import Button from "../components/Button.svelte";
     import FormField from "../components/FormField.svelte";
+    import {importFromFile, importFromURL} from "../stores/event_store";
+    import {importFromGoogleCalendar} from "../stores/googlecalendar_store";
 
     const {close} = getContext('simple-modal');
 
@@ -22,6 +24,26 @@
             }
             reader.readAsText(file);
         }
+    }
+
+    function sendFile() {
+        importFromFile(data);
+        refreshCalendars();
+    }
+
+    function sendURL() {
+        importFromURL(url);
+        refreshCalendars();
+    }
+
+    function sendGoogle() {
+        importFromGoogleCalendar(gmail);
+        refreshCalendars();
+    }
+
+    function refreshCalendars() {
+        calendarRefs.forEach(c => c.getAPI().refetchEvents());
+        close();
     }
 </script>
 
@@ -47,19 +69,19 @@
             </label>
         </div>
         <div class="flex justify-start items-center pt-5">
-            <Button>Import</Button>
+            <Button on:click={sendFile}>Import</Button>
         </div>
 
         <FormField bind:value={url} extendClass="col-span-2" fieldClass="full-field" hint="iCalendar feed"
                    label="From URL" name="url" type="text"/>
         <div class="flex justify-start items-center pt-5">
-            <Button>Import</Button>
+            <Button on:click={sendURL}>Import</Button>
         </div>
 
         <FormField bind:value={gmail} extendClass="col-span-2" fieldClass="full-field" hint="GMail address"
                    label="From Google Calendar" name="gmail" type="email"/>
         <div class="flex justify-start items-center pt-5">
-            <Button>Import</Button>
+            <Button on:click={sendGoogle}>Import</Button>
         </div>
     </div>
 
