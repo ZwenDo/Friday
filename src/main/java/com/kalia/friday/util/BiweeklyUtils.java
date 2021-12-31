@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.kalia.friday.util.StringUtils.notBlankElse;
 import static java.util.Objects.requireNonNull;
@@ -99,14 +100,32 @@ public final class BiweeklyUtils {
      */
     public static void requireValidRecurRule(String recurRulePart) {
         if (recurRulePart == null) return;
-        getFromString(recurRulePart);
+        getFromString(cleanRecurRule(recurRulePart));
+    }
+
+    private static String cleanRecurRule(String recurRulePart) {
+        var rules = recurRulePart.replaceFirst("RRULE:", "").split(";");
+        return Arrays.stream(rules)
+            .filter(BiweeklyUtils::isAcceptedRule)
+            .collect(Collectors.joining(";"));
+    }
+
+    private static boolean isAcceptedRule(String r) {
+        return r.startsWith("FREQ") ||
+            r.startsWith("BYDAY") ||
+            r.startsWith("BYMONTHDAY") ||
+            r.startsWith("BYYEARDAY") ||
+            r.startsWith("BYMONTH") ||
+            r.startsWith("BYSETPOS") ||
+            r.startsWith("BYWEEKNO") ||
+            r.startsWith("UNTIL");
     }
 
     private static RecurrenceRule getFromString(String recurRulePart) {
         var cal = Biweekly.parse(START + recurRulePart + END).first();
         var opt = getRruleAsString(cal);
         if (opt.isPresent() && opt.get().contains("FREQ=")) {
-            if (!("RRULE:" + recurRulePart.trim()).equals(opt.get().trim())) {
+            if (("RRULE:" + recurRulePart.trim()).length() != opt.get().trim().length()) {
                 throw new IllegalArgumentException("Invalid recurrence rule: " + recurRulePart);
             }
         } else {
@@ -131,7 +150,7 @@ public final class BiweeklyUtils {
         if (opt.isEmpty()) {
             throw new AssertionError("No rule present.");
         }
-        return opt.get();
+        return cleanRecurRule(opt.get());
     }
 
     private static LocalDateTime fromICalDate(ICalDate date) {
