@@ -49,7 +49,7 @@
             copyToExtendedProps(data);
             return data;
         }
-    }
+    };
 
     function cleanData(data) {
         data.start[1]--;
