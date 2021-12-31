@@ -1,7 +1,9 @@
 const purgecss = require('@fullhuman/postcss-purgecss')({
     content: ['./src/**/*.html', './src/**/*.svelte'],
 
-    whitelistPatterns: [/svelte-/],
+    whitelistPatterns: [
+        /svelte-/, /bg/, /content/, /window/, /window-wrap/,
+    ],
 
     defaultExtractor: (content) => content.match(/[A-Za-z0-9-_:/]+/g) || [],
 });

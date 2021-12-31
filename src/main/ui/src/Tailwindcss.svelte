@@ -58,5 +58,17 @@
             background-clip: text;
             -webkit-background-clip: text;
         }
+
+        .bg {
+        }
+
+        .content {
+        }
+
+        .window {
+        }
+
+        .window-wrap {
+        }
     }
 </style>

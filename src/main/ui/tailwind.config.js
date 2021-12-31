@@ -32,6 +32,9 @@ module.exports = {
             },
             boxShadow: {
                 inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.5)'
+            },
+            border: {
+                '1': '1px',
             }
         },
     },
