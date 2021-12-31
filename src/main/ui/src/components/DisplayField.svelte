@@ -2,7 +2,6 @@
     import {tooltip} from "../utils/tooltip";
 
     export let label = null;
-    export let type = "text";
     export let value = "";
     export let hint = null;
     export let extendClass = "";

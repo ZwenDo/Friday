@@ -35,10 +35,12 @@
                 closeButton: false,
                 styleWindow: {
                     backgroundColor: '#ffffff',
+                    overflow: 'hidden',
                 },
                 styleContent: {
                     display: 'flex',
                     justifyContent: 'center',
+                    overflowY: 'scroll',
                 }
             });
         },

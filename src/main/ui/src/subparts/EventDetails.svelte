@@ -4,10 +4,11 @@
     import DisplayField from "../components/DisplayField.svelte";
     import Heading from "../components/Heading.svelte";
     import Details from "../components/Details.svelte";
+    import EventForm from "./EventForm.svelte";
 
-    const {close} = getContext('simple-modal');
+    const {open, close} = getContext('simple-modal');
 
-    export let calendarRefs = null;
+    export let calendarRefs = [];
     export let event;
 
     const start = new Date(event.start);
@@ -17,6 +18,22 @@
 
     const end = new Date(event.end);
     const actualEnd = `${end.toLocaleDateString()} ${end.toLocaleTimeString()}`;
+
+    function gotoEdit() {
+        close();
+        open(EventForm, {calendarRefs, eventToEdit: event}, {
+            closeButton: false,
+            styleWindow: {
+                backgroundColor: '#ffffff',
+                overflow: 'hidden',
+            },
+            styleContent: {
+                display: 'flex',
+                justifyContent: 'center',
+                overflowY: 'scroll',
+            }
+        });
+    }
 </script>
 
 <div class="w-full h-full flex flex-col">
@@ -46,7 +63,7 @@
     {/if}
     <div class="w-full h-full flex justify-start items-center mt-4">
         <Button extendClass="bg-pink-500 hover:bg-pink-600 mr-2" on:click={close}>Close</Button>
-        <Button extendClass="bg-purple-500 hover:bg-purple-600 mr-2" on:click={close}>Edit</Button>
+        <Button extendClass="bg-purple-500 hover:bg-purple-600 mr-2" on:click={gotoEdit}>Edit</Button>
         <Button extendClass="bg-red-600 hover:bg-red-700 mr-2" on:click={close}>Delete</Button>
     </div>
 </div>

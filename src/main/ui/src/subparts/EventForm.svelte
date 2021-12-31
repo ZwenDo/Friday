@@ -39,7 +39,7 @@
         bySetPos: ""
     };
 
-    function createNewEvent() {
+    function submit() {
         if (hasRecurrenceChecked) {
             event.rrule = createRrule(rec);
             if (event.rrule == null) return; // stop creation
@@ -79,7 +79,8 @@
 </script>
 
 <div>
-    <Form on:submit={createNewEvent} submitText="Create" title="Create an event">
+    <Form on:submit={submit} submitText="{eventToEdit ? 'Update' : 'Create'}"
+          title="{eventToEdit ? 'Edit' : 'Create'} an event">
         <div class="sm:flex">
             <div class="sm:pr-4">
                 <FormField bind:value={event.title} fieldClass="full-field" label="Title*"
