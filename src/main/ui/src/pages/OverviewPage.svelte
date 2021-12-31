@@ -5,6 +5,7 @@
     import {isLoginValid, logoutUser} from "../stores/login_store";
     import Button from "../components/Button.svelte";
     import EventForm from "../subparts/EventForm.svelte";
+    import ImportForm from "../subparts/ImportForm.svelte";
     import Heading from "../components/Heading.svelte";
     import Section from "../components/Section.svelte";
     import Calendar from "../subparts/Calendar.svelte";
@@ -26,6 +27,21 @@
         });
     }
 
+
+    function showImportForm() {
+        open(ImportForm, {calendarRefs}, {
+            closeButton: false,
+            styleWindow: {
+                backgroundColor: '#ffffff',
+                overflow: 'hidden',
+            },
+            styleContent: {
+                display: 'flex',
+                justifyContent: 'center',
+                overflowY: 'scroll',
+            }
+        });
+    }
 
     function showEventForm() {
         open(EventForm, {calendarRefs}, {
@@ -52,14 +68,20 @@
         <div>
             <Heading>Hello, {getCookie(COOKIE_USER_NAME)}!</Heading>
         </div>
-        <div>
+        <div class="flex flex-col-reverse sm:flex-row mt-2 sm:mt-0">
             <Button
+                on:click={showImportForm}
+            >
+                Import Events
+            </Button>
+            <Button
+                extendClass="sm:ml-4"
                 on:click={showEventForm}
             >
                 Create Event
             </Button>
             <Button
-                extendClass="bg-pink-500 hover:bg-pink-700 ml-4"
+                extendClass="bg-pink-500 hover:bg-pink-700 sm:ml-4"
                 on:click={logout}
             >
                 Logout
