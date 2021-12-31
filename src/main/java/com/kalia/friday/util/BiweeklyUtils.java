@@ -106,7 +106,7 @@ public final class BiweeklyUtils {
         var cal = Biweekly.parse(START + recurRulePart + END).first();
         var opt = getRruleAsString(cal);
         if (opt.isPresent() && opt.get().contains("FREQ=")) {
-            if (!("RRULE:" + recurRulePart.trim()).equals(opt.get().trim())) {
+            if (("RRULE:" + recurRulePart.trim()).length() != opt.get().trim().length()) {
                 throw new IllegalArgumentException("Invalid recurrence rule: " + recurRulePart);
             }
         } else {

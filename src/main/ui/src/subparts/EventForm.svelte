@@ -36,7 +36,8 @@
         byWeekNo: "",
         byDay: "",
         byMonthDay: "",
-        bySetPos: ""
+        bySetPos: "",
+        until: null,
     };
 
     function submit() {
@@ -94,7 +95,7 @@
                 <FormField bind:value={event.start} fieldClass="full-field" label="Start Date*"
                            name="startDate" required="true" type="datetime-local"/>
                 <FormField bind:value={event.end} disabled="{event.allDay}" fieldClass="full-field" label="End Date*"
-                           name="endDate" required="true" type="datetime-local"/>
+                           name="endDate" required="{!event.allDay}" type="datetime-local"/>
                 <Checkbox bind:checked={event.allDay} label="All Day" name="allDay"/>
             </div>
         </div>
@@ -150,6 +151,8 @@
                 <FormField bind:value={rec.bySetPos} disabled={!hasRecurrenceChecked} fieldClass="full-field"
                            hint="From -366 to 366 except 0, comma separated ; to select specific occurrences of the actual rule"
                            label="Specific occurrences" name="bysetpos" type="text"/>
+                <FormField  bind:value={rec.until} disabled={!hasRecurrenceChecked} fieldClass="full-field"
+                            label="Until" name="until" type="datetime-local"/>
             </div>
         </Details>
         <Button extendClass="bg-pink-500 hover:bg-pink-600 mr-1" on:click={close}>Cancel</Button>
