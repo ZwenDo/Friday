@@ -41,6 +41,7 @@
     {:else}
         <input
             class="input-field peer {disabled ? 'opacity-75' : ''} {fieldClass}"
+            on:change
             bind:this={field}
             id="{name}"
             {name}
