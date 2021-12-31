@@ -14,6 +14,6 @@ export function importFromGoogleCalendar(googleId, onSuccess) {
         },
         200,
         onSuccess,
-        e => console.log("import from google failed because of:\n" + e)
+        _ => alert("Failed to import from Google Calendar")
     );
 }

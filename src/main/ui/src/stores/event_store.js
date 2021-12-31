@@ -73,7 +73,7 @@ export function importFromURL(url, onSuccess) {
         },
         200,
         onSuccess,
-        e => console.log("import from url failed because of:\n" + e)
+        _ => alert("Couldn't import events from URL")
     );
 }
 
@@ -88,6 +88,6 @@ export function importFromFile(fileContent, onSuccess) {
         },
         200,
         onSuccess,
-        e => console.log("import from file failed because of:\n" + e)
+        _ => alert("Couldn't import events from file")
     );
 }
