@@ -91,3 +91,19 @@ export function importFromFile(fileContent, onSuccess) {
         _ => alert("Couldn't import events from file")
     );
 }
+
+export function nextEvent(onSuccess) {
+    const userId = getCookie(COOKIE_USER_ID);
+    const token = getCookie(COOKIE_USER_TOKEN);
+    sendHTTPRequest(
+        api + "next",
+        "POST",
+        {
+            userId,
+            token
+        },
+        200,
+        res => res.json().then(data => onSuccess(data)),
+        (e) => console.log("next event failed because of:\n" + e)
+    );
+}

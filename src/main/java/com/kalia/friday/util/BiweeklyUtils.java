@@ -9,7 +9,6 @@ import biweekly.util.ICalDate;
 import biweekly.util.Recurrence;
 import com.kalia.friday.event.EventDTO;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -154,11 +153,7 @@ public final class BiweeklyUtils {
     }
 
     private static LocalDateTime fromICalDate(ICalDate date) {
-        return date == null ?
-            null :
-            Instant.ofEpochMilli(date.toInstant().toEpochMilli())
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+        return date == null ? null : date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     private static <T> T getPropValue(ValuedProperty<T> property) {
