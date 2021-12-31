@@ -59,6 +59,7 @@ export default {
 
         replace({
             'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
+            'process.env.GMAP_KEY': JSON.stringify('AIzaSyDxdrOS-gFaZsIeUm5L0rcN4aLHdJPBaP8'),
             preventAssignment: true,
         }),
 
