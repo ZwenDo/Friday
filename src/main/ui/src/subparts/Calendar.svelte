@@ -73,8 +73,8 @@
 
         const rrule = data.rrule;
         const start = data.extendedProps.start;
+        if (!rrule) return;
         if (
-            rrule &&
             rrule.includes('FREQ=YEARLY') &&
             !rrule.includes('BYMONTH=') &&
             !rrule.includes('BYMONTHDAY=') &&
@@ -83,9 +83,8 @@
             !rrule.includes('BYDAY=')
         ) {
             data.rrule += ';BYYEARDAY=' + (dateToYearDay(start) - 1);
+            data.rrule += ';DTSTART=' + formDateToICalDate(start);
         }
-        data.rrule += ';DTSTART=' + formDateToICalDate(start);
-
     }
 
     onMount(() => calendarRefs.push(calendarRef));

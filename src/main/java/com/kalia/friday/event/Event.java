@@ -1,6 +1,7 @@
 package com.kalia.friday.event;
 
 import com.kalia.friday.user.User;
+import com.kalia.friday.util.BiweeklyUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -9,7 +10,10 @@ import javax.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 
 import static com.kalia.friday.util.StringUtils.requireNotBlank;
 import static com.kalia.friday.util.StringUtils.requireNotNullOrBlank;
@@ -310,4 +314,43 @@ public class Event implements Serializable {
             throw new IllegalArgumentException("endDate is before startDate.");
         }
     }
+
+    public Optional<LocalDateTime> nextOccurrence(LocalDateTime time) {
+        requireNonNull(time);
+        var next = LocalDateTime.now();
+        var duration = endDate == null ?
+            24 * 3600 :
+            endDate.atZone(ZoneId.systemDefault()).toEpochSecond() - startDate.atZone(ZoneId.systemDefault()).toEpochSecond();
+        var rrule = BiweeklyUtils.recurrenceRuleFromString(recurRuleParts);
+        if (startDate.isAfter(time)) { // not started
+            return Optional.of(startDate);
+        }
+        if (startDate.plusSeconds(duration).isBefore(time) &&
+            rrule.getValue().getUntil() != null
+            && rrule.getValue().getUntil().toInstant().isBefore(time.atZone(ZoneId.systemDefault()).toInstant())) { // recurrence has ended
+            return Optional.empty();
+        }
+
+        UnaryOperator<LocalDateTime> incr = switch (rrule.getValue().getFrequency()) {
+            case DAILY -> (d) -> d.plusDays(1);
+            case WEEKLY -> (d) -> d.plusWeeks(1);
+            case YEARLY -> (d) -> d.plusYears(1);
+            case MONTHLY -> (d) -> {
+                var i = 1;
+                while (d.plusMonths(i).getDayOfMonth() != d.getDayOfMonth()) {
+                    i++;
+                }
+                return d.plusMonths(i);
+            };
+            default -> throw new IllegalStateException("Unexpected value: " + rrule.getValue().getFrequency());
+        };
+
+
+        while (next.isBefore(time)) {
+            next = incr.apply(next);
+        }
+
+        return Optional.of(next);
+    }
+
 }
