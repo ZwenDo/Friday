@@ -23,22 +23,21 @@
     {...attrs}
     class="panel w-full
     relative box-border bg-white shadow-md rounded-lg
-    border-gray-100 border-[1px] transition-all duration-300
-    first:border-t-0 first:rounded-tl-[inherit] first:rounded-tr-[inherit]
-    last:rounded-bl-[inherit] last:rounded-br-[inherit]
+    border-gray-100 border-1 transition-all duration-300
+    first:border-t-0
     {extendClass}" class:active
 >
     <button
         class="header
-        flex items-start w-full min-h-[48px]
+        flex items-start w-full mh48
         cursor-pointer bg-none text-base text-left
-        leading-none border-2 outline-none
-        m-0 px-[22px] py-[10px] transition-all duration-300"
+        leading-none border-1 outline-none
+        m-0 transition-all duration-300"
         on:click={onclick} type="button"
     >
-        <span class="flex-1 leading-[24px]">{name}</span>
+        <span class="flex-1 span">{name}</span>
         <slot name="icon">
-            <i class="icon inline-block leading-[0.5]">
+            <i class="icon inline-block">
                 <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
                     <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
                 </svg>
@@ -54,6 +53,10 @@
 </div>
 
 <style>
+    .header {
+        padding: 10px 22px;
+    }
+
     .panel:first-child::before {
         @apply hidden;
     }
@@ -72,5 +75,17 @@
 
     .active :global(.icon) {
         @apply rotate-180;
+    }
+
+    .mh48 {
+        min-height: 48px;
+    }
+
+    .span {
+        line-height: 24px;
+    }
+
+    .icon {
+        line-height: 0.5;
     }
 </style>

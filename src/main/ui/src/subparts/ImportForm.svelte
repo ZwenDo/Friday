@@ -80,7 +80,7 @@
         <div class="flex justify-start items-center pt-5">
             <Button on:click={sendGoogle}>Import</Button>
         </div>
-    </div>
 
-    <Button on:click={close}>Cancel</Button>
+        <Button on:click={close}>Cancel</Button>
+    </div>
 </div>
