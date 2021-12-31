@@ -19,7 +19,12 @@
 
     onMount(() => {
         if (!field) return;
-        field.type = type;
+        if (type === "float") {
+            field.type = "number";
+            field.step = "0.01";
+        } else {
+            field.type = type;
+        }
     });
 </script>
 

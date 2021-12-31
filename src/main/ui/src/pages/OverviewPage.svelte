@@ -89,7 +89,7 @@
         </div>
     </div>
     <Section title="Next">
-        AAAAAAA
+        Not Implemented Yet
     </Section>
     <Section title="Today">
         <Calendar bind:calendarRefs={calendarRefs} type="listDay"/>

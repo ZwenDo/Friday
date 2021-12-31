@@ -101,10 +101,10 @@
         </div>
         <Details extendClass="my-4" name="Localisation">
             <div class="grid gap-x-4 grid-cols-1 sm:grid-cols-2">
-                <FormField bind:value={event.latitude} fieldClass="full-field" label="Latitude" min="0"
-                           name="latitude" type="number"/>
-                <FormField bind:value={event.longitude} fieldClass="full-field" label="Longitude" min="0"
-                           name="longitude" type="number"/>
+                <FormField bind:value={event.latitude} fieldClass="full-field" label="Latitude" max="90" min="-90"
+                           name="latitude" type="float"/>
+                <FormField bind:value={event.longitude} fieldClass="full-field" label="Longitude" max="180" min="-180"
+                           name="longitude" type="float"/>
             </div>
         </Details>
         <Details extendClass="my-4" name="Recurrence">
