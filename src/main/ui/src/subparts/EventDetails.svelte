@@ -20,15 +20,10 @@
     const end = new Date(event.end);
     const actualEnd = `${end.toLocaleDateString()} ${end.toLocaleTimeString()}`;
 
-    const userOrigin = {
-        latitude: null,
-        longitude: null
-    };
-    if (event.place || (event.latitude && event.longitude)) {
-        navigator.geolocation.getCurrentPosition(position => {
-            userOrigin.latitude = position.coords.latitude;
-            userOrigin.longitude = position.coords.longitude;
-        });
+    let mapURL = null;
+
+    function setMapURL(url) {
+        mapURL = url;
     }
 
     let location = null;
@@ -38,7 +33,11 @@
         location = event.place;
     }
 
-    let mapurl = `https://www.google.com/maps/embed/v1/directions?mode=transit&origin=${userOrigin.latitude},${userOrigin.longitude}&destination=${location}&key=${process.env.GMAP_KEY}`;
+    if (event.place || (event.latitude && event.longitude)) {
+        navigator.geolocation.getCurrentPosition(position => {
+            setMapURL(`https://www.google.com/maps/embed/v1/directions?mode=transit&origin=${position.coords.latitude},${position.coords.longitude}&destination=${location}&key=${process.env.GMAP_KEY}`);
+        });
+    }
 
     function gotoEdit() {
         close();
@@ -85,11 +84,11 @@
         </div>
     </div>
     <Details extendClass="mt-4" name="Map">
-        {#if location && userOrigin.latitude && userOrigin.longitude}
+        {#if mapURL}
             <iframe title="Event map"
                     class="w-full" height="500"
                     style="border:0" frameborder="0"
-                    src={mapurl} allowfullscreen></iframe>
+                    src={mapURL} allowfullscreen></iframe>
         {:else}
             <p class="m-7 text-lg font-thin">
                 Cannot get directions :
