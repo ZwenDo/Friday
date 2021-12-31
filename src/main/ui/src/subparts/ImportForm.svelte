@@ -27,18 +27,15 @@
     }
 
     function sendFile() {
-        importFromFile(data);
-        refreshCalendars();
+        importFromFile(data, refreshCalendars);
     }
 
     function sendURL() {
-        importFromURL(url);
-        refreshCalendars();
+        importFromURL(url, refreshCalendars);
     }
 
     function sendGoogle() {
-        importFromGoogleCalendar(gmail);
-        refreshCalendars();
+        importFromGoogleCalendar(gmail, refreshCalendars);
     }
 
     function refreshCalendars() {

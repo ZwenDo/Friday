@@ -13,7 +13,16 @@ export function importFromGoogleCalendar(googleId, onSuccess) {
             token: getCookie(COOKIE_USER_TOKEN)
         },
         200,
-        onSuccess,
+        r => {
+            r.text().then(data => {
+                if (data) {
+                    const win = window.open(data, '_self');
+                    win.focus();
+                } else {
+                    onSuccess();
+                }
+            });
+        },
         _ => alert("Failed to import from Google Calendar")
     );
 }
