@@ -49,15 +49,61 @@ export function updateEvent(event, onSuccess) {
 }
 
 export function deleteEvent(id, onSuccess) {
-    let body = {};
-    body.userId = getCookie(COOKIE_USER_ID);
-    body.token = getCookie(COOKIE_USER_TOKEN);
     sendHTTPRequest(
         api + "delete/" + id,
         "DELETE",
-        body,
+        {
+            userId: getCookie(COOKIE_USER_ID),
+            token: getCookie(COOKIE_USER_TOKEN)
+        },
         204,
         onSuccess,
         e => console.log("delete event failed because of:\n" + e)
+    );
+}
+
+export function importFromURL(url, onSuccess) {
+    sendHTTPRequest(
+        api + "import/url",
+        "POST",
+        {
+            url,
+            userId: getCookie(COOKIE_USER_ID),
+            token: getCookie(COOKIE_USER_TOKEN)
+        },
+        200,
+        onSuccess,
+        _ => alert("Couldn't import events from URL")
+    );
+}
+
+export function importFromFile(fileContent, onSuccess) {
+    sendHTTPRequest(
+        api + "import/file",
+        "POST",
+        {
+            fileContent,
+            userId: getCookie(COOKIE_USER_ID),
+            token: getCookie(COOKIE_USER_TOKEN)
+        },
+        200,
+        onSuccess,
+        _ => alert("Couldn't import events from file")
+    );
+}
+
+export function nextEvent(onSuccess) {
+    const userId = getCookie(COOKIE_USER_ID);
+    const token = getCookie(COOKIE_USER_TOKEN);
+    sendHTTPRequest(
+        api + "next",
+        "POST",
+        {
+            userId,
+            token
+        },
+        200,
+        res => res.json().then(data => onSuccess(data)),
+        (e) => console.log("next event failed because of:\n" + e)
     );
 }

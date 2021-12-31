@@ -38,12 +38,12 @@ public class GoogleCalendarController {
      * been correctly imported | redirection if Authentication is required
      */
     @Post
-    public HttpResponse<Void> importCalendar(@Body @Valid GCalImportDTO gCalImportDTO) {
+    public HttpResponse<String> importCalendar(@Body @Valid GCalImportDTO gCalImportDTO) {
         try {
             // get events
             var response = googleCalendar.getCalendar(gCalImportDTO.googleId());
             if (response.status() == GoogleCalendar.GoogleCalendarRequestResponse.Status.AUTH_REQUIRED) { // redirect to auth if not authorized
-                return HttpResponse.redirect(URI.create(response.url()));
+                return HttpResponse.ok(response.url());
             }
 
             var fridayEvents = GoogleCalendars.toFridayEventList(response.events(), gCalImportDTO.userId(), gCalImportDTO.token());

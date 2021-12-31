@@ -81,7 +81,7 @@ public class GoogleCalendar {
 
     private String createAuthURI(GoogleAuthorizationCodeFlow flow) {
         return flow.newAuthorizationUrl()
-            .setRedirectUri("localhost:8080")
+            .setRedirectUri("http://localhost:8080")
             .build();
     }
 

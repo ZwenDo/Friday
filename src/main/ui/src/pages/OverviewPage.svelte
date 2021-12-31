@@ -5,27 +5,55 @@
     import {isLoginValid, logoutUser} from "../stores/login_store";
     import Button from "../components/Button.svelte";
     import EventForm from "../subparts/EventForm.svelte";
+    import ImportForm from "../subparts/ImportForm.svelte";
     import Heading from "../components/Heading.svelte";
     import Section from "../components/Section.svelte";
     import Calendar from "../subparts/Calendar.svelte";
+    import {nextEvent} from "../stores/event_store";
+    import EventDetails from "../subparts/EventDetails.svelte";
+    import {jsDateToFormDate} from "../utils/date";
 
     let calendarRefs = [];
 
     const {open} = getContext('simple-modal');
 
-    if (process.env.NODE_ENV === 'production') {
-        onMount(() => {
-            if (!getCookie(COOKIE_USER_NAME) || !getCookie(COOKIE_USER_TOKEN)) {
-                replace("/login");
-                return;
-            }
-            isLoginValid(() => {
-                deleteCookies();
-                replace("/login");
-            });
-        });
+    let next = null;
+
+    function setNext(n) {
+        next = n;
+        next["start"] = jsDateToFormDate(n["start"]);
+        next["end"] = jsDateToFormDate(n["end"]);
     }
 
+    onMount(() => {
+        if (!getCookie(COOKIE_USER_NAME) || !getCookie(COOKIE_USER_TOKEN)) {
+            replace("/login");
+            return;
+        }
+        isLoginValid(() => {
+            deleteCookies();
+            replace("/login");
+        });
+        nextEvent(d => {
+            setNext(d);
+        });
+    });
+
+
+    function showImportForm() {
+        open(ImportForm, {calendarRefs}, {
+            closeButton: false,
+            styleWindow: {
+                backgroundColor: '#ffffff',
+                overflow: 'hidden',
+            },
+            styleContent: {
+                display: 'flex',
+                justifyContent: 'center',
+                overflowY: 'scroll',
+            }
+        });
+    }
 
     function showEventForm() {
         open(EventForm, {calendarRefs}, {
@@ -52,22 +80,34 @@
         <div>
             <Heading>Hello, {getCookie(COOKIE_USER_NAME)}!</Heading>
         </div>
-        <div>
+        <div class="flex flex-col-reverse sm:flex-row mt-2 sm:mt-0">
             <Button
-                on:click={showEventForm}
+                    on:click={showImportForm}
+            >
+                Import Events
+            </Button>
+            <Button
+                    extendClass="sm:ml-4"
+                    on:click={showEventForm}
             >
                 Create Event
             </Button>
             <Button
-                extendClass="bg-pink-500 hover:bg-pink-700 ml-4"
-                on:click={logout}
+                    extendClass="bg-pink-500 hover:bg-pink-700 sm:ml-4"
+                    on:click={logout}
             >
                 Logout
             </Button>
         </div>
     </div>
     <Section title="Next">
-        AAAAAAA
+        {#if next}
+            <EventDetails {calendarRefs} event={next}/>
+            {:else}
+            <p class="m-7 text-lg font-thin">
+                No next event.
+            </p>
+        {/if}
     </Section>
     <Section title="Today">
         <Calendar bind:calendarRefs={calendarRefs} type="listDay"/>

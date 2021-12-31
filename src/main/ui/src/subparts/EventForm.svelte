@@ -1,7 +1,6 @@
 <script>
     import {getContext, onMount} from "svelte";
-    import {converter, createRrule} from "../utils/rrule";
-    import {jsDateToFormDate} from "../utils/date";
+    import {formDateToICalDate, jsDateToFormDate} from "../utils/date";
     import {createEvent, updateEvent} from "../stores/event_store";
     import Button from "../components/Button.svelte";
     import Checkbox from "../components/Checkbox.svelte";
@@ -14,6 +13,10 @@
     export let calendarRefs;
     export let eventToEdit = undefined;
 
+    const converter = {
+        "FREQ": "freq",
+        "UNTIL": "until"
+    }
 
     let event = {
         title: null,
@@ -27,39 +30,38 @@
         rrule: null,
     };
 
-    let hasRecurrenceChecked = false;
-
     let rec = {
-        freq: "WEEKLY",
-        byMonth: "",
-        byYearDay: "",
-        byWeekNo: "",
-        byDay: "",
-        byMonthDay: "",
-        bySetPos: ""
+        freq: "NONE"
     };
 
-    function createNewEvent() {
-        if (hasRecurrenceChecked) {
-            event.rrule = createRrule(rec);
-            if (event.rrule == null) return; // stop creation
+    function submit() {
+        if (rec.freq !== "NONE") {
+            if (!rec["until"]) delete rec["until"];
+            event.rrule = Object.keys(rec).map(k => `${k.toUpperCase()}=${rec[k]}`).join(";");
         }
         event.end = event.allDay ? null : event.end;
-        event.allDay = null;
         if (!eventToEdit) {
             createEvent(event, refreshCalendars);
         } else {
             updateEvent(event, refreshCalendars);
         }
+
     }
 
     function refreshCalendars() {
         calendarRefs.forEach(c => c.getAPI().refetchEvents());
         close();
+
     }
 
+    let untilForm;
+    $: rec.until = formDateToICalDate(untilForm);
+
     function parseRrule(rrule) {
-        if (!rrule) return;
+        if (!rrule) {
+            rec.freq = "NONE";
+            return;
+        }
         const rules = rrule.split(";");
         rules.forEach(r => {
             const pair = r.split("=");
@@ -67,19 +69,20 @@
             if (!key) return;
             rec[key] = pair[1];
         });
+        if (!rec["until"]) rec["until"] = null;
     }
 
     onMount(() => {
         if (eventToEdit) {
             event = {...eventToEdit};
             parseRrule(eventToEdit.rrule);
-            hasRecurrenceChecked = event.rrule !== undefined;
         }
     });
 </script>
 
 <div>
-    <Form on:submit={createNewEvent} submitText="Create" title="Create an event">
+    <Form on:submit={submit} submitText="{eventToEdit ? 'Update' : 'Create'}"
+          title="{eventToEdit ? 'Edit' : 'Create'} an event">
         <div class="sm:flex">
             <div class="sm:pr-4">
                 <FormField bind:value={event.title} fieldClass="full-field" label="Title*"
@@ -93,62 +96,33 @@
                 <FormField bind:value={event.start} fieldClass="full-field" label="Start Date*"
                            name="startDate" required="true" type="datetime-local"/>
                 <FormField bind:value={event.end} disabled="{event.allDay}" fieldClass="full-field" label="End Date*"
-                           name="endDate" required="true" type="datetime-local"/>
+                           name="endDate" required="{!event.allDay}" type="datetime-local"/>
                 <Checkbox bind:checked={event.allDay} label="All Day" name="allDay"/>
             </div>
         </div>
         <Details extendClass="my-4" name="Localisation">
             <div class="grid gap-x-4 grid-cols-1 sm:grid-cols-2">
-                <FormField bind:value={event.latitude} fieldClass="full-field" label="Latitude" min="0"
-                           name="latitude" type="number"/>
-                <FormField bind:value={event.longitude} fieldClass="full-field" label="Longitude" min="0"
-                           name="longitude" type="number"/>
+                <FormField bind:value={event.latitude} fieldClass="full-field" label="Latitude" max="90" min="-90"
+                           name="latitude" type="float"/>
+                <FormField bind:value={event.longitude} fieldClass="full-field" label="Longitude" max="180" min="-180"
+                           name="longitude" type="float"/>
             </div>
         </Details>
         <Details extendClass="my-4" name="Recurrence">
-            <Checkbox bind:checked={hasRecurrenceChecked} label="Has recurrence" name="hasRecurrence"/>
             <div class="grid gap-x-4 grid-cols-1 sm:grid-cols-2 mt-2">
-                <div class="mt-8 mb-4 relative {!hasRecurrenceChecked ? 'opacity-25' : ''}">
+                <div class="mt-8 mb-4 relative">
                     <label class="absolute left-2 -top-6 font-semibold text-gray-600 text-sm"
                            for="frequency">Frequency*</label>
-                    <select bind:value={rec.freq} class="mt-1 input-field" disabled={!hasRecurrenceChecked}
-                            id="frequency">
+                    <select bind:value={rec.freq} class="mt-1 input-field" id="frequency">
+                        <option value="NONE">None</option>
                         <option value="DAILY">Daily</option>
                         <option value="WEEKLY">Weekly</option>
                         <option value="MONTHLY">Monthly</option>
                         <option value="YEARLY">Yearly</option>
                     </select>
                 </div>
-                <FormField bind:value={rec.byMonth} disabled={!hasRecurrenceChecked} fieldClass="full-field"
-                           hint="From 1 to 12, comma separated"
-                           label="Months" name="bymonth" type="text"/>
-                <FormField bind:value={rec.byYearDay} disabled={!hasRecurrenceChecked}
-                           extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"
-                           fieldClass="full-field"
-                           hint="From -366 to 366 except 0, comma separated"
-                           label="Year days" name="byyearday" type="text"/>
-                <FormField bind:value={rec.byWeekNo} disabled={!hasRecurrenceChecked}
-                           extendClass="{rec.freq === 'YEARLY' ? '' : 'hidden'}"
-                           fieldClass="full-field"
-                           hint="From -53 to 53 except 0, comma separated"
-                           label="Week numbers" name="byweekno" type="text"/>
-                {#if rec.freq === 'YEARLY' || rec.freq === 'MONTHLY'}
-                    <FormField fieldClass="full-field" disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
-                               hint="Week number from -53 to 53 except 0, followed by the day's first two letters all of which comma separated; e.g. +2MO,-51TH"
-                               label="Week days" name="byday" type="text"/>
-                {:else}
-                    <FormField fieldClass="full-field" disabled={!hasRecurrenceChecked} bind:value={rec.byDay}
-                               hint="MO or TH,WE,SA"
-                               label="Week days" name="byday" type="text"/>
-                {/if}
-                <FormField bind:value={rec.byMonthDay} disabled={!hasRecurrenceChecked}
-                           extendClass="{rec.freq === 'WEEKLY' ? 'hidden' : ''}"
-                           fieldClass="full-field"
-                           hint="From -31 to 31 except 0, comma separated" label="Month days"
-                           name="bymonthday" type="text"/>
-                <FormField bind:value={rec.bySetPos} disabled={!hasRecurrenceChecked} fieldClass="full-field"
-                           hint="From -366 to 366 except 0, comma separated ; to select specific occurrences of the actual rule"
-                           label="Specific occurrences" name="bysetpos" type="text"/>
+                <FormField  bind:value={untilForm} disabled={rec.freq === "NONE"} fieldClass="full-field"
+                            label="Until" name="until" type="datetime-local"/>
             </div>
         </Details>
         <Button extendClass="bg-pink-500 hover:bg-pink-600 mr-1" on:click={close}>Cancel</Button>

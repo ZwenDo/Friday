@@ -19,7 +19,12 @@
 
     onMount(() => {
         if (!field) return;
-        field.type = type;
+        if (type === "float") {
+            field.type = "number";
+            field.step = "0.01";
+        } else {
+            field.type = type;
+        }
     });
 </script>
 
@@ -41,6 +46,7 @@
     {:else}
         <input
             class="input-field peer {disabled ? 'opacity-75' : ''} {fieldClass}"
+            on:change
             bind:this={field}
             id="{name}"
             {name}

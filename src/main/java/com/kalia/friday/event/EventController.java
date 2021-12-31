@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -207,5 +209,25 @@ public class EventController {
         } catch (NullPointerException | IllegalArgumentException e) { // if invalid format
             return HttpResponse.badRequest();
         }
+    }
+
+    @Post("/next")
+    public HttpResponse<EventResponseDTO> nextEvent(@Body @Valid LoginSessionDTO loginSessionDTO) {
+        var findResponse = eventRepository.authenticatedFindByUserId(loginSessionDTO.userId(), loginSessionDTO.token());
+        if (findResponse.status() != RepositoryResponse.Status.OK) {
+            return HttpResponse.unauthorized();
+        }
+
+        var now = LocalDateTime.now();
+        var event = findResponse.get()
+            .stream()
+            .filter(e -> e.nextOccurrence(now).isPresent())
+            .sorted(Comparator.comparing(a -> a.nextOccurrence(now).get()))
+            .map(Event::toEventResponseDTO)
+            .findFirst()
+            .orElse(null);
+
+        return HttpResponse.ok(event)
+            .headers(h -> h.location(URI.create(DEFAULT_ROUTE + "allbyuser")));
     }
 }

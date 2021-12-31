@@ -1,12 +1,12 @@
 <script>
+    import {getContext, onMount} from "svelte";
+    import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
+    import {dateToYearDay, formDateToICalDate, jsDateToFormDate} from "../utils/date";
     import Fullcalendar from "svelte-fullcalendar";
+    import EventDetails from "./EventDetails.svelte";
     import dayGridPlugin from "@fullcalendar/daygrid";
     import rRulePlugin from "@fullcalendar/rrule";
-    import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
-    import {getContext, onMount} from "svelte";
-    import {jsDateToFormDate} from "../utils/date";
     import listPlugin from "@fullcalendar/list";
-    import EventForm from "./EventForm.svelte";
 
     export let calendarRefs = [];
     export let calendarRef = null;
@@ -31,14 +31,16 @@
             }
         },
         eventClick(infos) {
-            open(EventForm, {calendarRefs, event: infos.event._def.extendedProps}, {
+            open(EventDetails, {calendarRefs, event: infos.event._def.extendedProps}, {
                 closeButton: false,
                 styleWindow: {
                     backgroundColor: '#ffffff',
+                    overflow: 'hidden',
                 },
                 styleContent: {
                     display: 'flex',
                     justifyContent: 'center',
+                    overflowY: 'scroll',
                 }
             });
         },
@@ -47,7 +49,7 @@
             copyToExtendedProps(data);
             return data;
         }
-    }
+    };
 
     function cleanData(data) {
         data.start[1]--;
@@ -63,10 +65,25 @@
     function copyToExtendedProps(data) {
         // copy all the data to prevent discard
         data.extendedProps = {...data};
-        data.extendedProps.extendedProps = null;
+        data.extendedProps.extendedProps = undefined;
         data.extendedProps.start = jsDateToFormDate(new Date(...data.extendedProps.start));
-        if (data.extendedProps.end !== undefined) {
+        if (data.extendedProps.end) {
             data.extendedProps.end = jsDateToFormDate(new Date(...data.extendedProps.end));
+        }
+
+        const rrule = data.rrule;
+        const start = data.extendedProps.start;
+        if (!rrule) return;
+        if (
+            rrule.includes('FREQ=YEARLY') &&
+            !rrule.includes('BYMONTH=') &&
+            !rrule.includes('BYMONTHDAY=') &&
+            !rrule.includes('BYYEARDAY=') &&
+            !rrule.includes('BYWEEKNO=') &&
+            !rrule.includes('BYDAY=')
+        ) {
+            data.rrule += ';BYYEARDAY=' + (dateToYearDay(start) - 1);
+            data.rrule += ';DTSTART=' + formDateToICalDate(start);
         }
     }
 

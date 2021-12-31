@@ -13,7 +13,7 @@
         focus-within:ring-purple-200 focus-within:ring-2"
     >
         <input bind:checked class="opacity-0 absolute" id="{name}" {name} type="checkbox">
-        <svg class="fill-current hidden w-4 h-4 text-purple-500 pointer-events-none" viewBox="0 0 20 20">
+        <svg class="fill-current hidden w-4 h-4 text-purple-500" viewBox="0 0 20 20">
             <path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/>
         </svg>
     </div>
