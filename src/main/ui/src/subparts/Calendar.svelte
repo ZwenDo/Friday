@@ -72,6 +72,7 @@
         }
 
         const rrule = data.rrule;
+        const start = data.extendedProps.start;
         if (
             rrule &&
             rrule.includes('FREQ=YEARLY') &&
@@ -81,9 +82,10 @@
             !rrule.includes('BYWEEKNO=') &&
             !rrule.includes('BYDAY=')
         ) {
-            const start = new Date(data.extendedProps.start);
-            data.rrule += ';BYYEARDAY=' + (dateToYearDay(start) - 1) + ';DTSTART=' + formDateToICalDate(start);
+            data.rrule += ';BYYEARDAY=' + (dateToYearDay(start) - 1);
         }
+        data.rrule += ';DTSTART=' + formDateToICalDate(start);
+
     }
 
     onMount(() => calendarRefs.push(calendarRef));
