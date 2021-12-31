@@ -1,12 +1,12 @@
 <script>
+    import {getContext, onMount} from "svelte";
+    import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
+    import {jsDateToFormDate} from "../utils/date";
     import Fullcalendar from "svelte-fullcalendar";
+    import EventDetails from "./EventDetails.svelte";
     import dayGridPlugin from "@fullcalendar/daygrid";
     import rRulePlugin from "@fullcalendar/rrule";
-    import {COOKIE_USER_ID, COOKIE_USER_TOKEN, getCookie} from "../utils/cookies";
-    import {getContext, onMount} from "svelte";
-    import {jsDateToFormDate} from "../utils/date";
     import listPlugin from "@fullcalendar/list";
-    import EventForm from "./EventForm.svelte";
 
     export let calendarRefs = [];
     export let calendarRef = null;
@@ -31,7 +31,7 @@
             }
         },
         eventClick(infos) {
-            open(EventForm, {calendarRefs, event: infos.event._def.extendedProps}, {
+            open(EventDetails, {calendarRefs, event: infos.event._def.extendedProps}, {
                 closeButton: false,
                 styleWindow: {
                     backgroundColor: '#ffffff',
@@ -63,7 +63,7 @@
     function copyToExtendedProps(data) {
         // copy all the data to prevent discard
         data.extendedProps = {...data};
-        data.extendedProps.extendedProps = null;
+        data.extendedProps.extendedProps = undefined;
         data.extendedProps.start = jsDateToFormDate(new Date(...data.extendedProps.start));
         if (data.extendedProps.end !== undefined) {
             data.extendedProps.end = jsDateToFormDate(new Date(...data.extendedProps.end));
