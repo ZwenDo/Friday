@@ -1,3 +1,5 @@
+import {formDateToICalDate} from "./date";
+
 export const converter = {
     "FREQ": "freq",
     "BYYEAR": "byYear",
@@ -32,7 +34,8 @@ export function createRrule(rec) {
             } else {
                 rrule += addIfNotEmpty(rec.byMonth, ";BYMONTH=") +
                     (rec.freq !== "YEARLY" ? addIfNotEmpty(rec.byDay, ";BYDAY=") : "") +
-                    addIfNotEmpty(rec.bySetPos, ";BYSETPOS=");
+                    addIfNotEmpty(rec.bySetPos, ";BYSETPOS=") +
+                    addIfNotEmpty(formDateToICalDate(rec.until), ";UNTIL=");
             }
             break;
     }
