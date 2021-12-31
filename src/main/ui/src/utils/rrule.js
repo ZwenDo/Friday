@@ -15,31 +15,62 @@ export function createRrule(rec) {
     let rrule = "FREQ=" + rec.freq;
     switch (rec.freq) {
         case "YEARLY":
-            if (!checkWeekNo(rec) || !checkYearDays(rec) || !checkDays(rec)) {
+            if (
+                !checkWeekNo(rec) ||
+                !checkYearDays(rec) ||
+                !(!rec.byWeekNo && checkDaysWithWeekNo(rec) || checkDays(rec)) ||
+                !checkMonthDays(rec) ||
+                !checkMonths(rec)
+            ) {
                 return null;
             } else {
                 rrule += addIfNotEmpty(rec.byWeekNo, ";BYWEEKNO=") +
-                    addIfNotEmpty(rec.byYearDay, ";BYYEARDAY=");
+                    addIfNotEmpty(rec.byYearDay, ";BYYEARDAY=") +
+                    addIfNotEmpty(rec.byMonthDay, ";BYMONTHDAY=") +
+                    addIfNotEmpty(rec.byMonth, ";BYMONTH=") +
+                    addIfNotEmpty(rec.byDay, ";BYDAY=");
             }
+            break;
         case "MONTHLY":
-        case "DAILY":
-            if (!checkMonthDays(rec)) {
+            if (
+                !checkDaysWithWeekNo(rec) ||
+                !checkMonthDays(rec) ||
+                !checkMonths(rec)
+            ) {
                 return null;
             } else {
-                rrule += addIfNotEmpty(rec.byMonthDay, ";BYMONTHDAY=");
+                rrule += addIfNotEmpty(rec.byMonthDay, ";BYMONTHDAY=") +
+                    addIfNotEmpty(rec.byMonth, ";BYMONTH=") +
+                    addIfNotEmpty(rec.byDay, ";BYDAY=");
             }
+            break;
+        case "DAILY":
+            if (
+                !checkDays(rec) ||
+                !checkMonthDays(rec) ||
+                !checkMonths(rec)
+            ) {
+                return null;
+            } else {
+                rrule += addIfNotEmpty(rec.byMonthDay, ";BYMONTHDAY=") +
+                    addIfNotEmpty(rec.byMonth, ";BYMONTH=") +
+                    addIfNotEmpty(rec.byDay, ";BYDAY=");
+            }
+            break;
         case "WEEKLY":
-            if (!checkDaysWithWeekNo(rec) || !checkMonths(rec) || !checkSetPos(rec)) {
+            if (
+                !checkDays(rec) ||
+                !checkMonths(rec)
+            ) {
                 return null;
             } else {
                 rrule += addIfNotEmpty(rec.byMonth, ";BYMONTH=") +
-                    (rec.freq !== "YEARLY" ? addIfNotEmpty(rec.byDay, ";BYDAY=") : "") +
-                    addIfNotEmpty(rec.bySetPos, ";BYSETPOS=") +
-                    addIfNotEmpty(formDateToICalDate(rec.until), ";UNTIL=");
+                    addIfNotEmpty(rec.byDay, ";BYDAY=");
             }
             break;
     }
-    return rrule;
+    if (!checkSetPos(rec)) return null;
+    return rrule + addIfNotEmpty(rec.bySetPos, ";BYSETPOS=") + addIfNotEmpty(formDateToICalDate(rec.until), ";UNTIL=");
 }
 
 function addIfNotEmpty(str, prefix) {
@@ -48,8 +79,7 @@ function addIfNotEmpty(str, prefix) {
 
 function checkDaysWithWeekNo(rec) {
     if (rec.byDay.length === 0) return true;
-    const regex = /[+-]?([1-4]?[0-9]|5[0-3])?(MO|TU|WE|TH|FR|SA|SU)/;
-    if (rec.byDay.split(",").some(e => !regex.exec(e))) {
+    if (rec.byDay.split(",").some(e => !/[+-]?([1-4]?[0-9]|5[0-3])?(MO|TU|WE|TH|FR|SA|SU)/.exec(e))) {
         alert("Invalid days");
         return false;
     }
