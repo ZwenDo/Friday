@@ -13,16 +13,27 @@
     import EventDetails from "../subparts/EventDetails.svelte";
     import {jsDateToFormDate} from "../utils/date";
 
-    let calendarRefs = [];
-
     const {open} = getContext('simple-modal');
+
+    let calendarRefs = [];
 
     let next = null;
 
     function setNext(n) {
         next = n;
-        next["start"] = jsDateToFormDate(n["start"]);
-        next["end"] = jsDateToFormDate(n["end"]);
+    }
+
+    export function fetchNextEvent() {
+        nextEvent(d => {
+            d.start = jsDateToFormDate(new Date(...d.start));
+            if (d.end) {
+                d.end = jsDateToFormDate(new Date(...d.end));
+            } else {
+                delete d.end;
+                d.allDay = true;
+            }
+            setNext(d);
+        });
     }
 
     onMount(() => {
@@ -34,9 +45,7 @@
             deleteCookies();
             replace("/login");
         });
-        nextEvent(d => {
-            setNext(d);
-        });
+        fetchNextEvent();
     });
 
 
@@ -82,28 +91,28 @@
         </div>
         <div class="flex flex-col-reverse sm:flex-row mt-2 sm:mt-0">
             <Button
-                    on:click={showImportForm}
+                on:click={showImportForm}
             >
                 Import Events
             </Button>
             <Button
-                    extendClass="sm:ml-4"
-                    on:click={showEventForm}
+                extendClass="sm:ml-4"
+                on:click={showEventForm}
             >
                 Create Event
             </Button>
             <Button
-                    extendClass="bg-pink-500 hover:bg-pink-700 sm:ml-4"
-                    on:click={logout}
+                extendClass="bg-pink-500 hover:bg-pink-700 sm:ml-4"
+                on:click={logout}
             >
                 Logout
             </Button>
         </div>
     </div>
-    <Section title="Next">
+    <Section title="Next Event">
         {#if next}
             <EventDetails {calendarRefs} event={next}/>
-            {:else}
+        {:else}
             <p class="m-7 text-lg font-thin">
                 No next event.
             </p>

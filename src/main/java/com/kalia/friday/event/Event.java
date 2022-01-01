@@ -321,10 +321,11 @@ public class Event implements Serializable {
         var duration = endDate == null ?
             24 * 3600 :
             endDate.atZone(ZoneId.systemDefault()).toEpochSecond() - startDate.atZone(ZoneId.systemDefault()).toEpochSecond();
-        var rrule = BiweeklyUtils.recurrenceRuleFromString(recurRuleParts);
         if (startDate.isAfter(time)) { // not started
             return Optional.of(startDate);
         }
+        if (recurRuleParts == null) return Optional.empty();
+        var rrule = BiweeklyUtils.recurrenceRuleFromString(recurRuleParts);
         if (startDate.plusSeconds(duration).isBefore(time) &&
             rrule.getValue().getUntil() != null
             && rrule.getValue().getUntil().toInstant().isBefore(time.atZone(ZoneId.systemDefault()).toInstant())) { // recurrence has ended

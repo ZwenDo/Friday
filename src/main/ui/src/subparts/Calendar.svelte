@@ -31,7 +31,7 @@
             }
         },
         eventClick(infos) {
-            open(EventDetails, {calendarRefs, event: infos.event._def.extendedProps}, {
+            open(EventDetails, {calendarRefs, closeable: true, event: infos.event._def.extendedProps}, {
                 closeButton: false,
                 styleWindow: {
                     backgroundColor: '#ffffff',

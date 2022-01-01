@@ -10,33 +10,43 @@
     const {open, close} = getContext('simple-modal');
 
     export let calendarRefs = [];
+    export let closeable = false;
+
+    let start;
+    let actualStart;
+    let end;
+    let actualEnd;
+    let mapURL;
+    let location;
+
     export let event;
+    $: resetValues();
 
-    const start = new Date(event.start);
-    const actualStart = event.allDay
-        ? start.toLocaleDateString()
-        : `${start.toLocaleDateString()} ${start.toLocaleTimeString()}`
+    function resetValues() {
+        if (!event) return;
+        start = new Date(event.start);
+        actualStart = event.allDay
+            ? start.toLocaleDateString()
+            : `${start.toLocaleDateString()} ${start.toLocaleTimeString()}`
 
-    const end = new Date(event.end);
-    const actualEnd = `${end.toLocaleDateString()} ${end.toLocaleTimeString()}`;
+        end = new Date(event.end);
+        actualEnd = `${end.toLocaleDateString()} ${end.toLocaleTimeString()}`;
 
-    let mapURL = null;
+        function setMapURL(url) {
+            mapURL = url;
+        }
 
-    function setMapURL(url) {
-        mapURL = url;
-    }
+        if (event.latitude && event.longitude) {
+            location = `${event.latitude},${event.longitude}`;
+        } else if (event.place) {
+            location = event.place;
+        }
 
-    let location = null;
-    if (event.latitude && event.longitude) {
-        location = `${event.latitude},${event.longitude}`;
-    } else if (event.place) {
-        location = event.place;
-    }
-
-    if (event.place || (event.latitude && event.longitude)) {
-        navigator.geolocation.getCurrentPosition(position => {
-            setMapURL(`https://www.google.com/maps/embed/v1/directions?mode=transit&origin=${position.coords.latitude},${position.coords.longitude}&destination=${location}&key=${process.env.GMAP_KEY}`);
-        });
+        if (event.place || (event.latitude && event.longitude)) {
+            navigator.geolocation.getCurrentPosition(position => {
+                setMapURL(`https://www.google.com/maps/embed/v1/directions?mode=transit&origin=${position.coords.latitude},${position.coords.longitude}&destination=${location}&key=${process.env.GMAP_KEY}`);
+            });
+        }
     }
 
     function gotoEdit() {
@@ -64,7 +74,9 @@
 </script>
 
 <div class="w-full h-full flex flex-col">
-    <Heading>Event</Heading>
+    {#if closeable}
+        <Heading>Event</Heading>
+    {/if}
     <div class="sm:flex mt-4">
         <div class="sm:pr-4 sm:flex-1">
             <DisplayField fieldClass="full-field" label="Title" value={event.title}/>
@@ -97,7 +109,9 @@
         {/if}
     </Details>
     <div class="w-full h-full flex justify-start items-center mt-4">
-        <Button extendClass="bg-pink-500 hover:bg-pink-600 mr-2" on:click={close}>Close</Button>
+        {#if closeable}
+            <Button extendClass="bg-pink-500 hover:bg-pink-600 mr-2" on:click={close}>Close</Button>
+        {/if}
         <Button extendClass="bg-purple-500 hover:bg-purple-600 mr-2" on:click={gotoEdit}>Edit</Button>
         <Button extendClass="bg-red-600 hover:bg-red-700 mr-2" on:click={gotoDelete}>Delete</Button>
     </div>
